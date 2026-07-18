@@ -164,3 +164,5 @@ export const PERSONA_FIELDS: readonly PersonaField[] = [
 export const DEFAULT_TRAITS: Record<string, number> = Object.fromEntries(
   PERSONA_TRAITS.map((t) => [t.id, t.default]),
 );
+
+export type { TraitCategory } from "./types";
