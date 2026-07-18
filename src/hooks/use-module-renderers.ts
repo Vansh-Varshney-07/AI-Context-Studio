@@ -6,6 +6,8 @@ import { PromptLibraryModule } from "@/features/prompt-library";
 import { SystemPromptEngineModule } from "@/features/system-prompt-engine";
 import { SkillsModule } from "@/features/skills";
 import { PersonasModule } from "@/features/personas";
+import { WorkflowsModule } from "@/features/workflows";
+import { MemoriesModule } from "@/features/memories";
 import type { ModuleId, ModuleParams } from "@/types/navigation";
 import {
   ComingSoon,
@@ -37,8 +39,8 @@ const moduleRenderers: ModuleRendererRegistry = {
   "system-prompt-engine": SystemPromptEngineModule as ModuleRenderer,
   skills: SkillsModule as ModuleRenderer,
   personas: PersonasModule as ModuleRenderer,
-  workflows: ComingSoon as unknown as ModuleRenderer,
-  memories: ComingSoon as unknown as ModuleRenderer,
+  workflows: WorkflowsModule as ModuleRenderer,
+  memories: MemoriesModule as ModuleRenderer,
   configurations: ComingSoon as unknown as ModuleRenderer,
 };
 
