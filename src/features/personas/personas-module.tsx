@@ -45,12 +45,16 @@ import {
   PERSONA_FIELDS,
   DEFAULT_TRAITS,
 } from "./constants";
-import { SEED_PERSONAS, renderPersonaBlueprint, enhanceWithAI } from "./data";
+import { PERSONA_BLUEPRINTS, renderPersonaBlueprint, enhanceWithAI } from "./data";
 import { useAIEngine } from "@/hooks";
 import type { Persona, PersonaAnswers, TraitCategory } from "./types";
 
 const PERSONA_BLUEPRINT_KINDS = ["system-prompt", "instruction-file"] as const;
 type BlueprintKind = typeof PERSONA_BLUEPRINT_KINDS[number];
+
+const SEED_PERSONAS: Persona[] = [];
+
+export { SEED_PERSONAS, PERSONA_BLUEPRINTS, renderPersonaBlueprint, enhanceWithAI };
 
 export function PersonasModule() {
   const [search, setSearch] = React.useState("");

@@ -1,0 +1,892 @@
+﻿"use client";
+
+import { motion } from "framer-motion";
+import {
+  FileText,
+  Upload,
+  Clipboard,
+  CheckCircle,
+  AlertCircle,
+  AlertTriangle,
+  Info,
+  Star,
+  TrendingUp,
+  TrendingDown,
+  Target,
+  Zap,
+  Shield,
+  Clock,
+  Brain,
+  Download,
+  Copy,
+  RefreshCw,
+  Settings,
+  HelpCircle,
+  ChevronDown,
+  ChevronUp,
+  X,
+  Plus,
+  Search,
+  Filter,
+  Zap as ZapIcon,
+  type LucideIcon,
+} from "lucide-react";
+import * as React from "react";
+import { useState, useCallback, useRef } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tag } from "@/components/common/tag";
+import { EmptyState } from "@/components/common/empty-state";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { moduleTransition } from "@/components/motion";
+import { useToast } from "@/providers/toaster-provider";
+import { cn, downloadFile, copyToClipboard } from "@/utils";
+import { validateAsset, quickValidate, detectAssetType, getValidationProfile } from "./services";
+import type { ValidationResult, ValidationInput, AssetType, ValidationProfile, ValidationFinding, ClientCompatibility } from "./types";
+
+const SUPPORTED_ASSET_TYPES: { value: AssetType; label: string; description: string; icon: LucideIcon }[] = [
+  { value: "instruction-file", label: "Instruction Files", description: "CLAUDE.md, AGENTS.md, GEMINI.md, Cursor Rules, etc.", icon: FileText },
+  { value: "system-prompt", label: "System Prompts", description: "AI system instructions and role definitions", icon: Brain },
+  { value: "prompt-template", label: "Prompt Templates", description: "Reusable prompt templates with variables", icon: Clipboard },
+  { value: "skill", label: "Skills", description: "Atomic AI capabilities and capabilities", icon: Zap },
+  { value: "persona", label: "Personas", description: "AI personalities and role definitions", icon: Shield },
+  { value: "workflow", label: "Workflows", description: "Multi-step AI processes and pipelines", icon: Target },
+  { value: "mcp-configuration", label: "MCP Configurations", description: "Model Context Protocol server configs", icon: Settings },
+];
+
+const VALIDATION_PROFILES: { value: ValidationProfile; label: string; description: string }[] = [
+  { value: "comprehensive", label: "Comprehensive", description: "Full analysis across all categories" },
+  { value: "quick", label: "Quick Check", description: "Essential checks only" },
+  { value: "compatibility", label: "Compatibility", description: "Focus on client compatibility" },
+  { value: "prompt-engineering", label: "Prompt Engineering", description: "Optimize for prompt quality" },
+  { value: "instruction-files", label: "Instruction Files", description: "Specialized for CLAUDE.md, AGENTS.md, etc." },
+];
+
+function ResultsPanel({ result }: { result: ValidationResult }) {
+  return (
+    <div className="flex-1 flex flex-col overflow-hidden">
+      {/* Score Header */}
+      <div className="border-b border-border bg-bg-secondary p-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className={cn(
+              "flex size-16 items-center justify-center rounded-xl font-bold text-2xl",
+              result.score.overall >= 90 ? "bg-success-bg text-success" :
+              result.score.overall >= 75 ? "bg-accent-bg text-accent" :
+              result.score.overall >= 60 ? "bg-warning-bg text-warning" : "bg-error-bg text-error"
+            )}>
+              {result.score.overall}
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl font-bold text-text-primary">{result.score.grade}</span>
+                <span className={cn(
+                  "px-2 py-0.5 rounded-full text-xs font-medium",
+                  result.score.overall >= 90 ? "bg-success-bg text-success" :
+                  result.score.overall >= 75 ? "bg-accent-bg text-accent" :
+                  result.score.overall >= 60 ? "bg-warning-bg text-warning" : "bg-error-bg text-error"
+                )}>
+                  {result.score.overall >= 90 ? "Excellent" :
+                   result.score.overall >= 75 ? "Good" :
+                   result.score.overall >= 60 ? "Fair" : "Needs Work"}
+                </span>
+              </div>
+              <p className="text-sm text-text-muted mt-1">
+                {result.findings.filter(f => f.severity === "error").length} errors, 
+                {result.findings.filter(f => f.severity === "warning").length} warnings, 
+                {result.findings.filter(f => f.severity === "info").length} suggestions
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 mt-4">
+            <div className="flex items-center gap-2">
+              <Brain className="size-4 text-text-muted" />
+              <span className={cn(
+                "text-sm font-medium",
+                result.metadata.estimatedAIPerformance === "excellent" ? "text-success" :
+                result.metadata.estimatedAIPerformance === "good" ? "text-accent" :
+                result.metadata.estimatedAIPerformance === "fair" ? "text-warning" : "text-error"
+              )}>
+                AI Performance: {result.metadata.estimatedAIPerformance}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Zap className="size-4 text-text-muted" />
+              <span className={cn(
+                "text-sm font-medium",
+                result.metadata.estimatedTokenEfficiency === "high" ? "text-success" :
+                result.metadata.estimatedTokenEfficiency === "medium" ? "text-warning" : "text-error"
+              )}>
+                Token Efficiency: {result.metadata.estimatedTokenEfficiency}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Tabs for detailed analysis */}
+        <Tabs defaultValue="overview" className="flex-1 flex flex-col">
+          <TabsList className="bg-bg-secondary border-b border-border">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="score">Score Breakdown</TabsTrigger>
+            <TabsTrigger value="findings">Findings</TabsTrigger>
+            <TabsTrigger value="compatibility">Compatibility</TabsTrigger>
+            <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="flex-1 overflow-hidden">
+            <ScrollArea className="h-full p-4">
+              <div className="space-y-6 max-w-3xl">
+                {/* Strengths */}
+                {result.strengths.length > 0 && (
+                  <section>
+                    <h3 className="flex items-center gap-2 text-sm font-semibold text-text-primary mb-3">
+                      <Star className="size-4 text-amber-500" />
+                      Strengths
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {result.strengths.map((s, i) => (
+                        <Tag key={i} variant="success" className="gap-1">
+                          <CheckCircle className="size-3" />
+                          {s}
+                        </Tag>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* Weaknesses */}
+                {result.weaknesses.length > 0 && (
+                  <section>
+                    <h3 className="flex items-center gap-2 text-sm font-semibold text-text-primary mb-3">
+                      <AlertTriangle className="size-4 text-warning" />
+                      Areas for Improvement
+                    </h3>
+                    <div className="space-y-2">
+                      {result.weaknesses.map((w, i) => (
+                        <Tag key={i} variant="warning" className="w-full justify-start gap-1">
+                          <AlertTriangle className="size-3" />
+                          {w}
+                        </Tag>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* Missing Sections */}
+                {result.missingSections.length > 0 && (
+                  <section>
+                    <h3 className="flex items-center gap-2 text-sm font-semibold text-text-primary mb-3">
+                      <Info className="size-4 text-text-muted" />
+                      Missing Sections
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {result.missingSections.map((s, i) => (
+                        <Tag key={i} variant="outline" className="gap-1">
+                          <Plus className="size-3" />
+                          {s}
+                        </Tag>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* Quick Stats */}
+                <section>
+                  <h3 className="text-sm font-semibold text-text-primary mb-3">Statistics</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <StatCard label="Lines" value={result.metadata.lineCount || 0} icon={FileText} />
+                    <StatCard label="Words" value={result.metadata.wordCount || 0} icon={Brain} />
+                    <StatCard label="Sections" value={result.metadata.sectionCount || 0} icon={Target} />
+                    <StatCard label="Characters" value={result.metadata.contentLength || 0} icon={ZapIcon} />
+                  </div>
+                </section>
+              </div>
+            </ScrollArea>
+          </TabsContent>
+
+          <TabsContent value="score" className="flex-1 overflow-hidden">
+            <ScrollArea className="h-full p-4">
+              <div className="space-y-6 max-w-3xl">
+                <h3 className="text-lg font-semibold text-text-primary">Score Breakdown</h3>
+                <div className="space-y-4">
+                  {result.score.breakdown.map(dim => (
+                    <ScoreBar 
+                      key={dim.category} 
+                      label={dim.label} 
+                      score={dim.score} 
+                      maxScore={dim.maxScore} 
+                      description={dim.description}
+                    />
+                  ))}
+                </div>
+                <div className="mt-6 p-4 rounded-lg bg-bg-secondary border border-border">
+                  <h4 className="font-medium text-text-primary mb-2">Grade: {result.score.grade}</h4>
+                  <p className="text-sm text-text-muted">
+                    {result.score.overall >= 90 ? "Excellent quality - ready for production use" :
+                     result.score.overall >= 75 ? "Good quality - minor improvements recommended" :
+                     result.score.overall >= 60 ? "Fair quality - several improvements needed" :
+                     "Needs significant improvement before use"}
+                  </p>
+                </div>
+              </div>
+            </ScrollArea>
+          </TabsContent>
+
+          <TabsContent value="findings" className="flex-1 overflow-hidden">
+            <div className="flex h-full flex-col">
+              <div className="border-b border-border px-4 py-3 bg-bg-secondary">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium text-text-primary">Validation Findings</h3>
+                  <div className="flex items-center gap-2">
+                    <Select value="all" onValueChange={() => {}}>
+                      <SelectTrigger className="w-[140px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All</SelectItem>
+                        <SelectItem value="error">Errors</SelectItem>
+                        <SelectItem value="warning">Warnings</SelectItem>
+                        <SelectItem value="info">Info</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <ScrollArea className="flex-1">
+                  <div className="p-4 space-y-3">
+                    {result.findings.length === 0 ? (
+                      <div className="flex h-full items-center justify-center text-text-muted">
+                        <CheckCircle className="size-8 text-success mr-2" />
+                        <span>No issues found! Great job.</span>
+                      </div>
+                    ) : (
+                      result.findings.map((finding, idx) => (
+                        <FindingCard key={idx} finding={finding} index={idx + 1} />
+                      ))
+                    )}
+                  </div>
+                </ScrollArea>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="compatibility" className="flex-1 overflow-hidden">
+              <ScrollArea className="h-full p-4">
+                <div className="max-w-3xl space-y-4">
+                  <h3 className="text-lg font-semibold text-text-primary">Client Compatibility</h3>
+                  <p className="text-sm text-text-muted mb-4">
+                    Analysis of how well this asset works with various AI coding assistants
+                  </p>
+                  <div className="space-y-3">
+                    {result.compatibility?.map((comp, idx) => (
+                      <CompatibilityCard key={idx} compatibility={comp} />
+                    ))}
+                  </div>
+                </div>
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="recommendations" className="flex-1 overflow-hidden">
+              <ScrollArea className="h-full p-4">
+                <div className="max-w-3xl space-y-6">
+                  <h3 className="text-lg font-semibold text-text-primary">Prioritized Recommendations</h3>
+                  <p className="text-sm text-text-muted">
+                    Actionable suggestions ordered by impact and severity
+                  </p>
+                  <div className="space-y-3">
+                    {result.recommendations.map((rec, idx) => (
+                      <RecommendationCard key={idx} recommendation={rec} priority={idx + 1} />
+                    ))}
+                  </div>
+                </div>
+              </ScrollArea>
+            </TabsContent>
+</Tabs>
+        </div>
+      );
+}
+
+function EmptyStateView() {
+  return (
+    <div className="flex-1 flex items-center justify-center p-8">
+      <EmptyState
+        icon={Shield}
+        title="Ready to Validate"
+        description="Paste content, upload a file, or validate generated assets to see detailed analysis"
+        action={
+          <Button variant="primary" size="lg" onClick={() => {}}>
+            <Upload className="mr-1.5 size-4" />
+            Start Validation
+          </Button>
+        }
+      />
+    </div>
+  );
+}
+
+function StatCard({ label, value, icon: Icon }: { label: string; value: number; icon: LucideIcon }) {
+  return (
+    <div className="rounded-lg border border-border bg-bg-secondary p-4">
+      <div className="flex items-center gap-2 text-text-muted mb-1">
+        <Icon className="size-4" />
+        <span className="text-xs font-medium">{label}</span>
+      </div>
+      <div className="text-2xl font-bold text-text-primary">{value.toLocaleString()}</div>
+    </div>
+  );
+}
+
+function ScoreBar({ label, score, maxScore, description }: { label: string; score: number; maxScore: number; description: string }) {
+  const percentage = (score / maxScore) * 100;
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-1.5">
+        <span className="text-sm font-medium text-text-primary">{label}</span>
+        <span className="text-sm font-mono text-text-muted">{score}/{maxScore}</span>
+      </div>
+      <div className="h-2 rounded-full bg-border overflow-hidden">
+        <div 
+          className="h-full rounded-full transition-all duration-500"
+          style={{ 
+            width: `${percentage}%`,
+            backgroundColor: percentage >= 90 ? "var(--color-success)" :
+                           percentage >= 75 ? "var(--color-accent)" :
+                           percentage >= 60 ? "var(--color-warning)" : "var(--color-error)"
+          }}
+        />
+      </div>
+      <p className="text-xs text-text-muted mt-1">{description}</p>
+    </div>
+  );
+}
+
+function FindingCard({ finding, index }: { finding: ValidationFinding; index: number }) {
+  const severityColors = {
+    error: "border-error/20 bg-error-bg/50 text-error",
+    warning: "border-warning/20 bg-warning-bg/50 text-warning",
+    info: "border-border bg-bg-secondary text-text-muted",
+    success: "border-success/20 bg-success-bg/50 text-success",
+  };
+  
+  const severityIcons = {
+    error: <AlertCircle className="size-4" />,
+    warning: <AlertTriangle className="size-4" />,
+    info: <Info className="size-4" />,
+    success: <CheckCircle className="size-4" />,
+  };
+
+  return (
+    <div className={cn("rounded-lg border p-4 transition-colors", severityColors[finding.severity])}>
+      <div className="flex items-start gap-3">
+        <div className={cn("flex size-8 shrink-0 items-center justify-center rounded-lg", severityColors[finding.severity])}>
+          {severityIcons[finding.severity]}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="font-medium text-text-primary">{finding.title || finding.category}</span>
+            <span className="px-1.5 py-0.5 text-[10px] font-medium rounded-full bg-bg-tertiary text-text-muted uppercase">
+              {finding.category}
+            </span>
+            {finding.location?.line && (
+              <span className="text-xs text-text-muted font-mono">Line {finding.location.line}</span>
+            )}
+          </div>
+          <p className="text-sm text-text-secondary">{finding.description}</p>
+          {finding.suggestion && (
+            <p className="mt-2 text-sm text-accent flex items-center gap-1">
+              <Zap className="size-3" />
+              <span>{finding.suggestion}</span>
+            </p>
+          )}
+          {finding.location?.snippet && (
+            <pre className="mt-2 rounded bg-bg-tertiary p-2 text-xs font-mono text-text-muted overflow-x-auto max-h-20 overflow-y-auto">
+              {finding.location.snippet}
+            </pre>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CompatibilityCard({ compatibility }: { compatibility: ClientCompatibility }) {
+  const clientLabels: Record<string, string> = {
+    "claude-code": "Claude Code",
+    "cursor": "Cursor",
+    "opencode": "OpenCode",
+    "codex": "Codex CLI",
+    "gemini-cli": "Gemini CLI",
+    "continue": "Continue",
+    "roo-code": "Roo Code",
+    "cline": "Cline",
+  };
+
+  return (
+    <div className="flex items-center justify-between p-4 rounded-lg border bg-bg-secondary">
+      <div className="flex items-center gap-3">
+        <div className="flex size-10 items-center justify-center rounded-lg bg-bg-tertiary">
+          <Brain className="size-5 text-text-muted" />
+        </div>
+        <div>
+          <p className="font-medium text-text-primary">{clientLabels[compatibility.client] || compatibility.client}</p>
+          <p className="text-xs text-text-muted">{compatibility.issues.length} issues Â· {compatibility.requiredChanges.length} changes needed</p>
+        </div>
+      </div>
+      <div className={cn(
+        "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium",
+        compatibility.status === "compatible" && "bg-success-bg text-success",
+        compatibility.status === "partially-compatible" && "bg-warning-bg text-warning",
+        compatibility.status === "needs-changes" && "bg-error-bg text-error"
+      )}>
+        {compatibility.status === "compatible" && <CheckCircle className="size-3" />}
+        {compatibility.status === "partially-compatible" && <AlertTriangle className="size-3" />}
+        {compatibility.status === "needs-changes" && <AlertCircle className="size-3" />}
+        {compatibility.status.charAt(0).toUpperCase() + compatibility.status.slice(1).replace("-", " ")}
+      </div>
+    </div>
+  );
+}
+
+function RecommendationCard({ recommendation, priority }: { recommendation: string; priority: number }) {
+  return (
+    <div className="flex items-start gap-3 p-4 rounded-lg border border-border bg-bg-secondary">
+      <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent font-bold text-sm">
+        {priority}
+      </div>
+      <p className="text-sm text-text-secondary flex-1">{recommendation}</p>
+    </div>
+  );
+}
+
+function generateMarkdownReport(result: ValidationResult): string {
+  const lines = [
+    "# Validation Report",
+    "",
+    `**Asset Type:** ${result.assetType}`,
+    `**Score:** ${result.score.overall}/100 (${result.score.grade})`,
+    `**Validated:** ${new Date(result.metadata.validatedAt).toLocaleString()}`,
+    `**Method:** ${result.metadata.inputMethod}`,
+    "",
+    "## Score Breakdown",
+    "",
+    "| Category | Score | Max |",
+    "|----------|-------|-----|",
+    ...result.score.breakdown.map(d => `| ${d.label} | ${d.score} | ${d.maxScore} |`),
+    "",
+    "## Findings",
+    "",
+    ...result.findings.map(f => `### ${f.severity.toUpperCase()}: ${f.title}\n\n${f.description}\n${f.suggestion ? `\n> **Suggestion:** ${f.suggestion}` : ""}\n`),
+    "",
+    "## Recommendations",
+    "",
+    ...result.recommendations.map((r, i) => `${i + 1}. ${r}`),
+    "",
+    "## Compatibility",
+    "",
+    "| Client | Status | Issues |",
+    "|--------|--------|--------|",
+    ...result.compatibility?.map(c => `| ${c.client} | ${c.status} | ${c.issues.length} |`) || [],
+  ];
+  return lines.join("\n");
+}
+
+export function ValidatorModule() {
+  const [content, setContent] = useState("");
+  const [assetType, setAssetType] = useState<AssetType>("instruction-file");
+  const [profile, setProfile] = useState<ValidationProfile>("comprehensive");
+  const [result, setResult] = useState<ValidationResult | null>(null);
+  const [isValidating, setIsValidating] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
+  const [showSettings, setShowSettings] = useState(false);
+  const [quickScore, setQuickScore] = useState<{ score: number; grade: string; criticalIssues: number } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  const handleValidate = useCallback(async () => {
+    if (!content.trim()) {
+      toast({ title: "No content", description: "Please paste content or upload a file first", variant: "warning" });
+      return;
+    }
+
+    setIsValidating(true);
+    try {
+      const input: ValidationInput = {
+        content,
+        assetType,
+        method: "paste",
+      };
+      const validationResult = await validateAsset(input);
+      setResult(validationResult);
+      setQuickScore(null);
+    } catch (error) {
+      toast({ 
+        title: "Validation failed", 
+        description: error instanceof Error ? error.message : "Unknown error", 
+        variant: "danger" 
+      });
+    } finally {
+      setIsValidating(false);
+    }
+  }, [content, assetType, toast]);
+
+  const handleQuickValidate = useCallback(async () => {
+    if (!content.trim()) return;
+    const score = await quickValidate(content, assetType);
+    setQuickScore(score);
+  }, [content, assetType]);
+
+  const handleFileUpload = useCallback(async (file: File) => {
+    const text = await file.text();
+    setContent(text);
+    setAssetType(detectAssetType(text, file.name));
+    toast({ title: "File loaded", description: `${file.name} (${(file.size / 1024).toFixed(1)} KB)`, variant: "success" });
+  }, [toast]);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      handleFileUpload(file);
+    }
+  }, [handleFileUpload]);
+
+  const handleExport = useCallback(async (format: "json" | "md") => {
+    if (!result) return;
+    
+    let exportContent: string;
+    let filename: string;
+    let mimeType: string;
+    
+    if (format === "json") {
+      exportContent = JSON.stringify(result, null, 2);
+      filename = `validation-report-${Date.now()}.json`;
+      mimeType = "application/json";
+    } else {
+      exportContent = generateMarkdownReport(result);
+      filename = `validation-report-${Date.now()}.md`;
+      mimeType = "text/markdown";
+    }
+    
+    downloadFile(filename, exportContent, mimeType);
+    toast({ title: "Exported", description: `Report saved as ${filename}`, variant: "success" });
+  }, [result, toast]);
+
+  const handleCopy = useCallback(async () => {
+    if (!result) return;
+    await copyToClipboard(JSON.stringify(result, null, 2));
+    toast({ title: "Copied", description: "Validation result copied to clipboard", variant: "success" });
+  }, [result, toast]);
+
+  const handleRegenerate = useCallback(async () => {
+    if (!result) return;
+    toast({ title: "Regenerating...", description: "AI-powered regeneration coming soon", variant: "info" });
+  }, [result, toast]);
+
+  const getSeverityColor = (severity: string) => {
+    switch (severity) {
+      case "error": return "text-error bg-error-bg border-error/20";
+      case "warning": return "text-warning bg-warning-bg border-warning/20";
+      case "info": return "text-text-muted bg-bg-secondary border-border/50";
+      case "success": return "text-success bg-success-bg border-success/20";
+      default: return "text-text-muted bg-bg-secondary border-border/50";
+    }
+  };
+
+  const getCompatibilityColor = (status: "compatible" | "partially-compatible" | "needs-changes") => {
+    switch (status) {
+      case "compatible": return "text-success bg-success-bg";
+      case "partially-compatible": return "text-warning bg-warning-bg";
+      case "needs-changes": return "text-error bg-error-bg";
+    }
+  };
+
+  const getCompatibilityIcon = (status: "compatible" | "partially-compatible" | "needs-changes"): React.ReactNode => {
+    switch (status) {
+      case "compatible": return <CheckCircle className="size-4" />;
+      case "partially-compatible": return <AlertTriangle className="size-4" />;
+      case "needs-changes": return <AlertCircle className="size-4" />;
+    }
+  };
+
+  return (
+    <motion.div
+      variants={moduleTransition}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      className="flex h-full flex-col overflow-hidden"
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between gap-4 border-b border-border px-6 py-4">
+        <div className="flex items-center gap-3">
+          <div className="flex size-10 items-center justify-center rounded-lg bg-accent/10 text-accent">
+            <Shield className="size-5" />
+          </div>
+          <div>
+            <h1 className="text-lg font-semibold tracking-tight text-text-primary">AI Asset Validator</h1>
+            <p className="text-xs text-text-muted">Analyze structure, quality, and compatibility of AI assets</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" onClick={() => setShowSettings(!showSettings)}>
+            <Settings className="size-4" />
+          </Button>
+          {result && (
+            <>
+              <Button variant="outline" size="sm" onClick={() => handleExport("json")}>
+                <Download className="size-3.5 mr-1.5" />
+                JSON
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => handleExport("md")}>
+                <Download className="size-3.5 mr-1.5" />
+                MD
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleCopy}>
+                <Copy className="size-3.5 mr-1.5" />
+                Copy
+              </Button>
+              <Button variant="primary" size="sm" onClick={handleRegenerate} disabled={!result}>
+                <RefreshCw className="size-3.5 mr-1.5" />
+                Regenerate
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Settings Panel */}
+      {showSettings && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          className="border-b border-border px-6 py-4 bg-bg-secondary"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <Label className="mb-1.5">Asset Type</Label>
+              <Select value={assetType} onValueChange={setAssetType}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Auto-detect" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SUPPORTED_ASSET_TYPES.map(type => (
+                    <SelectItem key={type.value} value={type.value}>
+                      <div className="flex items-center gap-2">
+                        <type.icon className="size-4 text-accent" />
+                        <span>{type.label}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="mb-1.5">Validation Profile</Label>
+              <Select value={profile} onValueChange={setProfile}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {VALIDATION_PROFILES.map(p => (
+                    <SelectItem key={p.value} value={p.value}>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="font-medium">{p.label}</span>
+                        <span className="text-xs text-text-muted">{p.description}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-end">
+              <Label className="flex items-center gap-2 cursor-pointer">
+                <Switch
+                  checked={false}
+                  onCheckedChange={() => {}}
+                />
+                <span className="text-sm">Strict mode</span>
+              </Label>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Main Content */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Input Panel */}
+        <div className="w-full md:w-1/2 lg:w-2/5 border-r border-border flex flex-col overflow-hidden">
+          <div className="flex h-full flex-col">
+            {/* Tabs for input methods */}
+            <Tabs defaultValue="paste" className="flex-1 flex flex-col">
+              <TabsList className="bg-bg-secondary border-b border-border">
+                <TabsTrigger value="paste">Paste Content</TabsTrigger>
+                <TabsTrigger value="upload">Upload File</TabsTrigger>
+                <TabsTrigger value="generated">Generated</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="paste" className="flex-1 flex flex-col p-4 overflow-hidden">
+                <div className="flex-1 flex flex-col">
+                  <Label className="mb-2 text-sm">Paste your AI asset content</Label>
+                  <textarea
+                    value={content}
+                    onChange={e => setContent(e.target.value)}
+                    onKeyUp={handleQuickValidate}
+                    placeholder="Paste CLAUDE.md, AGENTS.md, system prompts, workflows, MCP configs, or any AI asset..."
+                    className="flex-1 resize-none rounded-lg border border-border bg-cream px-3 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus font-mono"
+                    rows={10}
+                    spellCheck={false}
+                  />
+                  <div className="flex items-center justify-between mt-2 text-xs text-text-muted">
+                    <span>{content.split("\n").length} lines Â· {content.split(/\s+/).filter(w => w).length} words Â· {content.length} chars</span>
+                    {quickScore && (
+                      <span className="flex items-center gap-1">
+                        <span className={cn(
+                          "font-mono",
+                          quickScore.criticalIssues > 0 ? "text-error" : "text-success"
+                        )}>
+                          {quickScore.score}/100 ({quickScore.grade})
+                        </span>
+                        {quickScore.criticalIssues > 0 && (
+                          <span className="text-error">âš  {quickScore.criticalIssues} critical</span>
+                        )}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex gap-2 mt-4 pt-4 border-t border-border">
+                  <Button 
+                    onClick={handleValidate} 
+                    disabled={!content.trim() || isValidating}
+                    className="flex-1"
+                    size="lg"
+                  >
+                    {isValidating ? (
+                      <>
+                        <svg className="mr-2 size-4 animate-spin" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                        </svg>
+                        Validating...
+                      </>
+                    ) : (
+                      <>
+                        <Zap className="mr-2 size-4" />
+                        Validate Asset
+                      </>
+                    )}
+                  </Button>
+                  <Button variant="outline" onClick={() => { setContent(""); setResult(null); setQuickScore(null); }}>
+                    <X className="mr-1.5 size-4" />
+                    Clear
+                  </Button>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="upload" className="flex-1 flex flex-col p-4 overflow-hidden">
+                <div
+                  className={cn(
+                    "flex-1 flex flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed p-8 transition-colors",
+                    dragActive 
+                      ? "border-accent bg-accent/5" 
+                      : "border-border bg-bg-secondary"
+                  )}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                >
+                  <Upload className="size-12 text-text-muted" />
+                  <div className="text-center">
+                    <p className="text-lg font-medium text-text-primary">Drop file here or click to browse</p>
+                    <p className="text-sm text-text-muted mt-1">Supports .md, .txt, .json, .yaml, .yml (max 10MB)</p>
+                  </div>
+                  <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+                    Select File
+                  </Button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".md,.txt,.json,.yaml,.yml"
+                    className="hidden"
+                    onChange={e => e.target.files?.[0] && handleFileUpload(e.target.files[0])}
+                  />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="generated" className="flex-1 flex flex-col p-4 overflow-hidden">
+                <div className="flex-1 flex items-center justify-center">
+                  <EmptyState
+                    icon={ZapIcon}
+                    title="Validate Generated Assets"
+                    description="After generating assets in other modules, use the 'Validate' button to analyze them here."
+                    action={
+                      <Button variant="primary" onClick={() => {}}>
+                        <ZapIcon className="mr-1.5 size-4" />
+                        Go to Generator
+                      </Button>
+                    }
+                  />
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          {/* Asset Type Selector */}
+          <div className="border-t border-border p-4 bg-bg-secondary">
+            <Label className="mb-2 text-sm">Asset Type</Label>
+            <div className="flex flex-wrap gap-2">
+              {SUPPORTED_ASSET_TYPES.map(type => (
+                <button
+                  key={type.value}
+                  onClick={() => setAssetType(type.value)}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all",
+                    assetType === type.value
+                      ? "bg-accent text-accent-foreground"
+                      : "text-text-secondary hover:bg-bg-tertiary hover:text-text-primary"
+                  )}
+                >
+                  <type.icon className="size-3" />
+                  {type.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Results Panel */}
+        <div className="w-full md:w-1/2 lg:w-3/5 flex flex-col overflow-hidden">
+          {result ? (
+            <ResultsPanel result={result} />
+          ) : (
+            <EmptyStateView />
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+export { ValidatorModule };

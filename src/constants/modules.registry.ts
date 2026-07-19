@@ -9,6 +9,9 @@ import {
   Library,
   SlidersHorizontal,
   Sparkles,
+  Server,
+  Shield,
+  Zap,
   type LucideIcon,
 } from "lucide-react";
 
@@ -100,10 +103,24 @@ export const MODULE_REGISTRY: readonly ModuleManifest[] = [
   },
   {
     id: "configurations",
-    label: "Configurations",
-    description: "MCP configurations and provider settings.",
-    icon: SlidersHorizontal,
+    label: "MCP Manager",
+    description: "Configure, validate, and export MCP server configurations.",
+    icon: Server,
     order: 70,
+  },
+  {
+    id: "validator",
+    label: "Asset Validator",
+    description: "Validate AI assets for quality, completeness, and compatibility.",
+    icon: Shield,
+    order: 80,
+  },
+  {
+    id: "optimizer",
+    label: "Prompt Optimizer",
+    description: "Optimize prompts for clarity, quality, and model compatibility.",
+    icon: Zap,
+    order: 85,
   },
 ] as const;
 

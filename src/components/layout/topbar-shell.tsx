@@ -50,11 +50,14 @@ function SearchTrigger({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className="btn-secondary size-9 max-w-xs gap-2"
+      className="btn-secondary size-9 max-w-xs gap-2 flex items-center"
       aria-label="Open command palette"
     >
-      <Search className="size-3.5" />
+      <Search className="size-3.5 shrink-0" />
       <span className="hidden sm:inline text-xs">Search…</span>
+      <kbd className="ml-auto hidden rounded border border-border-strong bg-bg-secondary px-1.5 text-[10px] text-text-muted md:inline">
+        ⌘K
+      </kbd>
     </button>
   );
 }

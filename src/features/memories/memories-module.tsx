@@ -5,8 +5,6 @@ import {
   BookText,
   Brain,
   GitBranch,
-  Ruler,
-  Bookmark,
   Search,
   Plus,
   Filter,
@@ -20,6 +18,9 @@ import {
   ChevronLeft,
   X,
   MoreHorizontal,
+  FileText,
+  Book,
+  Bookmark,
 } from "lucide-react";
 import * as React from "react";
 import { useState } from "react";
@@ -36,7 +37,7 @@ import { useToast } from "@/providers/toaster-provider";
 import { cn } from "@/utils/cn";
 import { copyToClipboard, downloadFile } from "@/utils";
 
-import { MEMORY_TYPES, MEMORY_TYPE_ICONS, DEFAULT_COLLECTIONS } from "./data";
+import { MEMORY_TYPES, DEFAULT_COLLECTIONS } from "./data";
 import type { MemoryBlock, MemoryCollection, MemoryType } from "./types";
 
 const MEMORY_TYPE_LABELS: Record<string, string> = {
@@ -108,7 +109,7 @@ export function MemoriesModule() {
                     : "text-text-secondary hover:bg-bg-tertiary hover:text-text-primary"
                 }`}
               >
-                {type !== "all" && (
+{type !== "all" && (
                   <span className="size-2 rounded-full bg-accent/20" />
                 )}
                 <span className="truncate flex-1 capitalize">{type === "all" ? "All Types" : type}</span>
@@ -141,14 +142,16 @@ export function MemoriesModule() {
                   <p className="px-2 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
                     {collection.name} ({collection.blocks.length})
                   </p>
-                  {collection.blocks.map((block) => (
-                    <MemoryBlockItem
-                      key={block.id}
-                      block={block}
-                      active={selectedBlock?.id === block.id}
-                      onClick={() => setSelectedBlock(block)}
-                    />
-                  ))}
+                  {collection.blocks.map((block) => {
+                    return (
+                      <MemoryBlockItem
+                        key={block.id}
+                        block={block}
+                        active={selectedBlock?.id === block.id}
+                        onClick={() => setSelectedBlock(block)}
+                      />
+                    );
+                  })}
                 </div>
               ))}
             {filteredBlocks.length === 0 && search && (
@@ -207,19 +210,20 @@ export function MemoriesModule() {
 
 function MemoryBlockItem({ block, active, onClick }: { block: MemoryBlock; active: boolean; onClick: () => void }) {
   const typeInfo = MEMORY_TYPES.find((t) => t.type === block.type);
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`flex w-full items-start gap-2 rounded-lg px-2.5 py-1.5 text-left text-sm transition-colors ${
-        active
-          ? "bg-accent/10 text-text-primary"
-          : "text-text-secondary hover:bg-bg-tertiary hover:text-text-primary"
-      }`}
-    >
-      <span className="size-6 shrink-0 flex items-center justify-center rounded-md bg-accent/10 text-accent">
-        <span className="text-xs">{MEMORY_TYPE_ICONS[block.type] || "📄"}</span>
-      </span>
+      const TypeIcon = typeInfo?.icon;
+      return (
+        <button
+          type="button"
+          onClick={onClick}
+          className={`flex w-full items-start gap-2 rounded-lg px-2.5 py-1.5 text-left text-sm transition-colors ${
+            active
+              ? "bg-accent/10 text-text-primary"
+              : "text-text-secondary hover:bg-bg-tertiary hover:text-text-primary"
+          }`}
+        >
+          <span className="size-6 shrink-0 flex items-center justify-center rounded-md bg-accent/10 text-accent">
+            {TypeIcon && <TypeIcon className="size-3.5" />}
+          </span>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1">
           <p className="truncate font-medium">{block.title}</p>
@@ -281,33 +285,38 @@ function MemoriesGrid({
 
   return (
     <div className="grid h-full grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4 p-4 overflow-y-auto">
-      {blocks.map((block) => (
-        <motion.article
-          key={block.id}
-          whileHover={{ y: -2 }}
-          whileTap={{ scale: 0.98 }}
-          className="group flex h-full flex-col rounded-xl border border-border-subtle bg-bg-primary p-4 transition-all hover:border-border hover:shadow-sm"
-        >
-          <div className="flex items-start justify-between gap-2 mb-3">
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
-              <span className="text-base">{MEMORY_TYPE_ICONS[block.type] || "📄"}</span>
-            </span>
-            <div className="flex items-center gap-1 ml-auto">
-              {block.pinned && <Pin className="size-3.5 text-accent" />}
-              {block.favorite && <Star className="size-3.5 text-amber-500" />}
+      {blocks.map((block) => {
+        const typeInfo = MEMORY_TYPES.find((t) => t.type === block.type);
+        return (
+          <motion.article
+            key={block.id}
+            whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.98 }}
+            className="group flex h-full flex-col rounded-xl border border-border-subtle bg-bg-primary p-4 transition-all hover:border-border hover:shadow-sm"
+          >
+            <div className="flex items-start justify-between gap-2 mb-3">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
+                {typeInfo?.icon && <typeInfo.icon className="size-4" />}
+              </span>
+              <div className="flex items-center gap-1 ml-auto">
+                {block.pinned && <Pin className="size-3.5 text-accent" />}
+                {block.favorite && <Star className="size-3.5 text-amber-500" />}
+              </div>
             </div>
-          </div>
-          <h3 className="font-medium text-text-primary mb-1">{block.title}</h3>
-          <p className="text-sm text-text-muted mb-3 line-clamp-3">{block.content}</p>
-          <div className="mt-auto flex flex-wrap gap-1">
-            <Tag variant="muted" className="text-[10px] capitalize">{MEMORY_TYPE_LABELS[block.type]}</Tag>
-            {block.tags.slice(0, 3).map((t) => (
-              <Tag key={t} variant="default" className="text-[9px]">{t}</Tag>
-            ))}
-            {block.tags.length > 3 && <Tag variant="muted" className="text-[9px]">+{block.tags.length - 3}</Tag>}
-          </div>
-        </motion.article>
-      ))}
+            <h3 className="font-medium text-text-primary mb-1">{block.title}</h3>
+            <p className="text-sm text-text-muted mb-3 line-clamp-3">{block.content}</p>
+            <div className="mt-auto flex flex-wrap gap-1">
+              <Tag variant="muted" className="text-[10px] capitalize">{MEMORY_TYPE_LABELS[block.type]}</Tag>
+              {block.tags.slice(0, 3).map((t) => (
+                <Tag key={t} variant="default" className="text-[9px]">{t}</Tag>
+              ))}
+              {block.tags.length > 3 && (
+                <Tag variant="muted" className="text-[9px]">+{block.tags.length - 3}</Tag>
+              )}
+            </div>
+          </motion.article>
+        );
+      })}
     </div>
   );
 }

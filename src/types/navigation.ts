@@ -12,7 +12,9 @@ export type ModuleId =
   | "skills"
   | "workflows"
   | "memories"
-  | "configurations";
+  | "configurations"
+  | "validator"
+  | "optimizer";
 
 /**
  * Parameters passed to a module renderer. Interpreted per-module.

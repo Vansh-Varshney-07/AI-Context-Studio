@@ -8,6 +8,9 @@ import { SkillsModule } from "@/features/skills";
 import { PersonasModule } from "@/features/personas";
 import { WorkflowsModule } from "@/features/workflows";
 import { MemoriesModule } from "@/features/memories";
+import { MCPModule } from "@/features/mcp";
+import { ValidatorModule } from "@/features/validator";
+import { OptimizerModule } from "@/features/optimizer";
 import type { ModuleId, ModuleParams } from "@/types/navigation";
 import {
   ComingSoon,
@@ -41,7 +44,9 @@ const moduleRenderers: ModuleRendererRegistry = {
   personas: PersonasModule as ModuleRenderer,
   workflows: WorkflowsModule as ModuleRenderer,
   memories: MemoriesModule as ModuleRenderer,
-  configurations: ComingSoon as unknown as ModuleRenderer,
+  configurations: MCPModule as ModuleRenderer,
+  validator: ValidatorModule as ModuleRenderer,
+  optimizer: OptimizerModule as ModuleRenderer,
 };
 
 export type { ModuleRendererProps, ModuleRendererRegistry, ModuleRenderer };
@@ -56,6 +61,8 @@ export function ensureModuleId(id: string): ModuleId | null {
     "workflows",
     "memories",
     "configurations",
+    "validator",
+    "optimizer",
   ];
   return (allowed as string[]).includes(id) ? (id as ModuleId) : null;
 }

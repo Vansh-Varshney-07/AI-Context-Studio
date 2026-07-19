@@ -23,6 +23,7 @@ export {
 } from "./select";
 export { Separator } from "./separator";
 export { Slider } from "./slider";
+export { Switch } from "./switch";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
 export { Toaster, type Toast, type ToastVariant } from "./toaster";
 export { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";

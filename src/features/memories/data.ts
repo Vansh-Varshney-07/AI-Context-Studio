@@ -1,51 +1,41 @@
-import type { MemoryType, MemoryBlock, MemoryCollection } from "./types";
+import { FileText, BookOpen, GitBranch, Ruler, Bookmark } from "lucide-react";
+import type { MemoryType, MemoryCollection } from "./types";
 
 /**
  * Canonical memory types
  */
-export const MEMORY_TYPES: readonly { type: MemoryType; label: string; description: string; icon: string }[] = [
+export const MEMORY_TYPES: readonly { type: MemoryType; label: string; description: string; icon: React.ComponentType<{ className?: string }> }[] = [
   {
     type: "context",
     label: "Project Context",
     description: "High-level project information, goals, and constraints",
-    icon: "file-text",
+    icon: FileText,
   },
   {
     type: "knowledge",
     label: "Knowledge Base",
     description: "Reusable knowledge, patterns, and best practices",
-    icon: "book-open",
+    icon: BookOpen,
   },
   {
     type: "decision",
     label: "Decision Log",
     description: "Architectural and technical decisions with rationale",
-    icon: "git-branch",
+    icon: GitBranch,
   },
   {
     type: "standard",
     label: "Standards & Conventions",
     description: "Coding standards, naming conventions, and guidelines",
-    icon: "ruler",
+    icon: Ruler,
   },
   {
     type: "reference",
     label: "Reference Material",
     description: "API specs, schemas, external documentation links",
-    icon: "book-mark",
+    icon: Bookmark,
   },
 ] as const;
-
-/**
- * Memory type icons mapping
- */
-export const MEMORY_TYPE_ICONS: Record<string, string> = {
-  context: "file-text",
-  knowledge: "book-open",
-  decision: "git-branch",
-  standard: "ruler",
-  reference: "book-mark",
-};
 
 /**
  * Default memory collections
