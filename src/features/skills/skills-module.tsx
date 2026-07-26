@@ -452,7 +452,7 @@ interface Skill {
   icon: React.ComponentType<{ className?: string }>;
 }
 
-// Demo skills data
+// Seed skills data
 const SKILLS: Skill[] = [
   {
     id: "refactor-functional",

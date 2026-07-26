@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
-import { AppShellClient } from "@/components/layout/app-shell-client";
 
 export const metadata: Metadata = {
   title: "AI Context Studio",
@@ -29,10 +27,6 @@ export async function generateStaticParams() {
   }));
 }
 
-export default function CatchAll() {
-  return (
-    <Suspense fallback={<div className="flex h-screen items-center justify-center text-fg-muted">Loading…</div>}>
-      <AppShellClient />
-    </Suspense>
-  );
+export default function CatchAllPage() {
+  return null;
 }
