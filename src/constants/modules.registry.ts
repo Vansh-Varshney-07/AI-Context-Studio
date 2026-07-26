@@ -101,7 +101,7 @@ export const MODULE_REGISTRY: readonly ModuleManifest[] = [
     order: 60,
   },
   {
-    id: "configurations",
+    id: "mcp",
     label: "MCP Manager",
     description: "Configure, validate, and export MCP server configurations.",
     icon: Server,

@@ -44,7 +44,7 @@ const moduleRenderers: ModuleRendererRegistry = {
   personas: PersonasModule as ModuleRenderer,
   workflows: WorkflowsModule as ModuleRenderer,
   memories: MemoriesModule as ModuleRenderer,
-  configurations: MCPModule as ModuleRenderer,
+  mcp: MCPModule as ModuleRenderer,
   validator: ValidatorModule as ModuleRenderer,
   optimizer: OptimizerModule as ModuleRenderer,
 };
@@ -60,7 +60,7 @@ export function ensureModuleId(id: string): ModuleId | null {
     "skills",
     "workflows",
     "memories",
-    "configurations",
+    "mcp",
     "validator",
     "optimizer",
   ];

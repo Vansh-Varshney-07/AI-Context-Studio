@@ -12,7 +12,7 @@ export type ModuleId =
   | "skills"
   | "workflows"
   | "memories"
-  | "configurations"
+  | "mcp"
   | "validator"
   | "optimizer";
 

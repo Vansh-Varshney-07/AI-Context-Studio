@@ -26,42 +26,12 @@ export interface ProviderInfo {
   defaultEndpoint?: string;
 }
 
-/**
- * Structured context for the prompt generation engine (Phase 7).
- * Every field is optional so simple generations don't require full context.
- * The engine interprets whatever is present.
- */
-export interface GenerationContext {
-  purpose?: string;
-  targetAI?: string;
-  framework?: string;
-  language?: string;
-  codingStyle?: string;
-  projectType?: string;
-  architecture?: string;
-  experienceLevel?: string;
-  testingFramework?: string;
-  deploymentTarget?: string;
-  codingConventions?: string;
-}
-
-/**
- * Output kinds producible by the generation engine (Phase 7).
- */
-export type GenerationOutputKind =
-  | "system-prompt"
-  | "instruction-file"
-  | "prompt-template"
-  | "context-file"
-  | "memory"
-  | "workflow";
-
-/**
- * Result of a single generation. Adapters must normalize to this shape.
- */
-export interface GenerationResult {
-  kind: GenerationOutputKind;
-  title: string;
-  content: string;
-  metadata?: Record<string, string>;
-}
+// Re-export canonical types from the providers package
+export {
+  type GenerationOutputKind,
+  type GenerationContext,
+  type GenerationOptions,
+  type GenerationResult,
+  type ProviderConfig,
+  type AIProvider,
+} from "@/services/providers/types";

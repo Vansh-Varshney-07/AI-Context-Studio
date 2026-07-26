@@ -75,11 +75,11 @@ export function DashboardModule() {
       onClick: () => navigate("workflows"),
     },
     {
-      id: "config",
+      id: "mcp",
       icon: SlidersHorizontal,
-      title: "Manage configurations",
+      title: "Manage MCP configurations",
       description: "Inspect MCP configs, providers, and export/import bundle.",
-      onClick: () => navigate("configurations"),
+      onClick: () => navigate("mcp"),
     },
   ];
 
