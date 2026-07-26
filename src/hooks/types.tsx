@@ -18,7 +18,6 @@ export type ModuleRenderer = React.ComponentType<ModuleRendererProps>;
 
 /**
  * Registry mapping `ModuleId -> ModuleRenderer`.
- * Lazy via `lazy()` so each module is code-split automatically.
  * Adding a new module = appending to this map — nothing else.
  */
 export interface ModuleRendererRegistry {

@@ -4,7 +4,6 @@ import {
   Boxes,
   Cpu,
   FileText,
-  Heading,
   Layers,
   Library,
   SlidersHorizontal,
@@ -141,9 +140,4 @@ export const MODULES_ORDERED: ModuleManifest[] = [...MODULE_REGISTRY].sort(
   (a, b) => a.order - b.order,
 );
 
-/**
- * A simple `Heading` placeholder import marker so tree-shaking does not
- * drop lucide `Heading` from our supported-icon set for later phases.
- */
 export type { LucideIcon } from "lucide-react";
-export { Heading };
