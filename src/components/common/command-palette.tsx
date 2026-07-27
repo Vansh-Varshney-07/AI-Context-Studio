@@ -127,11 +127,11 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         keywords: ["memory", "context", "long", "running"],
       },
       {
-        id: "configurations",
-        label: "Configurations",
+        id: "mcp",
+        label: "MCP Manager",
         description: "MCP configs and provider settings",
         icon: SlidersHorizontal,
-        action: () => { navigate("configurations"); onClose(); },
+        action: () => { navigate("mcp"); onClose(); },
         keywords: ["config", "mcp", "provider", "settings"],
       },
     ];

@@ -118,15 +118,7 @@ export function OptimizerModule() {
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
   const { toast } = useToast();
 
-  const handleFileUpload = React.useCallback(async (file: File) => {
-    const text = await file.text();
-    setContent(text);
-    const detectedType = detectPromptType(text, file.name);
-    if (detectedType) setPromptType(detectedType);
-    toast({ title: "File loaded", description: `${file.name} (${(file.size / 1024).toFixed(1)} KB)`, variant: "success" });
-  }, [toast]);
-
-  const detectPromptType = (text: string, filename?: string): PromptType | null => {
+  const detectPromptType = React.useCallback((text: string, filename?: string): PromptType | null => {
     const lowerText = text.toLowerCase();
     const lowerFilename = filename?.toLowerCase() || "";
     
@@ -141,7 +133,43 @@ export function OptimizerModule() {
     if (lowerText.includes("workflow:") || lowerText.includes("steps:") || lowerText.includes("pipeline:")) return "workflow-prompt";
     
     return "general-prompt";
-  };
+  }, []);
+
+  const generateMarkdownReport = React.useCallback((data: OptimizationResult): string => {
+    let md = `# Prompt Optimization Report\n\n`;
+    md += `**Original Length:** ${data.metadata.originalLength} chars\n`;
+    md += `**Optimized Length:** ${data.metadata.optimizedLength} chars\n`;
+    md += `**Token Reduction:** ${data.summary.tokenReduction} (${data.summary.tokenReductionPercent.toFixed(1)}%)\n`;
+    md += `**Changes:** ${data.summary.totalChanges} (${data.summary.majorChanges} major, ${data.summary.moderateChanges} moderate, ${data.summary.minorChanges} minor)\n\n`;
+    md += `## Changes Applied\n\n`;
+    for (const change of data.changes) {
+      md += `### ${change.severity.toUpperCase()}: ${change.type}\n`;
+      md += `**Explanation:** ${change.explanation}\n`;
+      md += `**Why Changed:** ${change.whyChanged}\n`;
+      md += `**Expected Improvement:** ${change.expectedImprovement}\n`;
+      md += `**Reasoning Improvement:** ${change.estimatedReasoningImprovement}\n`;
+      md += `**Token Savings:** ${change.estimatedTokenSavings}\n`;
+      md += `**Response Quality:** ${change.estimatedResponseQuality}\n`;
+      md += `**Confidence:** ${Math.round(change.confidence * 100)}%\n\n`;
+      md += `**Original:**\n\`\`\`\n${change.originalText}\n\`\`\`\n\n`;
+      md += `**Optimized:**\n\`\`\`\n${change.optimizedText}\n\`\`\`\n\n`;
+    }
+    md += `## Summary\n\n`;
+    md += `${data.summary.keyImprovements.map(k => `- ${k}`).join("\n")}\n`;
+    if (data.summary.remainingIssues.length > 0) {
+      md += `\n## Remaining Issues\n\n`;
+      md += `${data.summary.remainingIssues.map(r => `- ${r}`).join("\n")}\n`;
+    }
+    return md;
+  }, []);
+
+  const handleFileUpload = React.useCallback(async (file: File) => {
+    const text = await file.text();
+    setContent(text);
+    const detectedType = detectPromptType(text, file.name);
+    if (detectedType) setPromptType(detectedType);
+    toast({ title: "File loaded", description: `${file.name} (${(file.size / 1024).toFixed(1)} KB)`, variant: "success" });
+  }, [toast, detectPromptType]);
 
   const handleOptimize = React.useCallback(async () => {
     if (!content.trim()) {
@@ -201,11 +229,6 @@ export function OptimizerModule() {
     setQuickScore(null);
   }, []);
 
-  const handleFileSelect = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) handleFileUpload(file);
-  }, [handleFileUpload]);
-
   const handleDragOver = React.useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -235,35 +258,7 @@ export function OptimizerModule() {
       downloadFile(`optimization-report-${Date.now()}.md`, md, "text/markdown");
     }
     toast({ title: "Exported", description: `Report saved as ${format.toUpperCase()}`, variant: "success" });
-  }, [result, toast]);
-
-  const generateMarkdownReport = (data: OptimizationResult): string => {
-    let md = `# Prompt Optimization Report\n\n`;
-    md += `**Original Length:** ${data.metadata.originalLength} chars\n`;
-    md += `**Optimized Length:** ${data.metadata.optimizedLength} chars\n`;
-    md += `**Token Reduction:** ${data.summary.tokenReduction} (${data.summary.tokenReductionPercent.toFixed(1)}%)\n`;
-    md += `**Changes:** ${data.summary.totalChanges} (${data.summary.majorChanges} major, ${data.summary.moderateChanges} moderate, ${data.summary.minorChanges} minor)\n\n`;
-    md += `## Changes Applied\n\n`;
-    for (const change of data.changes) {
-      md += `### ${change.severity.toUpperCase()}: ${change.type}\n`;
-      md += `**Explanation:** ${change.explanation}\n`;
-      md += `**Why Changed:** ${change.whyChanged}\n`;
-      md += `**Expected Improvement:** ${change.expectedImprovement}\n`;
-      md += `**Reasoning Improvement:** ${change.estimatedReasoningImprovement}\n`;
-      md += `**Token Savings:** ${change.estimatedTokenSavings}\n`;
-      md += `**Response Quality:** ${change.estimatedResponseQuality}\n`;
-      md += `**Confidence:** ${Math.round(change.confidence * 100)}%\n\n`;
-      md += `**Original:**\n\`\`\`\n${change.originalText}\n\`\`\`\n\n`;
-      md += `**Optimized:**\n\`\`\`\n${change.optimizedText}\n\`\`\`\n\n`;
-    }
-    md += `## Summary\n\n`;
-    md += `${data.summary.keyImprovements.map(k => `- ${k}`).join("\n")}\n`;
-    if (data.summary.remainingIssues.length > 0) {
-      md += `\n## Remaining Issues\n\n`;
-      md += `${data.summary.remainingIssues.map(r => `- ${r}`).join("\n")}\n`;
-    }
-    return md;
-  };
+  }, [result, toast, generateMarkdownReport]);
 
   const handleCopy = React.useCallback(async () => {
     if (!result) return;

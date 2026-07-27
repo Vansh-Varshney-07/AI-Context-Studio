@@ -519,6 +519,10 @@ function WorkflowBuilderPane({
   onSubmit: (data: any) => void;
   onClose: () => void;
 }) {
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [tags, setTags] = useState("");
+
   return (
     <div className="flex h-full items-center justify-center p-6">
       <motion.div
@@ -536,7 +540,7 @@ function WorkflowBuilderPane({
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            onSubmit({});
+            onSubmit({ name, description, tags: tags.split(",").map(t => t.trim()).filter(Boolean) });
           }}
           className="space-y-4"
         >
@@ -544,8 +548,8 @@ function WorkflowBuilderPane({
             <Label htmlFor="workflow-name">Name</Label>
             <Input
               id="workflow-name"
-              value=""
-              onChange={(e) => {}}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Feature Development Pipeline"
               required
             />
@@ -555,8 +559,8 @@ function WorkflowBuilderPane({
             <Label htmlFor="workflow-description">Description</Label>
             <textarea
               id="workflow-description"
-              value=""
-              onChange={(e) => {}}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               rows={3}
               className="flex w-full rounded-lg border border-border bg-cream px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
               placeholder="What does this workflow accomplish?"
@@ -567,15 +571,15 @@ function WorkflowBuilderPane({
             <Label htmlFor="workflow-tags">Tags (comma separated)</Label>
             <Input
               id="workflow-tags"
-              value=""
-              onChange={(e) => {}}
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
               placeholder="ci/cd, development, automation"
             />
           </div>
 
           <div className="space-y-1.5 pt-2 border-t border-border">
-            <p className="text-xs font-semibold uppercase tracking-wider text-text-secondary">Step Builder (Coming Soon)</p>
-            <p className="text-xs text-text-muted">Visual step builder with drag-and-drop will be available in the next phase.</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-text-secondary">Steps</p>
+            <p className="text-xs text-text-muted">Step builder with drag-and-drop coming in next update. For now, workflow will be created with basic metadata.</p>
           </div>
 
           <div className="flex justify-end gap-2 pt-2">

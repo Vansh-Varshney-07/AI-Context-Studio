@@ -1,5 +1,5 @@
 import type { GenerationContext, GenerationOptions, GenerationResult, ProviderConfig, GenerationOutputKind } from "./types";
-import { BaseProvider } from "./base-provider";
+import { BaseProvider, type StreamChunkHandler } from "./base-provider";
 
 export class GoogleProvider extends BaseProvider {
   readonly id = "gemini";
@@ -56,8 +56,30 @@ export class GoogleProvider extends BaseProvider {
       throw new Error(`Google API error: ${res.status} - ${err.error?.message ?? "Unknown error"}`);
     }
 
+    // Handle streaming
+    if (options?.stream && options.onStream) {
+      return this.handleStreaming(res, options.onStream, kind);
+    }
+
     const data = await res.json();
     const content = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+
+    return { kind, title: `Generated ${this.getKindLabel(kind)}`, content };
+  }
+
+  private async handleStreaming(res: Response, onStream: StreamChunkHandler, kind: GenerationOutputKind): Promise<GenerationResult> {
+    const content = await this.consumeSSEStream(
+      res,
+      onStream,
+      (data: string) => {
+        try {
+          const parsed = JSON.parse(data);
+          return parsed.candidates?.[0]?.content?.parts?.[0]?.text ?? null;
+        } catch {
+          return null;
+        }
+      }
+    );
 
     return { kind, title: `Generated ${this.getKindLabel(kind)}`, content };
   }

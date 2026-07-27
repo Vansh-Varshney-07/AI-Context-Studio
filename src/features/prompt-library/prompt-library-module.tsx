@@ -259,6 +259,7 @@ const SubcategoryItem = React.forwardRef<HTMLButtonElement, {
     )}
   </button>
 ));
+SubcategoryItem.displayName = "SubcategoryItem";
 
 const FilterToggle = React.forwardRef<HTMLButtonElement, {
   label: string;
@@ -282,6 +283,7 @@ const FilterToggle = React.forwardRef<HTMLButtonElement, {
     {active && <span className="ml-auto size-1.5 rounded-full bg-accent" />}
   </button>
 ));
+FilterToggle.displayName = "FilterToggle";
 
 /**
  * Editor: split view — left: reference prompt (read-only), right: custom builder.
@@ -478,20 +480,19 @@ function CustomPromptBuilderPane({
 }) {
   const { lastOutput, clear } = useAIEngine();
   const [customPrompt, setCustomPrompt] = React.useState(basePrompt.referencePrompt);
-  const [variables, setVariables] = React.useState<Record<string, string>>({});
 
   // Extract {{VAR}} placeholders from reference prompt
-  React.useEffect(() => {
+  const defaultVariables = React.useMemo(() => {
     const vars = Array.from(basePrompt.referencePrompt.matchAll(/\{\{(\w+)\}\}/g)).map(
       (m) => m[1],
     );
     const uniq = [...new Set(vars)].filter((v): v is string => typeof v === "string");
-    setVariables((prev) => {
-      const next = { ...prev };
-      for (const v of uniq) if (!(v in next)) next[v] = "";
-      return next;
-    });
+    const result: Record<string, string> = {};
+    for (const v of uniq) result[v] = "";
+    return result;
   }, [basePrompt.referencePrompt]);
+
+  const [variables, setVariables] = React.useState(defaultVariables);
 
   return (
     <div className="flex h-full flex-col bg-bg-primary">

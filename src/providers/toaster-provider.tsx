@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, type ReactNode } from "react";
 
+import { uuid } from "@/utils/uuid";
 import { Toaster, type Toast } from "@/components/ui/toaster";
 
 /**
@@ -23,10 +24,7 @@ export function ToasterProvider({ children }: { children: ReactNode }) {
     setToasts((current) => current.filter((t) => t.id !== id));
 
   const toast = (next: Omit<Toast, "id">) => {
-    const id =
-      typeof crypto !== "undefined" && "randomUUID" in crypto
-        ? crypto.randomUUID()
-        : Math.random().toString(36).slice(2);
+    const id = uuid();
     setToasts((current) => [...current, { ...next, id }]);
     if (next.duration !== Infinity) {
       window.setTimeout(

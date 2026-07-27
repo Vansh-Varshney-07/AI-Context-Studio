@@ -12,9 +12,11 @@ export type ModuleId =
   | "skills"
   | "workflows"
   | "memories"
-  | "configurations"
+  | "mcp"
   | "validator"
-  | "optimizer";
+  | "optimizer"
+  | "settings"
+  | "search";
 
 /**
  * Parameters passed to a module renderer. Interpreted per-module.

@@ -157,14 +157,14 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         },
       },
       {
-        id: "configurations",
-        label: "Configurations",
+        id: "mcp",
+        label: "MCP Manager",
         description: "MCP configurations and provider settings",
         icon: SlidersHorizontal,
         category: "Modules",
         shortcut: "",
         action: () => {
-          navigate("configurations");
+          navigate("mcp");
           onClose();
         },
       },

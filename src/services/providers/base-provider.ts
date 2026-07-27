@@ -7,6 +7,17 @@ import type {
   GenerationOutputKind,
 } from "./types";
 
+export interface StreamChunkHandler {
+  (chunk: string): void;
+}
+
+export interface SSEStreamOptions {
+  response: Response;
+  onChunk: StreamChunkHandler;
+  parseChunk: (data: string) => string | null;
+  doneMarker?: string;
+}
+
 export abstract class BaseProvider implements AIProvider {
   abstract readonly id: string;
   abstract readonly label: string;
@@ -36,6 +47,41 @@ export abstract class BaseProvider implements AIProvider {
     options?: GenerationOptions,
     kind?: GenerationOutputKind
   ): Promise<GenerationResult>;
+
+  protected async consumeSSEStream(
+    res: Response,
+    onChunk: StreamChunkHandler,
+    parseChunk: (data: string) => string | null,
+    doneMarker = "[DONE]"
+  ): Promise<string> {
+    const reader = res.body?.getReader();
+    const decoder = new TextDecoder();
+    let fullContent = "";
+
+    if (!reader) return fullContent;
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split("\n").filter((l) => l.startsWith("data: "));
+        for (const line of lines) {
+          const data = line.slice(6);
+          if (data === doneMarker) continue;
+          const parsed = parseChunk(data);
+          if (parsed) {
+            fullContent += parsed;
+            onChunk(parsed);
+          }
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
+
+    return fullContent;
+  }
 
   protected buildSystemPrompt(ctx: GenerationContext, kind: GenerationOutputKind): string {
     const base = `You are an expert AI assistant specialized in generating high-quality ${this.getKindLabel(kind)}.`;

@@ -4,9 +4,7 @@ import { Copy, Download, Edit2, Star, Type } from "lucide-react";
 import * as React from "react";
 import { useState } from "react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -24,6 +22,34 @@ export function PromptEditor({ prompt }: PromptEditorProps) {
   const [customPrompt, setCustomPrompt] = useState("");
   const [variables, setVariables] = useState<Record<string, string>>({});
 
+  const extractedVars = React.useMemo(() => {
+    if (!prompt) return [];
+    const matches = prompt.referencePrompt.match(/\{\{(\w+)\}\}/g) ?? [];
+    return [...new Set(matches.map((m) => m.slice(2, -2)))];
+  }, [prompt?.referencePrompt]);
+
+  const handleVariableChange = (name: string, value: string) => {
+    setVariables((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const renderedReference = React.useMemo(() => {
+    if (!prompt) return "";
+    let out = prompt.referencePrompt;
+    for (const [k, v] of Object.entries(variables)) {
+      out = out.replace(new RegExp(`\\{\\{${k}\\}\\}`, "g"), v || `{{${k}}}`);
+    }
+    return out;
+  }, [prompt?.referencePrompt, variables]);
+
+  const finalCustom = React.useMemo(() => {
+    if (!prompt) return "";
+    let out = customPrompt || prompt.referencePrompt;
+    for (const [k, v] of Object.entries(variables)) {
+      out = out.replace(new RegExp(`\\{\\{${k}\\}\\}`, "g"), v || `{{${k}}}`);
+    }
+    return out;
+  }, [customPrompt, prompt?.referencePrompt, variables]);
+
   if (!prompt) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-4 p-6 text-center">
@@ -37,31 +63,6 @@ export function PromptEditor({ prompt }: PromptEditorProps) {
       </div>
     );
   }
-
-  const extractedVars = React.useMemo(() => {
-    const matches = prompt.referencePrompt.match(/\{\{(\w+)\}\}/g) ?? [];
-    return [...new Set(matches.map((m) => m.slice(2, -2)))];
-  }, [prompt.referencePrompt]);
-
-  const handleVariableChange = (name: string, value: string) => {
-    setVariables((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const renderedReference = React.useMemo(() => {
-    let out = prompt.referencePrompt;
-    for (const [k, v] of Object.entries(variables)) {
-      out = out.replace(new RegExp(`\\{\\{${k}\\}\\}`, "g"), v || `{{${k}}}`);
-    }
-    return out;
-  }, [prompt.referencePrompt, variables]);
-
-  const finalCustom = React.useMemo(() => {
-    let out = customPrompt || prompt.referencePrompt;
-    for (const [k, v] of Object.entries(variables)) {
-      out = out.replace(new RegExp(`\\{\\{${k}\\}\\}`, "g"), v || `{{${k}}}`);
-    }
-    return out;
-  }, [customPrompt, prompt.referencePrompt, variables]);
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
