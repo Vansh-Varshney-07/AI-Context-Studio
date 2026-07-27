@@ -1,0 +1,183 @@
+name: Rust Workspace CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'marketplace/**'
+      - 'registry/**'
+      - 'desktop/src-tauri/**'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - '.github/workflows/rust-ci.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'marketplace/**'
+      - 'registry/**'
+      - 'desktop/src-tauri/**'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - '.github/workflows/rust-ci.yml'
+
+env:
+  RUST_VERSION: 'stable'
+  CARGO_TERM_COLOR: always
+
+jobs:
+  check:
+    name: Cargo Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+      
+      - name: Cache Cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            marketplace/target
+            registry/target
+            desktop/src-tauri/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      
+      - name: Check Marketplace
+        run: cargo check --manifest-path marketplace/Cargo.toml --locked
+      
+      - name: Check Registry
+        run: cargo check --manifest-path registry/Cargo.toml --locked
+      
+      - name: Check Desktop Tauri
+        run: cargo check --manifest-path desktop/src-tauri/Cargo.toml --locked
+
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          components: clippy
+      
+      - name: Cache Cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            marketplace/target
+            registry/target
+            desktop/src-tauri/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      
+      - name: Clippy Marketplace
+        run: cargo clippy --manifest-path marketplace/Cargo.toml --locked -- -D warnings
+      
+      - name: Clippy Registry
+        run: cargo clippy --manifest-path registry/Cargo.toml --locked -- -D warnings
+      
+      - name: Clippy Desktop Tauri
+        run: cargo clippy --manifest-path desktop/src-tauri/Cargo.toml --locked -- -D warnings
+
+  fmt:
+    name: Rustfmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          components: rustfmt
+      
+      - name: Check Formatting
+        run: cargo fmt --all --check
+
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+      
+      - name: Cache Cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            marketplace/target
+            registry/target
+            desktop/src-tauri/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      
+      - name: Test Marketplace
+        run: cargo test --manifest-path marketplace/Cargo.toml --locked
+      
+      - name: Test Registry
+        run: cargo test --manifest-path registry/Cargo.toml --locked
+      
+      - name: Test Desktop Tauri
+        run: cargo test --manifest-path desktop/src-tauri/Cargo.toml --locked
+
+  audit:
+    name: Cargo Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+      
+      - name: Install cargo-audit
+        run: cargo install cargo-audit
+      
+      - name: Audit Marketplace
+        run: cargo audit --manifest-path marketplace/Cargo.toml
+      
+      - name: Audit Registry
+        run: cargo audit --manifest-path registry/Cargo.toml
+      
+      - name: Audit Desktop Tauri
+        run: cargo audit --manifest-path desktop/src-tauri/Cargo.toml
+
+  docs:
+    name: Generate Docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+      
+      - name: Generate Docs
+        run: |
+          cargo doc --manifest-path marketplace/Cargo.toml --no-deps --document-private-items
+          cargo doc --manifest-path registry/Cargo.toml --no-deps --document-private-items
+      
+      - name: Upload Docs
+        uses: actions/upload-artifact@v4
+        with:
+          name: rust-docs
+          path: |
+            marketplace/target/doc
+            registry/target/doc
+          retention-days: 7

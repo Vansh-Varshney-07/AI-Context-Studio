@@ -1,0 +1,57 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@components/*": ["./src/shared/components/*"],
+      "@hooks/*": ["./src/shared/hooks/*"],
+      "@lib/*": ["./src/shared/lib/*"],
+      "@providers/*": ["./src/shared/providers/*"],
+      "@services/*": ["./src/shared/services/*"],
+      "@styles/*": ["./src/shared/styles/*"],
+      "@shared/types/*": ["./src/shared/types/*"],
+      "@utils/*": ["./src/shared/utils/*"],
+      "@utils": ["./src/shared/utils/index.ts"],
+      "@hooks": ["./src/shared/hooks/index.ts"],
+      "@shared/types": ["./src/shared/types/index.ts"],
+      "@constants": ["./src/shared/constants/index.ts"],
+      "@lib": ["./src/shared/lib/index.ts"],
+      "@services": ["./src/shared/services/index.ts"],
+      "@constants/*": ["./src/shared/constants/*"],
+      "shared/*": ["./src/shared/*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
+  ],
+  "exclude": ["node_modules"]
+}

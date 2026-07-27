@@ -1,0 +1,473 @@
+@import "tailwindcss";
+
+/* =========================================================================
+   AI Context Studio — Premium Design System
+   Light, warm, calm, editorial aesthetic
+   Inspired by Linear, Notion, Vercel, Raycast, Stripe
+   ========================================================================= */
+
+:root {
+  /* =========================================================================
+     COLOR SYSTEM — Tri-color palette
+     ========================================================================= */
+
+  /* Primary Background — Warm Beige */
+  --color-bg-primary: #F5F1E8;
+
+  /* Secondary Background — Soft Sage */
+  --color-bg-secondary: #E7EFE6;
+
+  /* Tertiary Background — Cream */
+  --color-bg-tertiary: #FAF7F2;
+
+  /* Accent — Forest Green */
+  --color-accent: #4F7A5A;
+  --color-accent-hover: #446B4E;
+  --color-accent-light: #E7EFE6;
+
+  /* Supporting Colors */
+  --color-olive: #7B8F6A;
+  --color-muted-gold: #C8A96A;
+  --color-cream: #FAF7F2;
+
+  /* Text */
+  --color-text-primary: #222222;
+  --color-text-secondary: #6B6B6B;
+  --color-text-muted: #9B9B9B;
+  --color-text-inverse: #FAF7F2;
+
+  /* Borders */
+  --color-border: #DDD7CC;
+  --color-border-strong: #D0C8BB;
+  --color-border-subtle: #E8E3D9;
+
+  /* Status */
+  --color-success: #5F8D4E;
+  --color-success-bg: #E7EFE6;
+  --color-warning: #D8A84E;
+  --color-warning-bg: #F5F0E5;
+  --color-error: #D16666;
+  --color-error-bg: #F5E8E8;
+
+  /* Focus Ring */
+  --color-focus: #4F7A5A;
+  --color-focus-ring: rgba(79, 122, 90, 0.2);
+
+  /* =========================================================================
+     TYPOGRAPHY
+     ========================================================================= */
+
+  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), "SF Mono", "Fira Code", monospace;
+
+  --text-xs: 0.7rem;    /* 11.2px */
+  --text-sm: 0.8125rem; /* 13px */
+  --text-base: 0.9375rem; /* 15px */
+  --text-lg: 1.0625rem;  /* 17px */
+  --text-xl: 1.25rem;    /* 20px */
+  --text-2xl: 1.5rem;    /* 24px */
+  --text-3xl: 1.875rem;  /* 30px */
+  --text-4xl: 2.25rem;   /* 36px */
+
+  --font-light: 300;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  --leading-tight: 1.1;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+
+  /* =========================================================================
+     SPACING — 8px base grid
+     ========================================================================= */
+
+  --space-1: 0.25rem;  /* 4px */
+  --space-2: 0.5rem;   /* 8px */
+  --space-3: 0.75rem;  /* 12px */
+  --space-4: 1rem;     /* 16px */
+  --space-5: 1.25rem;  /* 20px */
+  --space-6: 1.5rem;   /* 24px */
+  --space-8: 2rem;     /* 32px */
+  --space-10: 2.5rem;  /* 40px */
+  --space-12: 3rem;    /* 48px */
+  --space-16: 4rem;    /* 64px */
+  --space-20: 5rem;    /* 80px */
+
+  /* =========================================================================
+     BORDER RADIUS
+     ========================================================================= */
+
+  --radius-sm: 0.375rem;  /* 6px */
+  --radius-md: 0.625rem;  /* 10px */
+  --radius-lg: 0.875rem;  /* 14px */
+  --radius-xl: 1.125rem;  /* 18px */
+  --radius-2xl: 1.5rem;   /* 24px */
+  --radius-full: 9999px;
+
+  /* =========================================================================
+     SHADOWS — Subtle, calm elevation
+     ========================================================================= */
+
+  --shadow-xs: 0 1px 2px rgba(34, 34, 34, 0.04);
+  --shadow-sm: 0 1px 3px rgba(34, 34, 34, 0.06);
+  --shadow-md: 0 4px 8px rgba(34, 34, 34, 0.06);
+  --shadow-lg: 0 8px 24px rgba(34, 34, 34, 0.07);
+  --shadow-xl: 0 16px 48px rgba(34, 34, 34, 0.08);
+  --shadow-inner: inset 0 1px 2px rgba(34, 34, 34, 0.04);
+
+  /* =========================================================================
+     MOTION
+     ========================================================================= */
+
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 300ms;
+
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* =========================================================================
+     Z-INDEX
+     ========================================================================= */
+
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --z-modal-backdrop: 400;
+  --z-modal: 500;
+  --z-popover: 600;
+  --z-tooltip: 700;
+  --z-toast: 800;
+}
+
+/* =========================================================================
+   TAILWIND THEME MAPPING
+   ========================================================================= */
+
+@theme inline {
+  /* Colors */
+  --color-bg-primary: var(--color-bg-primary);
+  --color-bg-secondary: var(--color-bg-secondary);
+  --color-bg-tertiary: var(--color-bg-tertiary);
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-light: var(--color-accent-light);
+  --color-olive: var(--color-olive);
+  --color-muted-gold: var(--color-muted-gold);
+  --color-cream: var(--color-cream);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+  --color-text-inverse: var(--color-text-inverse);
+  --color-border: var(--color-border);
+  --color-border-strong: var(--color-border-strong);
+  --color-border-subtle: var(--color-border-subtle);
+  --color-success: var(--color-success);
+  --color-success-bg: var(--color-success-bg);
+  --color-warning: var(--color-warning);
+  --color-warning-bg: var(--color-warning-bg);
+  --color-error: var(--color-error);
+  --color-error-bg: var(--color-error-bg);
+  --color-focus: var(--color-focus);
+  --color-focus-ring: var(--color-focus-ring);
+
+  /* Fonts */
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  /* Typography */
+  --text-xs: var(--text-xs);
+  --text-sm: var(--text-sm);
+  --text-base: var(--text-base);
+  --text-lg: var(--text-lg);
+  --text-xl: var(--text-xl);
+  --text-2xl: var(--text-2xl);
+  --text-3xl: var(--text-3xl);
+  --text-4xl: var(--text-4xl);
+
+  --font-light: var(--font-light);
+  --font-normal: var(--font-normal);
+  --font-medium: var(--font-medium);
+  --font-semibold: var(--font-semibold);
+  --font-bold: var(--font-bold);
+
+  --leading-tight: var(--leading-tight);
+  --leading-snug: var(--leading-snug);
+  --leading-normal: var(--leading-normal);
+  --leading-relaxed: var(--leading-relaxed);
+
+  /* Spacing */
+  --space-1: var(--space-1);
+  --space-2: var(--space-2);
+  --space-3: var(--space-3);
+  --space-4: var(--space-4);
+  --space-5: var(--space-5);
+  --space-6: var(--space-6);
+  --space-8: var(--space-8);
+  --space-10: var(--space-10);
+  --space-12: var(--space-12);
+  --space-16: var(--space-16);
+  --space-20: var(--space-20);
+
+  /* Border Radius */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  --radius-full: var(--radius-full);
+
+  /* Shadows */
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-inner: var(--shadow-inner);
+
+  /* Motion */
+  --duration-fast: var(--duration-fast);
+  --duration-base: var(--duration-base);
+  --duration-slow: var(--duration-slow);
+
+  --ease-out: var(--ease-out);
+  --ease-spring: var(--ease-spring);
+  --ease-smooth: var(--ease-smooth);
+
+  /* Z-Index */
+  --z-dropdown: var(--z-dropdown);
+  --z-sticky: var(--z-sticky);
+  --z-fixed: var(--z-fixed);
+  --z-modal-backdrop: var(--z-modal-backdrop);
+  --z-modal: var(--z-modal);
+  --z-popover: var(--z-popover);
+  --z-tooltip: var(--z-tooltip);
+  --z-toast: var(--z-toast);
+}
+
+/* =========================================================================
+   BASE RESET / TYPOGRAPHY
+   ========================================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-color: var(--color-border);
+}
+
+html {
+  color-scheme: light;
+  scrollbar-gutter: stable;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  font-weight: var(--font-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Selection */
+::selection {
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+}
+
+/* Focus visible */
+:focus-visible {
+  outline: none;
+  ring: 2px solid var(--color-focus);
+  ring-offset: 2px;
+  ring-offset-color: var(--color-bg-primary);
+}
+
+/* Scrollbars — minimal, calm */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-strong);
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+/* =========================================================================
+   UTILITY CLASSES — Design system primitives
+   ========================================================================= */
+
+/* Container */
+.container-app {
+  @apply mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8;
+}
+
+/* Typography utilities */
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-pretty {
+  text-wrap: pretty;
+}
+
+/* Card base */
+.card {
+  @apply bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] rounded-xl shadow-sm;
+}
+
+.card-hover {
+  @apply transition-all duration-200 ease-smooth hover:shadow-md hover:border-[var(--color-border-strong)];
+}
+
+/* Button base */
+.btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-150 ease-smooth focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)] disabled:opacity-50 disabled:pointer-events-none;
+}
+
+.btn-primary {
+  @apply bg-[var(--color-accent)] text-[var(--color-text-inverse)] hover:bg-[var(--color-accent-hover)] active:bg-[var(--color-accent-hover)] active:scale-[0.98] shadow-sm;
+}
+
+.btn-secondary {
+  @apply bg-[var(--color-cream)] text-[var(--color-text-primary)] border border-[var(--color-border)] hover:bg-[var(--color-bg-secondary)] hover:border-[var(--color-border-strong)] active:scale-[0.98];
+}
+
+.btn-ghost {
+  @apply bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)] hover:text-[var(--color-text-primary)] active:scale-[0.98];
+}
+
+.btn-danger {
+  @apply bg-[var(--color-error)] text-white hover:bg-[var(--color-error)]/90 active:scale-[0.98] shadow-sm;
+}
+
+.btn-icon {
+  @apply p-2 rounded-lg;
+}
+
+/* Input base */
+.input {
+  @apply w-full rounded-lg bg-[var(--color-cream)] border border-[var(--color-border)] px-3 py-2.5 text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] transition-all duration-150 ease-smooth;
+}
+
+.input:focus {
+  @apply border-[var(--color-accent)] ring-2 ring-[var(--color-focus-ring)];
+}
+
+.input-error {
+  @apply border-[var(--color-error)] focus:border-[var(--color-error)] focus:ring-[var(--color-error-bg)];
+}
+
+.label {
+  @apply block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5;
+}
+
+/* Badge / Tag */
+.badge {
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+}
+
+.badge-default {
+  @apply bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] border border-[var(--color-border)];
+}
+
+.badge-accent {
+  @apply bg-[var(--color-accent-light)] text-[var(--color-accent)];
+}
+
+.badge-success {
+  @apply bg-[var(--color-success-bg)] text-[var(--color-success)];
+}
+
+.badge-warning {
+  @apply bg-[var(--color-warning-bg)] text-[var(--color-warning)];
+}
+
+.badge-error {
+  @apply bg-[var(--color-error-bg)] text-[var(--color-error)];
+}
+
+/* Divider */
+.divider {
+  @apply border-t border-[var(--color-border)];
+}
+
+.divider-strong {
+  @apply border-t border-[var(--color-border-strong)];
+}
+
+/* Empty state */
+.empty-state {
+  @apply flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-[var(--color-border)] bg-[var(--color-bg-secondary)] p-8 text-center;
+}
+
+/* Section spacing */
+.section {
+  @apply py-8;
+}
+
+/* Animation utilities */
+.animate-in {
+  animation: fadeIn var(--duration-base) var(--ease-out) forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp var(--duration-base) var(--ease-out) forwards;
+}
+
+.animate-slide-down {
+  animation: slideDown var(--duration-base) var(--ease-out) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
