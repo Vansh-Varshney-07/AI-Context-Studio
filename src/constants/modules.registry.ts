@@ -11,6 +11,8 @@ import {
   Server,
   Shield,
   Zap,
+  Search,
+  Settings,
   type LucideIcon,
 } from "lucide-react";
 
@@ -120,6 +122,20 @@ export const MODULE_REGISTRY: readonly ModuleManifest[] = [
     description: "Optimize prompts for clarity, quality, and model compatibility.",
     icon: Zap,
     order: 85,
+  },
+  {
+    id: "settings",
+    label: "Settings",
+    description: "Configure app preferences, AI providers, data, and privacy.",
+    icon: Settings,
+    order: 90,
+  },
+  {
+    id: "search",
+    label: "Search",
+    description: "Find assets, prompts, and modules across your workspace.",
+    icon: Search,
+    order: 95,
   },
 ] as const;
 

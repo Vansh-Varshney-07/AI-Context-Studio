@@ -11,6 +11,8 @@ import { MemoriesModule } from "@/features/memories";
 import { MCPModule } from "@/features/mcp";
 import { ValidatorModule } from "@/features/validator";
 import { OptimizerModule } from "@/features/optimizer";
+import { SettingsModule } from "@/features/settings/settings-module";
+import { SearchModule } from "@/features/search/search-module";
 import type { ModuleId, ModuleParams } from "@/types/navigation";
 import {
   ComingSoon,
@@ -18,6 +20,7 @@ import {
   type ModuleRendererProps,
   type ModuleRendererRegistry,
 } from "./types";
+import { withErrorBoundary } from "@/components/common/error-boundary";
 
 /**
  * Phase 3+ renderer registry. Each phase registers its module renderer
@@ -35,18 +38,29 @@ export function useModuleRenderers(): ModuleRendererRegistry {
   return moduleRenderers;
 }
 
+const withErrorFallback = <P extends ModuleParams>(
+  WrappedComponent: ModuleRenderer
+) =>
+  withErrorBoundary(WrappedComponent, {
+    onError: (error, errorInfo) => {
+      console.error(`Module error in ${WrappedComponent.displayName || WrappedComponent.name}:`, error, errorInfo);
+    },
+  });
+
 const moduleRenderers: ModuleRendererRegistry = {
-  dashboard: DashboardModule as ModuleRenderer,
-  "instruction-files": InstructionFilesModule as ModuleRenderer,
-  "prompt-library": PromptLibraryModule as ModuleRenderer,
-  "system-prompt-engine": SystemPromptEngineModule as ModuleRenderer,
-  skills: SkillsModule as ModuleRenderer,
-  personas: PersonasModule as ModuleRenderer,
-  workflows: WorkflowsModule as ModuleRenderer,
-  memories: MemoriesModule as ModuleRenderer,
-  mcp: MCPModule as ModuleRenderer,
-  validator: ValidatorModule as ModuleRenderer,
-  optimizer: OptimizerModule as ModuleRenderer,
+  dashboard: withErrorFallback(DashboardModule),
+  "instruction-files": withErrorFallback(InstructionFilesModule),
+  "prompt-library": withErrorFallback(PromptLibraryModule),
+  "system-prompt-engine": withErrorFallback(SystemPromptEngineModule),
+  skills: withErrorFallback(SkillsModule),
+  personas: withErrorFallback(PersonasModule),
+  workflows: withErrorFallback(WorkflowsModule),
+  memories: withErrorFallback(MemoriesModule),
+  mcp: withErrorFallback(MCPModule),
+  validator: withErrorFallback(ValidatorModule),
+  optimizer: withErrorFallback(OptimizerModule),
+  settings: withErrorFallback(SettingsModule),
+  search: withErrorFallback(SearchModule),
 };
 
 export type { ModuleRendererProps, ModuleRendererRegistry, ModuleRenderer };
@@ -63,6 +77,8 @@ export function ensureModuleId(id: string): ModuleId | null {
     "mcp",
     "validator",
     "optimizer",
+    "settings",
+    "search",
   ];
   return (allowed as string[]).includes(id) ? (id as ModuleId) : null;
 }

@@ -14,7 +14,9 @@ export type ModuleId =
   | "memories"
   | "mcp"
   | "validator"
-  | "optimizer";
+  | "optimizer"
+  | "settings"
+  | "search";
 
 /**
  * Parameters passed to a module renderer. Interpreted per-module.

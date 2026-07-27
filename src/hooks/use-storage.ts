@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 
 import { saveAsset, getAsset, getAllAssets, getAssetsByKind, deleteAsset, type Asset } from "@/services/storage";
+import { uuid } from "@/utils/uuid";
 
 /**
  * Hook for persisting generated artifacts to IndexedDB.
@@ -27,7 +28,7 @@ export function useStorage() {
     setIsLoading(true);
     setError(null);
     try {
-      const id = crypto.randomUUID();
+      const id = uuid();
       const now = new Date().toISOString();
       const asset: Asset = {
         id,
