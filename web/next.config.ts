@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
   },
   compiler: {
     removeConsole: isDev ? false : { exclude: ["error", "warn"] },
-  };
+  },
+};
 
 export default nextConfig;
