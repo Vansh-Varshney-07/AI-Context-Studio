@@ -1,7 +1,7 @@
 {
-  "installCommand": "cd web && npm install --legacy-peer-deps",
-  "buildCommand": "cd web && npm run build",
+  "installCommand": "npm install --legacy-peer-deps",
+  "buildCommand": "npm run build --workspace=web",
   "outputDirectory": "web/out",
   "framework": "nextjs",
-  "devCommand": "cd web && npm run dev"
+  "devCommand": "npm run dev --workspace=web"
 }
