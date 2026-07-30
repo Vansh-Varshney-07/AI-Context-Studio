@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#F5F1E8"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#8B5CF6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="60" y="60" width="80" height="80" rx="18" fill="url(#accent)"/>
+  <path d="M80 95h40 M80 120h40 M80 145h28" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" fill="none"/>
+  <text x="160" y="115" font-family="system-ui, sans-serif" font-size="56" font-weight="700" fill="#111827">AI Context Studio</text>
+  <text x="160" y="175" font-family="system-ui, sans-serif" font-size="32" fill="#4B5563">Local-First AI Prompt Engineering Studio</text>
+  <rect x="60" y="260" width="1080" height="2" fill="#E5E7EB"/>
+  <text x="60" y="370" font-family="system-ui, sans-serif" font-size="42" font-weight="600" fill="#111827">Build. Customize. Manage. Export.</text>
+  <text x="60" y="430" font-family="system-ui, sans-serif" font-size="28" fill="#4B5563">AI instruction assets for every coding assistant</text>
+  <rect x="60" y="500" width="180" height="60" rx="12" fill="#3B82F6"/>
+  <text x="150" y="540" text-anchor="middle" font-family="system-ui, sans-serif" font-size="24" font-weight="600" fill="#FFFFFF">Download</text>
+  <rect x="270" y="500" width="160" height="60" rx="12" fill="#DBEAFE"/>
+  <text x="350" y="540" text-anchor="middle" font-family="system-ui, sans-serif" font-size="24" font-weight="600" fill="#3B82F6">GitHub</text>
+</svg>

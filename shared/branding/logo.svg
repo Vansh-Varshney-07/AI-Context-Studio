@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="brand-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#8B5CF6"/>
+    </linearGradient>
+  </defs>
+  <!-- Two connected semicircular shapes forming a stylized "A" / neural pathway -->
+  <path d="M64 192 
+           C64 136 112 96 128 96 
+           C144 96 192 136 192 192" 
+        fill="none" 
+        stroke="url(#brand-gradient)" 
+        stroke-width="32" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+  <path d="M128 96 
+           C128 152 80 192 64 192" 
+        fill="none" 
+        stroke="url(#brand-gradient)" 
+        stroke-width="32" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+  <!-- Center connecting node -->
+  <circle cx="128" cy="144" r="16" fill="url(#brand-gradient)"/>
+</svg>
