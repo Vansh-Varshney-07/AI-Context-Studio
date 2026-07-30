@@ -34,8 +34,9 @@ jobs:
           cache: 'npm'
           cache-dependency-path: web/package-lock.json
       
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+      - name: Install dependencies (with workspaces from root)
+        run: npm ci --legacy-peer-deps --workspaces --if-present
+        working-directory: ..
       
       - name: Run TypeCheck
         run: npm run typecheck
@@ -56,8 +57,9 @@ jobs:
           cache: 'npm'
           cache-dependency-path: web/package-lock.json
       
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+      - name: Install dependencies (with workspaces from root)
+        run: npm ci --legacy-peer-deps --workspaces --if-present
+        working-directory: ..
       
       - name: Run ESLint
         run: npm run lint
@@ -78,8 +80,9 @@ jobs:
           cache: 'npm'
           cache-dependency-path: web/package-lock.json
       
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+      - name: Install dependencies (with workspaces from root)
+        run: npm ci --legacy-peer-deps --workspaces --if-present
+        working-directory: ..
       
       - name: Build Next.js
         run: npm run build
@@ -160,8 +163,9 @@ jobs:
           cache: 'npm'
           cache-dependency-path: web/package-lock.json
       
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+      - name: Install dependencies (with workspaces from root)
+        run: npm ci --legacy-peer-deps --workspaces --if-present
+        working-directory: ..
       
       - name: Run Tests
         run: npm test --if-present

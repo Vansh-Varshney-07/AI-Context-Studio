@@ -1,0 +1,6 @@
+fix(workspace): add shared/package.json + root package.json workspaces for Vercel dependency resolution
+
+- Added shared/package.json with Radix UI, clsx, tailwind-merge, lucide-react dependencies
+- Updated root package.json to use npm workspaces ["web", "shared"]
+- Updated vercel.json to use npm install --legacy-peer-deps and build from workspace
+- All local checks pass: build (74 pages), lint (0 errors), typecheck (0 errors)
