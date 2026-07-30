@@ -1,106 +1,249 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { cn } from "@/lib/utils";
-import { ScrollReveal } from "@/components/common/scroll-reveal";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { CodeBlock } from "@/components/docs/code-block";
-import { Callout } from "@/components/docs/callout";
-import { FileJson, Code, GitBranch, Package, Shield, Search, Tag, Clock, Link, CheckCircle, ChevronRight, Zap, Terminal, Database, Network, Layout, Layers, HelpCircle, Copy, AlertCircle, RotateCcw } from "lucide-react";
+import { useState } from 'react';
+import { cn } from '@/lib/utils';
+import { ScrollReveal } from '@/components/common/scroll-reveal';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { CodeBlock } from '@/components/docs/code-block';
+import { Callout } from '@/components/docs/callout';
+import {
+  FileJson,
+  Code,
+  GitBranch,
+  Package,
+  Shield,
+  Search,
+  Tag,
+  Clock,
+  Link,
+  CheckCircle,
+  ChevronRight,
+  Zap,
+  Terminal,
+  Database,
+  Network,
+  Layout,
+  Layers,
+  HelpCircle,
+  Copy,
+  AlertCircle,
+  RotateCcw,
+} from 'lucide-react';
 
 const manifestSchema = {
-  id: "unique-asset-id",
-  name: "Asset Name",
-  version: "1.0.0",
-  author: "Author Name",
-  type: "skill | persona | workflow | promptPack | memory | instructionFile | systemPrompt | moduleConfig",
-  description: "Human-readable description",
-  tags: ["tag1", "tag2"],
-  minAppVersion: "1.0.0",
-  checksum: "sha256:...",
-  license: "MIT",
+  id: 'unique-asset-id',
+  name: 'Asset Name',
+  version: '1.0.0',
+  author: 'Author Name',
+  type: 'skill | persona | workflow | promptPack | memory | instructionFile | systemPrompt | moduleConfig',
+  description: 'Human-readable description',
+  tags: ['tag1', 'tag2'],
+  minAppVersion: '1.0.0',
+  checksum: 'sha256:...',
+  license: 'MIT',
   dependencies: {
-    "other-asset-id": "^1.0.0",
+    'other-asset-id': '^1.0.0',
   },
-  targets: ["cursor", "claude", "copilot", "windsurf", "vscode"],
-  screenshots: ["preview.png"],
-  readme: "README.md",
+  targets: ['cursor', 'claude', 'copilot', 'windsurf', 'vscode'],
+  screenshots: ['preview.png'],
+  readme: 'README.md',
 };
 
 const schemaFields = [
-  { field: "id", type: "string", required: true, desc: "Unique identifier (UUID v4)" },
-  { field: "name", type: "string", required: true, desc: "Human-readable asset name" },
-  { field: "version", type: "semver", required: true, desc: "Semantic version (MAJOR.MINOR.PATCH)" },
-  { field: "author", type: "string", required: true, desc: "Author name or organization" },
-  { field: "type", type: "enum", required: true, desc: "Asset kind (8 supported types)" },
-  { field: "description", type: "string", required: true, desc: "Detailed description" },
-  { field: "tags", type: "string[]", required: false, desc: "Searchable tags" },
-  { field: "minAppVersion", type: "semver", required: true, desc: "Minimum app version required" },
-  { field: "checksum", type: "sha256", required: true, desc: "SHA256 integrity hash" },
-  { field: "license", type: "spdx", required: true, desc: "SPDX license identifier" },
-  { field: "dependencies", type: "object", required: false, desc: "Dependency map with semver ranges" },
-  { field: "targets", type: "string[]", required: true, desc: "Compatible export targets" },
-  { field: "screenshots", type: "string[]", required: false, desc: "Preview image paths" },
-  { field: "readme", type: "string", required: false, desc: "Path to markdown documentation" },
+  { field: 'id', type: 'string', required: true, desc: 'Unique identifier (UUID v4)' },
+  { field: 'name', type: 'string', required: true, desc: 'Human-readable asset name' },
+  {
+    field: 'version',
+    type: 'semver',
+    required: true,
+    desc: 'Semantic version (MAJOR.MINOR.PATCH)',
+  },
+  { field: 'author', type: 'string', required: true, desc: 'Author name or organization' },
+  { field: 'type', type: 'enum', required: true, desc: 'Asset kind (8 supported types)' },
+  { field: 'description', type: 'string', required: true, desc: 'Detailed description' },
+  { field: 'tags', type: 'string[]', required: false, desc: 'Searchable tags' },
+  { field: 'minAppVersion', type: 'semver', required: true, desc: 'Minimum app version required' },
+  { field: 'checksum', type: 'sha256', required: true, desc: 'SHA256 integrity hash' },
+  { field: 'license', type: 'spdx', required: true, desc: 'SPDX license identifier' },
+  {
+    field: 'dependencies',
+    type: 'object',
+    required: false,
+    desc: 'Dependency map with semver ranges',
+  },
+  { field: 'targets', type: 'string[]', required: true, desc: 'Compatible export targets' },
+  { field: 'screenshots', type: 'string[]', required: false, desc: 'Preview image paths' },
+  { field: 'readme', type: 'string', required: false, desc: 'Path to markdown documentation' },
 ];
 
 const assetTypes = [
-  { id: "skill", name: "Skill", desc: "Composable AI capabilities with inputs/outputs", color: "bg-purple-100 text-purple-700" },
-  { id: "persona", name: "Persona", desc: "Character definitions with voice and expertise", color: "bg-pink-100 text-pink-700" },
-  { id: "workflow", name: "Workflow", desc: "Multi-step pipelines chaining prompts and tools", color: "bg-teal-100 text-teal-700" },
-  { id: "promptPack", name: "Prompt Pack", desc: "Curated prompt templates for specific tasks", color: "bg-indigo-100 text-indigo-700" },
-  { id: "memory", name: "Memory", desc: "Persistent context blocks for agent recall", color: "bg-amber-100 text-amber-700" },
-  { id: "instructionFile", name: "Instruction File", desc: "AGENTS.md, CLAUDE.md, per-target instructions", color: "bg-orange-100 text-orange-700" },
-  { id: "systemPrompt", name: "System Prompt", desc: "Base system instructions for AI assistants", color: "bg-blue-100 text-blue-700" },
-  { id: "moduleConfig", name: "Module Config", desc: "Configuration for AI Context Studio modules", color: "bg-cyan-100 text-cyan-700" },
+  {
+    id: 'skill',
+    name: 'Skill',
+    desc: 'Composable AI capabilities with inputs/outputs',
+    color: 'bg-purple-100 text-purple-700',
+  },
+  {
+    id: 'persona',
+    name: 'Persona',
+    desc: 'Character definitions with voice and expertise',
+    color: 'bg-pink-100 text-pink-700',
+  },
+  {
+    id: 'workflow',
+    name: 'Workflow',
+    desc: 'Multi-step pipelines chaining prompts and tools',
+    color: 'bg-teal-100 text-teal-700',
+  },
+  {
+    id: 'promptPack',
+    name: 'Prompt Pack',
+    desc: 'Curated prompt templates for specific tasks',
+    color: 'bg-indigo-100 text-indigo-700',
+  },
+  {
+    id: 'memory',
+    name: 'Memory',
+    desc: 'Persistent context blocks for agent recall',
+    color: 'bg-amber-100 text-amber-700',
+  },
+  {
+    id: 'instructionFile',
+    name: 'Instruction File',
+    desc: 'AGENTS.md, CLAUDE.md, per-target instructions',
+    color: 'bg-orange-100 text-orange-700',
+  },
+  {
+    id: 'systemPrompt',
+    name: 'System Prompt',
+    desc: 'Base system instructions for AI assistants',
+    color: 'bg-blue-100 text-blue-700',
+  },
+  {
+    id: 'moduleConfig',
+    name: 'Module Config',
+    desc: 'Configuration for AI Context Studio modules',
+    color: 'bg-cyan-100 text-cyan-700',
+  },
 ];
 
-const targets = ["Cursor", "Claude Code", "Windsurf", "VS Code", "Custom"];
+const targets = ['Cursor', 'Claude Code', 'Windsurf', 'VS Code', 'Custom'];
 
 const compatibilityMatrix = [
-  { feature: "System Prompts", cursor: true, claude: true, windsurf: true, vscode: true, custom: true },
-  { feature: "Instruction Files", cursor: true, claude: true, windsurf: true, vscode: true, custom: true },
-  { feature: "Prompt Library", cursor: true, claude: true, windsurf: true, vscode: true, custom: false },
-  { feature: "Personas", cursor: true, claude: true, windsurf: true, vscode: true, custom: true },
-  { feature: "Skills", cursor: true, claude: true, windsurf: true, vscode: false, custom: true },
-  { feature: "Workflows", cursor: true, claude: true, windsurf: true, vscode: false, custom: true },
-  { feature: "Memories", cursor: true, claude: false, windsurf: false, vscode: false, custom: true },
-  { feature: "MCP Configs", cursor: true, claude: true, windsurf: true, vscode: true, custom: true },
+  {
+    feature: 'System Prompts',
+    cursor: true,
+    claude: true,
+    windsurf: true,
+    vscode: true,
+    custom: true,
+  },
+  {
+    feature: 'Instruction Files',
+    cursor: true,
+    claude: true,
+    windsurf: true,
+    vscode: true,
+    custom: true,
+  },
+  {
+    feature: 'Prompt Library',
+    cursor: true,
+    claude: true,
+    windsurf: true,
+    vscode: true,
+    custom: false,
+  },
+  { feature: 'Personas', cursor: true, claude: true, windsurf: true, vscode: true, custom: true },
+  { feature: 'Skills', cursor: true, claude: true, windsurf: true, vscode: false, custom: true },
+  { feature: 'Workflows', cursor: true, claude: true, windsurf: true, vscode: false, custom: true },
+  {
+    feature: 'Memories',
+    cursor: true,
+    claude: false,
+    windsurf: false,
+    vscode: false,
+    custom: true,
+  },
+  {
+    feature: 'MCP Configs',
+    cursor: true,
+    claude: true,
+    windsurf: true,
+    vscode: true,
+    custom: true,
+  },
 ];
 
 const validatorSchema = {
-  $schema: "http://json-schema.org/draft-07/schema#",
-  type: "object",
-  required: ["id", "name", "version", "author", "type", "description", "minAppVersion", "checksum", "license", "targets"],
+  $schema: 'http://json-schema.org/draft-07/schema#',
+  type: 'object',
+  required: [
+    'id',
+    'name',
+    'version',
+    'author',
+    'type',
+    'description',
+    'minAppVersion',
+    'checksum',
+    'license',
+    'targets',
+  ],
   properties: {
-    id: { type: "string", format: "uuid", description: "Unique identifier (UUID v4)" },
-    name: { type: "string", minLength: 1, maxLength: 100 },
-    version: { type: "string", pattern: "^\\d+\\.\\d+\\.d+$", description: "Semantic version (MAJOR.MINOR.PATCH)" },
-    author: { type: "string", minLength: 1, maxLength: 100 },
-    type: { type: "string", enum: ["skill", "persona", "workflow", "promptPack", "memory", "instructionFile", "systemPrompt", "moduleConfig"] },
-    description: { type: "string", minLength: 10, maxLength: 5000 },
-    tags: { type: "array", items: { type: "string" }, maxItems: 20 },
-    minAppVersion: { type: "string", pattern: "^\\d+\\.\\d+\\.\\d+$" },
-    checksum: { type: "string", pattern: "^sha256:[a-f0-9]{64}$" },
-    license: { type: "string", description: "SPDX license identifier" },
-    dependencies: { type: "object", additionalProperties: { type: "string", pattern: "^\\^?\\d+\\.\\d+\\.\\d+$" } },
-    targets: { type: "array", items: { type: "string", enum: ["cursor", "claude", "windsurf", "vscode", "custom"] }, minItems: 1 },
-    screenshots: { type: "array", items: { type: "string", format: "uri" }, maxItems: 10 },
-    readme: { type: "string", maxLength: 200 },
+    id: { type: 'string', format: 'uuid', description: 'Unique identifier (UUID v4)' },
+    name: { type: 'string', minLength: 1, maxLength: 100 },
+    version: {
+      type: 'string',
+      pattern: '^\\d+\\.\\d+\\.d+$',
+      description: 'Semantic version (MAJOR.MINOR.PATCH)',
+    },
+    author: { type: 'string', minLength: 1, maxLength: 100 },
+    type: {
+      type: 'string',
+      enum: [
+        'skill',
+        'persona',
+        'workflow',
+        'promptPack',
+        'memory',
+        'instructionFile',
+        'systemPrompt',
+        'moduleConfig',
+      ],
+    },
+    description: { type: 'string', minLength: 10, maxLength: 5000 },
+    tags: { type: 'array', items: { type: 'string' }, maxItems: 20 },
+    minAppVersion: { type: 'string', pattern: '^\\d+\\.\\d+\\.\\d+$' },
+    checksum: { type: 'string', pattern: '^sha256:[a-f0-9]{64}$' },
+    license: { type: 'string', description: 'SPDX license identifier' },
+    dependencies: {
+      type: 'object',
+      additionalProperties: { type: 'string', pattern: '^\\^?\\d+\\.\\d+\\.\\d+$' },
+    },
+    targets: {
+      type: 'array',
+      items: { type: 'string', enum: ['cursor', 'claude', 'windsurf', 'vscode', 'custom'] },
+      minItems: 1,
+    },
+    screenshots: { type: 'array', items: { type: 'string', format: 'uri' }, maxItems: 10 },
+    readme: { type: 'string', maxLength: 200 },
   },
 };
 
 function VersionBadge({ version, label }: { version: string; label?: string }) {
   return (
-    <span className={cn(
-      "inline-flex items-center px-2 py-0.5 rounded text-xs font-medium",
-      "bg-green-100 text-green-800 border border-green-200"
-    )}>
+    <span
+      className={cn(
+        'inline-flex items-center rounded px-2 py-0.5 text-xs font-medium',
+        'border border-green-200 bg-green-100 text-green-800'
+      )}
+    >
       v{version}
       {label && <span className="ml-1 text-[10px] uppercase">{label}</span>}
     </span>
@@ -113,26 +256,38 @@ function SchemaTable() {
       <table className="w-full min-w-[600px]" role="table">
         <thead>
           <tr className="border-b border-[var(--color-border)] bg-[var(--color-bg-secondary)]">
-            <th className="px-4 py-3 text-left font-semibold text-[var(--color-text-primary)]">Field</th>
-            <th className="px-4 py-3 text-left font-semibold text-[var(--color-text-primary)]">Type</th>
-            <th className="px-4 py-3 text-left font-semibold text-[var(--color-text-primary)]">Req</th>
-            <th className="px-4 py-3 text-left font-semibold text-[var(--color-text-primary)]">Description</th>
+            <th className="px-4 py-3 text-left font-semibold text-[var(--color-text-primary)]">
+              Field
+            </th>
+            <th className="px-4 py-3 text-left font-semibold text-[var(--color-text-primary)]">
+              Type
+            </th>
+            <th className="px-4 py-3 text-left font-semibold text-[var(--color-text-primary)]">
+              Req
+            </th>
+            <th className="px-4 py-3 text-left font-semibold text-[var(--color-text-primary)]">
+              Description
+            </th>
           </tr>
         </thead>
         <tbody>
           {schemaFields.map((field) => (
             <tr key={field.field} className="border-b border-[var(--color-border-subtle)]">
               <td className="px-4 py-3">
-                <code className="font-mono text-[var(--color-accent)] bg-[var(--color-bg-surface)] px-2 py-0.5 rounded">{field.field}</code>
+                <code className="rounded bg-[var(--color-bg-surface)] px-2 py-0.5 font-mono text-[var(--color-accent)]">
+                  {field.field}
+                </code>
               </td>
               <td className="px-4 py-3">
-                <span className="text-xs px-2 py-0.5 rounded bg-[var(--color-accent-light)] text-[var(--color-accent)] font-medium">
+                <span className="rounded bg-[var(--color-accent-light)] px-2 py-0.5 text-xs font-medium text-[var(--color-accent)]">
                   {field.type}
                 </span>
               </td>
               <td className="px-4 py-3">
                 {field.required ? (
-                  <Badge variant="dot" dotColor="accent" className="text-xs">Required</Badge>
+                  <Badge variant="dot" dotColor="accent" className="text-xs">
+                    Required
+                  </Badge>
                 ) : (
                   <span className="text-xs text-[var(--color-text-muted)]">Optional</span>
                 )}
@@ -151,10 +306,15 @@ function AssetTypeCards() {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       {assetTypes.map((type) => (
         <Card key={type.id} className="card-hover p-4 text-center">
-          <div className={cn("mb-3 w-10 h-10 rounded-lg flex items-center justify-center mx-auto", type.color)}>
+          <div
+            className={cn(
+              'mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-lg',
+              type.color
+            )}
+          >
             <Package className="h-5 w-5" aria-hidden="true" />
           </div>
-          <h4 className="font-semibold text-[var(--color-text-primary)] mb-1">{type.name}</h4>
+          <h4 className="mb-1 font-semibold text-[var(--color-text-primary)]">{type.name}</h4>
           <p className="text-sm text-[var(--color-text-secondary)]">{type.desc}</p>
         </Card>
       ))}
@@ -168,9 +328,14 @@ function CompatibilityMatrix() {
       <table className="w-full min-w-[600px]" role="table">
         <thead>
           <tr className="border-b border-[var(--color-border)] bg-[var(--color-bg-secondary)]">
-            <th className="px-4 py-3 text-left font-semibold text-[var(--color-text-primary)] sticky left-0 z-10 bg-[var(--color-bg-secondary)]">Feature</th>
+            <th className="sticky left-0 z-10 bg-[var(--color-bg-secondary)] px-4 py-3 text-left font-semibold text-[var(--color-text-primary)]">
+              Feature
+            </th>
             {targets.map((t) => (
-              <th key={t} className="px-4 py-3 text-center font-semibold text-[var(--color-text-primary)]">
+              <th
+                key={t}
+                className="px-4 py-3 text-center font-semibold text-[var(--color-text-primary)]"
+              >
                 {t}
               </th>
             ))}
@@ -179,15 +344,18 @@ function CompatibilityMatrix() {
         <tbody>
           {compatibilityMatrix.map((row) => (
             <tr key={row.feature} className="border-b border-[var(--color-border-subtle)]">
-              <td className="px-4 py-3 sticky left-0 z-10 bg-[var(--color-bg-primary)] font-medium text-[var(--color-text-primary)]">
+              <td className="sticky left-0 z-10 bg-[var(--color-bg-primary)] px-4 py-3 font-medium text-[var(--color-text-primary)]">
                 {row.feature}
               </td>
               {targets.map((t) => (
                 <td key={t} className="px-4 py-3 text-center">
                   {row[t as keyof typeof row] ? (
-                    <CheckCircle className="h-5 w-5 text-[var(--color-success)] mx-auto" aria-hidden="true" />
+                    <CheckCircle
+                      className="mx-auto h-5 w-5 text-[var(--color-success)]"
+                      aria-hidden="true"
+                    />
                   ) : (
-                    <span className="h-5 w-5 text-[var(--color-border)] rounded-full flex items-center justify-center mx-auto">
+                    <span className="mx-auto flex h-5 w-5 items-center justify-center rounded-full text-[var(--color-border)]">
                       <span className="text-[10px]">✕</span>
                     </span>
                   )}
@@ -203,9 +371,9 @@ function CompatibilityMatrix() {
 
 function DependencyGraph() {
   return (
-    <div className="bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] rounded-xl p-6 font-mono text-sm overflow-x-auto">
+    <div className="overflow-x-auto rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-tertiary)] p-6 font-mono text-sm">
       <pre className="text-[var(--color-text-secondary)]">
-{`graph TD
+        {`graph TD
     A[my-skill v2.1.0] --> B[prompt-template v1.3.0]
     A --> C[persona-senior-engineer v1.0.0]
     B --> D[base-prompt v1.0.0]
@@ -230,7 +398,18 @@ function ManifestValidator() {
   const validate = () => {
     try {
       const parsed = JSON.parse(input);
-      const required = ["id", "name", "version", "author", "type", "description", "minAppVersion", "checksum", "license", "targets"];
+      const required = [
+        'id',
+        'name',
+        'version',
+        'author',
+        'type',
+        'description',
+        'minAppVersion',
+        'checksum',
+        'license',
+        'targets',
+      ];
       const errs: string[] = [];
 
       required.forEach((field) => {
@@ -238,22 +417,22 @@ function ManifestValidator() {
       });
 
       if (parsed.version && !/^\d+\.\d+\.\d+$/.test(parsed.version)) {
-        errs.push("Version must be semantic (MAJOR.MINOR.PATCH)");
+        errs.push('Version must be semantic (MAJOR.MINOR.PATCH)');
       }
 
       if (parsed.checksum && !/^sha256:[a-f0-9]{64}$/.test(parsed.checksum)) {
-        errs.push("Checksum must be sha256:<64 hex chars>");
+        errs.push('Checksum must be sha256:<64 hex chars>');
       }
 
       if (parsed.targets && !Array.isArray(parsed.targets)) {
-        errs.push("Targets must be an array");
+        errs.push('Targets must be an array');
       }
 
       setErrors(errs);
       setIsValid(errs.length === 0);
     } catch {
       setIsValid(false);
-      setErrors(["Invalid JSON"]);
+      setErrors(['Invalid JSON']);
     }
   };
 
@@ -261,50 +440,56 @@ function ManifestValidator() {
     <div className="space-y-4">
       <div className="flex gap-2">
         <Button onClick={validate} variant="primary">
-          <Zap className="h-4 w-4 mr-2" />
+          <Zap className="mr-2 h-4 w-4" />
           Validate Manifest
         </Button>
         <Button variant="outline" onClick={() => setInput(JSON.stringify(manifestSchema, null, 2))}>
-          <RotateCcw className="h-4 w-4 mr-2" />
+          <RotateCcw className="mr-2 h-4 w-4" />
           Reset Example
         </Button>
       </div>
       <div className="flex gap-4">
         <div className="flex-1">
-          <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2">
+          <label className="mb-2 block text-sm font-medium text-[var(--color-text-secondary)]">
             manifest.json
           </label>
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            className="font-mono text-sm min-h-[300px] bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] rounded-lg p-4"
+            className="min-h-[300px] rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-tertiary)] p-4 font-mono text-sm"
             placeholder="Paste your manifest.json here..."
             spellCheck={false}
           />
         </div>
         <div className="flex-1">
-          <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-2">
+          <label className="mb-2 block text-sm font-medium text-[var(--color-text-secondary)]">
             Validation Result
           </label>
-          <div className={cn(
-            "min-h-[300px] p-4 rounded-lg border font-mono text-sm",
-            isValid ? "bg-green-50 border-green-200 text-green-800" : "bg-red-50 border-red-200 text-red-800"
-          )}>
+          <div
+            className={cn(
+              'min-h-[300px] rounded-lg border p-4 font-mono text-sm',
+              isValid
+                ? 'border-green-200 bg-green-50 text-green-800'
+                : 'border-red-200 bg-red-50 text-red-800'
+            )}
+          >
             {isValid ? (
               <>
-                <div className="flex items-center gap-2 mb-2">
+                <div className="mb-2 flex items-center gap-2">
                   <CheckCircle className="h-5 w-5 text-green-500" />
                   <span className="font-semibold">Valid manifest</span>
                 </div>
-                <p className="text-sm text-[var(--color-text-muted)]">All required fields present and correctly formatted.</p>
+                <p className="text-sm text-[var(--color-text-muted)]">
+                  All required fields present and correctly formatted.
+                </p>
               </>
             ) : (
               <>
-                <div className="flex items-center gap-2 mb-2">
+                <div className="mb-2 flex items-center gap-2">
                   <AlertCircle className="h-5 w-5 text-red-500" />
                   <span className="font-semibold">Validation errors</span>
                 </div>
-                <ul className="list-disc list-inside space-y-1">
+                <ul className="list-inside list-disc space-y-1">
                   {errors.map((err, i) => (
                     <li key={i}>{err}</li>
                   ))}
@@ -320,24 +505,27 @@ function ManifestValidator() {
 
 function ScreenshotGallery() {
   const screenshots = [
-    { src: "https://picsum.photos/seed/registry1/600/400", alt: "Manifest editor UI" },
-    { src: "https://picsum.photos/seed/registry2/600/400", alt: "Dependency graph visualization" },
-    { src: "https://picsum.photos/seed/registry3/600/400", alt: "Compatibility matrix" },
-    { src: "https://picsum.photos/seed/registry4/600/400", alt: "Validator output" },
+    { src: 'https://picsum.photos/seed/registry1/600/400', alt: 'Manifest editor UI' },
+    { src: 'https://picsum.photos/seed/registry2/600/400', alt: 'Dependency graph visualization' },
+    { src: 'https://picsum.photos/seed/registry3/600/400', alt: 'Compatibility matrix' },
+    { src: 'https://picsum.photos/seed/registry4/600/400', alt: 'Validator output' },
   ];
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       {screenshots.map((shot, i) => (
-        <div key={i} className="group relative aspect-video rounded-xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg-tertiary)]">
+        <div
+          key={i}
+          className="group relative aspect-video overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-tertiary)]"
+        >
           <img
             src={shot.src}
             alt={shot.alt}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
           />
-          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <span className="text-white font-medium">View full size</span>
+          <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+            <span className="font-medium text-white">View full size</span>
           </div>
         </div>
       ))}
@@ -348,16 +536,33 @@ function ScreenshotGallery() {
 function VersioningSection() {
   return (
     <div className="space-y-6">
-      <h3 className="text-xl font-semibold text-[var(--color-text-primary)]">Semantic Versioning Strategy</h3>
+      <h3 className="text-xl font-semibold text-[var(--color-text-primary)]">
+        Semantic Versioning Strategy
+      </h3>
       <div className="grid gap-4 md:grid-cols-3">
         {[
-          { label: "MAJOR", version: "2.0.0", desc: "Breaking changes to manifest schema or required fields", color: "bg-red-100 text-red-700" },
-          { label: "MINOR", version: "1.1.0", desc: "New optional fields, new asset types, backward compatible", color: "bg-blue-100 text-blue-700" },
-          { label: "PATCH", version: "1.0.1", desc: "Bug fixes, typo corrections, documentation updates", color: "bg-green-100 text-green-700" },
+          {
+            label: 'MAJOR',
+            version: '2.0.0',
+            desc: 'Breaking changes to manifest schema or required fields',
+            color: 'bg-red-100 text-red-700',
+          },
+          {
+            label: 'MINOR',
+            version: '1.1.0',
+            desc: 'New optional fields, new asset types, backward compatible',
+            color: 'bg-blue-100 text-blue-700',
+          },
+          {
+            label: 'PATCH',
+            version: '1.0.1',
+            desc: 'Bug fixes, typo corrections, documentation updates',
+            color: 'bg-green-100 text-green-700',
+          },
         ].map((item) => (
           <Card key={item.label} className="p-4">
-            <div className="flex items-center gap-3 mb-2">
-              <span className={cn("px-3 py-1 rounded-full text-sm font-semibold", item.color)}>
+            <div className="mb-2 flex items-center gap-3">
+              <span className={cn('rounded-full px-3 py-1 text-sm font-semibold', item.color)}>
                 {item.label}
               </span>
               <VersionBadge version={item.version} />
@@ -368,7 +573,13 @@ function VersioningSection() {
       </div>
 
       <Callout type="note" title="Version Ranges">
-        <p>Dependencies use semantic version ranges (e.g., <code className="font-mono text-[var(--color-accent)]">{'^1.0.0'}</code>, <code className="font-mono text-[var(--color-accent)]">{'~2.1.0'}</code>, <code className="font-mono text-[var(--color-accent)]">{'>=1.0.0 <2.0.0'}</code>). The resolver picks the highest compatible version.</p>
+        <p>
+          Dependencies use semantic version ranges (e.g.,{' '}
+          <code className="font-mono text-[var(--color-accent)]">{'^1.0.0'}</code>,{' '}
+          <code className="font-mono text-[var(--color-accent)]">{'~2.1.0'}</code>,{' '}
+          <code className="font-mono text-[var(--color-accent)]">{'>=1.0.0 <2.0.0'}</code>). The
+          resolver picks the highest compatible version.
+        </p>
       </Callout>
     </div>
   );
@@ -376,18 +587,31 @@ function VersioningSection() {
 
 export function RegistryPageContent() {
   return (
-    <section className="flex-1 flex flex-col">
+    <section className="flex flex-1 flex-col">
       <header className="section bg-[var(--color-bg-secondary)]" aria-labelledby="registry-heading">
         <div className="container-app">
-          <ScrollReveal className="text-center mb-16">
-            <h2 id="registry-heading" className="text-4xl sm:text-5xl font-bold text-[var(--color-text-primary)] mb-4">
+          <ScrollReveal className="mb-16 text-center">
+            <h2
+              id="registry-heading"
+              className="mb-4 text-4xl font-bold text-[var(--color-text-primary)] sm:text-5xl"
+            >
               Registry — Asset Infrastructure
             </h2>
-            <p className="text-lg text-[var(--color-text-secondary)] max-w-2xl mx-auto mb-8">
-              Open specification for AI asset packaging: manifest schema, semantic versioning, dependencies, compatibility matrix, and checksums.
+            <p className="mx-auto mb-8 max-w-2xl text-lg text-[var(--color-text-secondary)]">
+              Open specification for AI asset packaging: manifest schema, semantic versioning,
+              dependencies, compatibility matrix, and checksums.
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
-              {["Manifest Schema", "Metadata Fields", "Asset Types", "Versioning", "Dependencies", "Compatibility", "Validator", "Package Structure"].map((item, i) => (
+            <div className="mb-8 flex flex-wrap items-center justify-center gap-3">
+              {[
+                'Manifest Schema',
+                'Metadata Fields',
+                'Asset Types',
+                'Versioning',
+                'Dependencies',
+                'Compatibility',
+                'Validator',
+                'Package Structure',
+              ].map((item, i) => (
                 <Badge key={item} variant="outline" className="text-sm">
                   {item}
                 </Badge>
@@ -411,11 +635,16 @@ export function RegistryPageContent() {
               <TabsContent value="schema" className="mt-6 space-y-6">
                 <ScrollReveal>
                   <Card className="p-6">
-                    <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+                    <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-[var(--color-text-primary)]">
                       <FileJson className="h-5 w-5 text-[var(--color-accent)]" />
                       Manifest Schema (manifest.json)
                     </h3>
-                    <CodeBlock code={JSON.stringify(manifestSchema, null, 2)} language="json" filename="manifest.json" showLineNumbers />
+                    <CodeBlock
+                      code={JSON.stringify(manifestSchema, null, 2)}
+                      language="json"
+                      filename="manifest.json"
+                      showLineNumbers
+                    />
                   </Card>
                 </ScrollReveal>
               </TabsContent>
@@ -423,7 +652,7 @@ export function RegistryPageContent() {
               <TabsContent value="fields" className="mt-6 space-y-6">
                 <ScrollReveal>
                   <Card className="p-6">
-                    <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+                    <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-[var(--color-text-primary)]">
                       <Tag className="h-5 w-5 text-[var(--color-accent)]" />
                       Schema Fields
                     </h3>
@@ -435,7 +664,9 @@ export function RegistryPageContent() {
               <TabsContent value="types" className="mt-6 space-y-6">
                 <ScrollReveal>
                   <Card className="p-6">
-                    <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-4">Supported Asset Types</h3>
+                    <h3 className="mb-4 text-xl font-semibold text-[var(--color-text-primary)]">
+                      Supported Asset Types
+                    </h3>
                     <AssetTypeCards />
                   </Card>
                 </ScrollReveal>
@@ -452,13 +683,16 @@ export function RegistryPageContent() {
               <TabsContent value="dependencies" className="mt-6 space-y-6">
                 <ScrollReveal>
                   <Card className="p-6">
-                    <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+                    <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-[var(--color-text-primary)]">
                       <GitBranch className="h-5 w-5 text-[var(--color-accent)]" />
                       Dependency Graph
                     </h3>
                     <DependencyGraph />
                     <Callout type="tip" title="Transitive Resolution" className="mt-4">
-                      <p>The registry resolves transitive dependencies automatically. Circular dependencies are detected and reported as validation errors.</p>
+                      <p>
+                        The registry resolves transitive dependencies automatically. Circular
+                        dependencies are detected and reported as validation errors.
+                      </p>
                     </Callout>
                   </Card>
                 </ScrollReveal>
@@ -467,12 +701,13 @@ export function RegistryPageContent() {
               <TabsContent value="compatibility" className="mt-6 space-y-6">
                 <ScrollReveal>
                   <Card className="p-6">
-                    <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+                    <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-[var(--color-text-primary)]">
                       <Search className="h-5 w-5 text-[var(--color-accent)]" />
                       Target Compatibility Matrix
                     </h3>
-                    <p className="text-sm text-[var(--color-text-secondary)] mb-6">
-                      Each target has different capabilities. The matrix below shows which asset features are supported by each target.
+                    <p className="mb-6 text-sm text-[var(--color-text-secondary)]">
+                      Each target has different capabilities. The matrix below shows which asset
+                      features are supported by each target.
                     </p>
                     <CompatibilityMatrix />
                   </Card>
@@ -482,12 +717,13 @@ export function RegistryPageContent() {
               <TabsContent value="validator" className="mt-6 space-y-6">
                 <ScrollReveal>
                   <Card className="p-6">
-                    <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+                    <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-[var(--color-text-primary)]">
                       <Shield className="h-5 w-5 text-[var(--color-accent)]" />
                       Manifest Validator
                     </h3>
-                    <p className="text-sm text-[var(--color-text-secondary)] mb-6">
-                      Validate your manifest.json against the official schema. Client-side validation using JSON Schema Draft 7.
+                    <p className="mb-6 text-sm text-[var(--color-text-secondary)]">
+                      Validate your manifest.json against the official schema. Client-side
+                      validation using JSON Schema Draft 7.
                     </p>
                     <ManifestValidator />
                   </Card>
@@ -497,10 +733,12 @@ export function RegistryPageContent() {
               <TabsContent value="structure" className="mt-6 space-y-6">
                 <ScrollReveal>
                   <Card className="p-6">
-                    <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-4">Asset Package Structure (.acs)</h3>
-                    <div className="bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] rounded-xl p-6 font-mono text-sm overflow-x-auto">
+                    <h3 className="mb-4 text-xl font-semibold text-[var(--color-text-primary)]">
+                      Asset Package Structure (.acs)
+                    </h3>
+                    <div className="overflow-x-auto rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-tertiary)] p-6 font-mono text-sm">
                       <pre className="text-[var(--color-text-secondary)]">
-{`asset.acs/
+                        {`asset.acs/
 ├── manifest.json       # Asset metadata (schema above)
 ├── content/            # Asset content files
 │   ├── prompts/        # System prompts & templates
@@ -513,7 +751,9 @@ export function RegistryPageContent() {
                     </div>
 
                     <div className="mt-8">
-                      <h4 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4">Screenshot Gallery</h4>
+                      <h4 className="mb-4 text-lg font-semibold text-[var(--color-text-primary)]">
+                        Screenshot Gallery
+                      </h4>
                       <ScreenshotGallery />
                     </div>
                   </Card>
@@ -524,18 +764,20 @@ export function RegistryPageContent() {
 
           <ScrollReveal className="mt-12 text-center">
             <Callout type="tip" title="Ready to Publish?">
-              <p className="mb-4">Learn how to package and publish your assets to the marketplace.</p>
+              <p className="mb-4">
+                Learn how to package and publish your assets to the marketplace.
+              </p>
               <div className="flex justify-center gap-4">
                 <Link href="/docs/marketplace/publishing">
                   <Button variant="outline">
                     Publishing Guide
-                    <ChevronRight className="h-4 w-4 ml-2" />
+                    <ChevronRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
                 <Link href="/docs/registry/schema">
                   <Button>
                     Registry Spec
-                    <ChevronRight className="h-4 w-4 ml-2" />
+                    <ChevronRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
               </div>

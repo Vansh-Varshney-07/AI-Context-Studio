@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Link from "next/link";
+import { useState } from 'react';
+import Link from 'next/link';
 import {
   Download,
   Star,
@@ -21,44 +21,44 @@ import {
   User,
   Verified,
   Package,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
-import type { Asset } from "@/data/marketplace";
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { cn } from '@/lib/utils';
+import type { Asset } from '@/data/marketplace';
 
 const targetLabels: Record<string, string> = {
-  "Cursor": "Cursor",
-  "Claude Code": "Claude Code",
-  "Windsurf": "Windsurf",
-  "VS Code": "VS Code",
-  "Custom": "Custom",
+  Cursor: 'Cursor',
+  'Claude Code': 'Claude Code',
+  Windsurf: 'Windsurf',
+  'VS Code': 'VS Code',
+  Custom: 'Custom',
 };
 
 const kindLabels: Record<string, string> = {
-  Skill: "Skill",
-  Persona: "Persona",
-  Template: "Template",
-  "Prompt Pack": "Prompt Pack",
-  "Instruction File": "Instruction File",
-  Workflow: "Workflow",
-  "MCP Server": "MCP Server",
-  Collection: "Collection",
-  Bundle: "Bundle",
+  Skill: 'Skill',
+  Persona: 'Persona',
+  Template: 'Template',
+  'Prompt Pack': 'Prompt Pack',
+  'Instruction File': 'Instruction File',
+  Workflow: 'Workflow',
+  'MCP Server': 'MCP Server',
+  Collection: 'Collection',
+  Bundle: 'Bundle',
 };
 
 const kindColors: Record<string, string> = {
-  Skill: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
-  Persona: "bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300",
-  Template: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
-  "Prompt Pack": "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300",
-  "Instruction File": "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
-  Workflow: "bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300",
-  "MCP Server": "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300",
-  Collection: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
-  Bundle: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+  Skill: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
+  Persona: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300',
+  Template: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+  'Prompt Pack': 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300',
+  'Instruction File': 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
+  Workflow: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300',
+  'MCP Server': 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300',
+  Collection: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
+  Bundle: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
 };
 
 export function AssetDetail({ asset }: { asset: Asset }) {
@@ -73,10 +73,10 @@ export function AssetDetail({ asset }: { asset: Asset }) {
   };
 
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+    return new Date(dateStr).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
   };
 
@@ -84,34 +84,51 @@ export function AssetDetail({ asset }: { asset: Asset }) {
 
   return (
     <div className="min-h-screen bg-[var(--color-bg-primary)]">
-      <nav className="border-b border-[var(--color-border)] bg-[var(--color-bg-surface)] sticky top-0 z-50" aria-label="Breadcrumb">
+      <nav
+        className="sticky top-0 z-50 border-b border-[var(--color-border)] bg-[var(--color-bg-surface)]"
+        aria-label="Breadcrumb"
+      >
         <div className="container-app px-4 py-3">
           <ol className="flex items-center gap-2 text-sm" role="list">
             <li>
-              <Link href="/" className="text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors">
+              <Link
+                href="/"
+                className="text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text-primary)]"
+              >
                 Home
               </Link>
             </li>
             <li className="flex items-center gap-2 text-[var(--color-text-muted)]">
               <ChevronRight className="h-4 w-4" aria-hidden="true" />
-              <Link href="/marketplace" className="hover:text-[var(--color-text-primary)] transition-colors">
+              <Link
+                href="/marketplace"
+                className="transition-colors hover:text-[var(--color-text-primary)]"
+              >
                 Marketplace
               </Link>
             </li>
             <li className="flex items-center gap-2 text-[var(--color-text-muted)]">
               <ChevronRight className="h-4 w-4" aria-hidden="true" />
-              <span className="text-[var(--color-text-primary)] font-medium truncate max-w-[200px]">{asset.name}</span>
+              <span className="max-w-[200px] truncate font-medium text-[var(--color-text-primary)]">
+                {asset.name}
+              </span>
             </li>
           </ol>
         </div>
       </nav>
 
-      <div className="container-app py-8 lg:py-12 flex-1">
+      <div className="container-app flex-1 py-8 lg:py-12">
         <div className="grid gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2 space-y-8">
+          <div className="space-y-8 lg:col-span-2">
             <header className="space-y-4">
               <div className="flex flex-wrap items-center gap-2">
-                <span className={cn("inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors whitespace-nowrap", kindColors[asset.kind] || "bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] border border-[var(--color-border)]")}>
+                <span
+                  className={cn(
+                    'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap transition-colors',
+                    kindColors[asset.kind] ||
+                      'border border-[var(--color-border)] bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)]'
+                  )}
+                >
                   {kindLabels[asset.kind] || asset.kind}
                 </span>
                 {asset.verified && (
@@ -122,7 +139,7 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                 )}
               </div>
 
-              <h1 className="text-3xl lg:text-4xl font-bold text-[var(--color-text-primary)]">
+              <h1 className="text-3xl font-bold text-[var(--color-text-primary)] lg:text-4xl">
                 {asset.name}
               </h1>
 
@@ -133,7 +150,7 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                     href={`https://github.com/${asset.author}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-[var(--color-text-primary)] hover:text-[var(--color-accent)] transition-colors"
+                    className="font-medium text-[var(--color-text-primary)] transition-colors hover:text-[var(--color-accent)]"
                   >
                     {asset.author}
                   </Link>
@@ -170,7 +187,9 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                   </div>
 
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Compatibility</h3>
+                    <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
+                      Compatibility
+                    </h3>
                     <div className="flex flex-wrap gap-2">
                       {asset.compatibility.map((target) => (
                         <Badge key={target} variant="outline" className="gap-1.5">
@@ -193,10 +212,12 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                   </div>
 
                   <div className="space-y-4 border-t border-[var(--color-border)] pt-6">
-                    <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Installation</h3>
-                    <div className="bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] rounded-lg p-4">
-                      <div className="flex items-center justify-between gap-4 mb-3">
-                        <code className="font-mono text-sm text-[var(--color-text-primary)] break-all">
+                    <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
+                      Installation
+                    </h3>
+                    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-tertiary)] p-4">
+                      <div className="mb-3 flex items-center justify-between gap-4">
+                        <code className="font-mono text-sm break-all text-[var(--color-text-primary)]">
                           {installCommand}
                         </code>
                         <Button
@@ -211,13 +232,13 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                         >
                           {copied ? (
                             <>
-                              <CheckCircle className="h-4 w-4 mr-1 text-[var(--color-success)]" />
+                              <CheckCircle className="mr-1 h-4 w-4 text-[var(--color-success)]" />
                               Copied!
                             </>
                           ) : (
                             <>
                               <span>Copy</span>
-                              <ExternalLink className="h-4 w-4 ml-1" />
+                              <ExternalLink className="ml-1 h-4 w-4" />
                             </>
                           )}
                         </Button>
@@ -232,16 +253,17 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                 <TabsContent value="versions" className="mt-6 space-y-4">
                   <div className="space-y-3">
                     {asset.versions.map((version, index) => (
-                      <Card key={version.version} className="p-4 hover:border-[var(--color-border-strong)] transition-colors">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <Card
+                        key={version.version}
+                        className="p-4 transition-colors hover:border-[var(--color-border-strong)]"
+                      >
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                           <div className="flex items-center gap-4">
                             <div className="flex items-center gap-3">
-                              <span className="font-mono font-semibold text-lg text-[var(--color-accent)]">
+                              <span className="font-mono text-lg font-semibold text-[var(--color-accent)]">
                                 v{version.version}
                               </span>
-                              {index === 0 && (
-                                <Badge variant="accent">Latest</Badge>
-                              )}
+                              {index === 0 && <Badge variant="accent">Latest</Badge>}
                             </div>
                             <time className="text-sm text-[var(--color-text-muted)]">
                               {formatDate(version.date)}
@@ -251,12 +273,12 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                             <Button variant="ghost" size="sm">
                               <Link href={`/marketplace/${asset.id}?version=${version.version}`}>
                                 View Details
-                                <ArrowRight className="h-4 w-4 ml-1" />
+                                <ArrowRight className="ml-1 h-4 w-4" />
                               </Link>
                             </Button>
                           </div>
                         </div>
-                        <div className="mt-3 text-sm text-[var(--color-text-secondary)] line-clamp-2">
+                        <div className="mt-3 line-clamp-2 text-sm text-[var(--color-text-secondary)]">
                           {version.changelog}
                         </div>
                       </Card>
@@ -269,12 +291,12 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                       >
                         {showFullChangelog ? (
                           <>
-                            <ChevronUp className="h-4 w-4 mr-1" />
+                            <ChevronUp className="mr-1 h-4 w-4" />
                             Show Less
                           </>
                         ) : (
                           <>
-                            <ChevronDown className="h-4 w-4 mr-1" />
+                            <ChevronDown className="mr-1 h-4 w-4" />
                             Show All {asset.versions.length} Versions
                           </>
                         )}
@@ -288,8 +310,10 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                     <p className="text-[var(--color-text-secondary)]">
                       This asset has no declared dependencies. It can be installed independently.
                     </p>
-                    <div className="bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] rounded-lg p-4">
-                      <h4 className="font-medium text-[var(--color-text-primary)] mb-2">Transitive Dependencies</h4>
+                    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-tertiary)] p-4">
+                      <h4 className="mb-2 font-medium text-[var(--color-text-primary)]">
+                        Transitive Dependencies
+                      </h4>
                       <p className="text-sm text-[var(--color-text-muted)]">
                         No transitive dependencies detected. This asset is self-contained.
                       </p>
@@ -299,23 +323,34 @@ export function AssetDetail({ asset }: { asset: Asset }) {
 
                 <TabsContent value="readme" className="mt-6">
                   <div className="prose prose-lg dark:prose-invert max-w-none">
-                    <div className={cn(
-                      "bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] rounded-lg p-6",
-                      readmeExpanded ? "max-h-none" : "max-h-96 overflow-hidden"
-                    )}>
+                    <div
+                      className={cn(
+                        'rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-tertiary)] p-6',
+                        readmeExpanded ? 'max-h-none' : 'max-h-96 overflow-hidden'
+                      )}
+                    >
                       <div className="space-y-4 text-[var(--color-text-secondary)]">
                         <h2 className="text-xl font-semibold text-[var(--color-text-primary)]">
                           {asset.name}
                         </h2>
                         <p>{asset.description}</p>
-                        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Installation</h3>
-                        <pre className="bg-[var(--color-bg-primary)] border border-[var(--color-border)] rounded p-4 overflow-x-auto">
+                        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
+                          Installation
+                        </h3>
+                        <pre className="overflow-x-auto rounded border border-[var(--color-border)] bg-[var(--color-bg-primary)] p-4">
                           <code className="font-mono text-sm">{installCommand}</code>
                         </pre>
-                        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Usage</h3>
-                        <p>Import and use this {kindLabels[asset.kind]?.toLowerCase() || "asset"} in your AI Context Studio workspace.</p>
-                        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Compatibility</h3>
-                        <ul className="list-disc list-inside space-y-1">
+                        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
+                          Usage
+                        </h3>
+                        <p>
+                          Import and use this {kindLabels[asset.kind]?.toLowerCase() || 'asset'} in
+                          your AI Context Studio workspace.
+                        </p>
+                        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
+                          Compatibility
+                        </h3>
+                        <ul className="list-inside list-disc space-y-1">
                           {asset.compatibility.map((target) => (
                             <li key={target}>{targetLabels[target] || target}</li>
                           ))}
@@ -329,12 +364,12 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                       >
                         {readmeExpanded ? (
                           <>
-                            <ChevronUp className="h-4 w-4 mr-1" />
+                            <ChevronUp className="mr-1 h-4 w-4" />
                             Show Less
                           </>
                         ) : (
                           <>
-                            <ChevronDown className="h-4 w-4 mr-1" />
+                            <ChevronDown className="mr-1 h-4 w-4" />
                             Read Full README
                           </>
                         )}
@@ -345,19 +380,21 @@ export function AssetDetail({ asset }: { asset: Asset }) {
               </Tabs>
             </div>
 
-            <aside className="lg:col-span-1 space-y-6">
-              <Card className="p-6 sticky top-24 space-y-6">
+            <aside className="space-y-6 lg:col-span-1">
+              <Card className="sticky top-24 space-y-6 p-6">
                 <div className="flex items-start gap-4">
                   {asset.thumbnail && (
                     <img
                       src={asset.thumbnail}
                       alt=""
-                      className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                      className="h-16 w-16 flex-shrink-0 rounded-lg object-cover"
                       aria-hidden="true"
                     />
                   )}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-[var(--color-text-primary)] truncate">{asset.name}</h3>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="truncate font-semibold text-[var(--color-text-primary)]">
+                      {asset.name}
+                    </h3>
                     <p className="text-sm text-[var(--color-text-muted)]">by {asset.author}</p>
                   </div>
                 </div>
@@ -366,33 +403,50 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-[var(--color-text-secondary)]">Rating</span>
                     <div className="flex items-center gap-2">
-                      <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" aria-hidden="true" />
-                      <span className="font-semibold text-[var(--color-text-primary)]">{asset.rating.toFixed(1)}</span>
-                      <span className="text-sm text-[var(--color-text-muted)]">({asset.reviewCount})</span>
+                      <Star
+                        className="h-5 w-5 fill-yellow-400 text-yellow-400"
+                        aria-hidden="true"
+                      />
+                      <span className="font-semibold text-[var(--color-text-primary)]">
+                        {asset.rating.toFixed(1)}
+                      </span>
+                      <span className="text-sm text-[var(--color-text-muted)]">
+                        ({asset.reviewCount})
+                      </span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-[var(--color-text-secondary)]">Downloads</span>
-                    <span className="font-semibold text-[var(--color-text-primary)]">{asset.downloads.toLocaleString()}</span>
+                    <span className="font-semibold text-[var(--color-text-primary)]">
+                      {asset.downloads.toLocaleString()}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-[var(--color-text-secondary)]">Last Updated</span>
-                    <time className="font-medium text-[var(--color-text-primary)]" dateTime={asset.updatedAt}>
+                    <time
+                      className="font-medium text-[var(--color-text-primary)]"
+                      dateTime={asset.updatedAt}
+                    >
                       {formatDate(asset.updatedAt)}
                     </time>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-[var(--color-text-secondary)]">Version</span>
-                    <span className="font-mono font-medium text-[var(--color-text-primary)]">v{asset.version}</span>
+                    <span className="font-mono font-medium text-[var(--color-text-primary)]">
+                      v{asset.version}
+                    </span>
                   </div>
                 </div>
 
-                <div className="space-y-3 pt-4 border-t border-[var(--color-border)]">
-                  <Button className="w-full justify-center gap-2" onClick={() => {
-                    navigator.clipboard.writeText(installCommand);
-                    setCopied(true);
-                    setTimeout(() => setCopied(false), 2000);
-                  }}>
+                <div className="space-y-3 border-t border-[var(--color-border)] pt-4">
+                  <Button
+                    className="w-full justify-center gap-2"
+                    onClick={() => {
+                      navigator.clipboard.writeText(installCommand);
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 2000);
+                    }}
+                  >
                     {copied ? (
                       <>
                         <CheckCircle className="h-4 w-4 text-[var(--color-success)]" />
@@ -406,21 +460,25 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                     )}
                   </Button>
                   <Button variant="outline" className="w-full justify-center gap-2">
-                    <Link href={`https://github.com/${asset.author}/${asset.id}`} target="_blank" rel="noopener noreferrer">
+                    <Link
+                      href={`https://github.com/${asset.author}/${asset.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <Github className="h-4 w-4" />
                       View on GitHub
                     </Link>
                   </Button>
                 </div>
 
-                <div className="pt-4 border-t border-[var(--color-border)]">
-                  <h4 className="font-medium text-[var(--color-text-primary)] mb-3">Share</h4>
+                <div className="border-t border-[var(--color-border)] pt-4">
+                  <h4 className="mb-3 font-medium text-[var(--color-text-primary)]">Share</h4>
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" className="flex-1">
-                      <Share2 className="h-4 w-4 mr-1" /> Share
+                      <Share2 className="mr-1 h-4 w-4" /> Share
                     </Button>
                     <Button variant="ghost" size="sm" className="flex-1">
-                      <Heart className="h-4 w-4 mr-1" /> Save
+                      <Heart className="mr-1 h-4 w-4" /> Save
                     </Button>
                   </div>
                 </div>

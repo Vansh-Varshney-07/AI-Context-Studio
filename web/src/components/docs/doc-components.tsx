@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Copy, Check, Terminal, Monitor, Command, TerminalSquare, FileText } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { useState } from 'react';
+import { Copy, Check, Terminal, Monitor, Command, TerminalSquare, FileText } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 interface CodeBlockProps {
   code: string;
@@ -12,7 +12,12 @@ interface CodeBlockProps {
   showLineNumbers?: boolean;
 }
 
-export function CodeBlock({ code, language = "bash", filename, showLineNumbers = true }: CodeBlockProps) {
+export function CodeBlock({
+  code,
+  language = 'bash',
+  filename,
+  showLineNumbers = true,
+}: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -21,39 +26,41 @@ export function CodeBlock({ code, language = "bash", filename, showLineNumbers =
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const lines = code.split("\n");
+  const lines = code.split('\n');
 
   return (
-    <div className="relative group">
-      <div className="flex items-center justify-between px-4 py-2 bg-[var(--color-bg-tertiary)] border-b border-[var(--color-border)] rounded-t-lg">
+    <div className="group relative">
+      <div className="flex items-center justify-between rounded-t-lg border-b border-[var(--color-border)] bg-[var(--color-bg-tertiary)] px-4 py-2">
         <div className="flex items-center gap-2">
-          {filename && <span className="text-sm font-mono text-[var(--color-text-secondary)]">{filename}</span>}
+          {filename && (
+            <span className="font-mono text-sm text-[var(--color-text-secondary)]">{filename}</span>
+          )}
           <span className="text-xs text-[var(--color-text-muted)] capitalize">{language}</span>
         </div>
         <Button
           variant="ghost"
           size="sm"
           onClick={handleCopy}
-          className="opacity-0 group-hover:opacity-100 transition-opacity"
+          className="opacity-0 transition-opacity group-hover:opacity-100"
         >
           {copied ? (
             <>
-              <Check className="h-4 w-4 mr-1 text-[var(--color-success)]" />
+              <Check className="mr-1 h-4 w-4 text-[var(--color-success)]" />
               Copied!
             </>
           ) : (
             <>
-              <Copy className="h-4 w-4 mr-1" />
+              <Copy className="mr-1 h-4 w-4" />
               Copy
             </>
           )}
         </Button>
       </div>
 
-      <div className="bg-[var(--color-bg-primary)] border border-t-0 rounded-b-lg overflow-x-auto">
-        <pre className="p-4 m-0 text-sm font-mono text-[var(--color-text-primary)] line-height-relaxed">
+      <div className="overflow-x-auto rounded-b-lg border border-t-0 bg-[var(--color-bg-primary)]">
+        <pre className="line-height-relaxed m-0 p-4 font-mono text-sm text-[var(--color-text-primary)]">
           {showLineNumbers && (
-            <span className="select-none mr-4 text-[var(--color-text-muted)]">
+            <span className="mr-4 text-[var(--color-text-muted)] select-none">
               {lines.map((_, i) => (
                 <span key={i} className="block">
                   {i + 1}
@@ -65,7 +72,7 @@ export function CodeBlock({ code, language = "bash", filename, showLineNumbers =
             {lines.map((line, i) => (
               <span key={i} className="block">
                 {line}
-                {i < lines.length - 1 && "\n"}
+                {i < lines.length - 1 && '\n'}
               </span>
             ))}
           </code>
@@ -83,30 +90,28 @@ interface OSCommandProps {
 }
 
 export function OSCommand({ windows, macos, linux, description }: OSCommandProps) {
-  const [activeTab, setActiveTab] = useState<"windows" | "macos" | "linux">("windows");
+  const [activeTab, setActiveTab] = useState<'windows' | 'macos' | 'linux'>('windows');
 
   const commands = [
-    { id: "windows", label: "Windows", icon: Monitor, command: windows },
-    { id: "macos", label: "macOS", icon: Command, command: macos },
-    { id: "linux", label: "Linux", icon: TerminalSquare, command: linux },
+    { id: 'windows', label: 'Windows', icon: Monitor, command: windows },
+    { id: 'macos', label: 'macOS', icon: Command, command: macos },
+    { id: 'linux', label: 'Linux', icon: TerminalSquare, command: linux },
   ].filter((tab) => tab.command);
 
   return (
     <div className="space-y-4">
-      {description && (
-        <p className="text-sm text-[var(--color-text-secondary)]">{description}</p>
-      )}
+      {description && <p className="text-sm text-[var(--color-text-secondary)]">{description}</p>}
       <div className="flex border-b border-[var(--color-border)]" role="tablist">
         {commands.map((tab) => (
           <button
             key={tab.id}
             role="tab"
             aria-selected={activeTab === tab.id}
-            onClick={() => setActiveTab(tab.id as "windows" | "macos" | "linux")}
-            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px ${
+            onClick={() => setActiveTab(tab.id as 'windows' | 'macos' | 'linux')}
+            className={`-mb-px flex items-center gap-2 border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
               activeTab === tab.id
-                ? "text-[var(--color-accent)] border-[var(--color-accent)]"
-                : "text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
+                ? 'border-[var(--color-accent)] text-[var(--color-accent)]'
+                : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]'
             }`}
           >
             <tab.icon className="h-4 w-4" aria-hidden="true" />
@@ -115,33 +120,42 @@ export function OSCommand({ windows, macos, linux, description }: OSCommandProps
         ))}
       </div>
       <div className="relative" role="tabpanel">
-        {commands.map((tab) => (
-          tab.command && (
-            <CodeBlock
-              key={tab.id}
-              code={tab.command}
-              language="bash"
-              filename={tab.id === "windows" ? "install.bat" : tab.id === "macos" ? "install.sh" : "install.sh"}
-            />
-          )
-        ))}
+        {commands.map(
+          (tab) =>
+            tab.command && (
+              <CodeBlock
+                key={tab.id}
+                code={tab.command}
+                language="bash"
+                filename={
+                  tab.id === 'windows'
+                    ? 'install.bat'
+                    : tab.id === 'macos'
+                      ? 'install.sh'
+                      : 'install.sh'
+                }
+              />
+            )
+        )}
       </div>
     </div>
   );
 }
 
 interface CalloutProps {
-  type: "note" | "tip" | "warning" | "danger";
+  type: 'note' | 'tip' | 'warning' | 'danger';
   title?: string;
   children: React.ReactNode;
 }
 
 export function Callout({ type, title, children }: CalloutProps) {
   const styles = {
-    note: "bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-100",
-    tip: "bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-100",
-    warning: "bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-100",
-    danger: "bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-100",
+    note: 'bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-100',
+    tip: 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-100',
+    warning:
+      'bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-100',
+    danger:
+      'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-100',
   };
 
   const icons = {
@@ -152,20 +166,21 @@ export function Callout({ type, title, children }: CalloutProps) {
   };
 
   const defaultTitles = {
-    note: "Note",
-    tip: "Tip",
-    warning: "Warning",
-    danger: "Danger",
+    note: 'Note',
+    tip: 'Tip',
+    warning: 'Warning',
+    danger: 'Danger',
   };
 
   return (
-    <div className={cn("rounded-lg border p-4", styles[type])}>
+    <div className={cn('rounded-lg border p-4', styles[type])}>
       <div className="flex gap-3">
         <div className="flex-shrink-0 text-lg">{icons[type]}</div>
         <div className="flex-1">
-          {title || defaultTitles[type] && (
-            <p className="font-semibold mb-1">{title || defaultTitles[type]}</p>
-          )}
+          {title ||
+            (defaultTitles[type] && (
+              <p className="mb-1 font-semibold">{title || defaultTitles[type]}</p>
+            ))}
           <div className="text-sm">{children}</div>
         </div>
       </div>
@@ -175,21 +190,23 @@ export function Callout({ type, title, children }: CalloutProps) {
 
 interface VersionBadgeProps {
   version: string;
-  status?: "stable" | "beta" | "alpha" | "deprecated";
+  status?: 'stable' | 'beta' | 'alpha' | 'deprecated';
 }
 
-export function VersionBadge({ version, status = "stable" }: VersionBadgeProps) {
+export function VersionBadge({ version, status = 'stable' }: VersionBadgeProps) {
   const styles = {
-    stable: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
-    beta: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
-    alpha: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300",
-    deprecated: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300",
+    stable: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
+    beta: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
+    alpha: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
+    deprecated: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
   };
 
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${styles[status]}`}>
+    <span
+      className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${styles[status]}`}
+    >
       v{version}
-      {status !== "stable" && <span className="ml-1 text-[10px] uppercase">{status}</span>}
+      {status !== 'stable' && <span className="ml-1 text-[10px] uppercase">{status}</span>}
     </span>
   );
 }

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useReducedMotion } from "@/hooks";
+import { useEffect, useState } from 'react';
+import { useReducedMotion } from '@/hooks';
 
 interface AnimatedCounterProps {
   end: number;
@@ -17,8 +17,8 @@ export function AnimatedCounter({
   start = 0,
   duration = 2000,
   className,
-  prefix = "",
-  suffix = "",
+  prefix = '',
+  suffix = '',
 }: AnimatedCounterProps) {
   const [count, setCount] = useState(start);
   const reducedMotion = useReducedMotion();
@@ -46,7 +46,9 @@ export function AnimatedCounter({
 
   return (
     <span className={className}>
-      {prefix}{count.toLocaleString()}{suffix}
+      {prefix}
+      {count.toLocaleString()}
+      {suffix}
     </span>
   );
 }

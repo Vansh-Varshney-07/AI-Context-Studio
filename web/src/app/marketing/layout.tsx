@@ -1,16 +1,10 @@
-import { Header, Footer } from "@/components/layout";
+import { Header, Footer } from '@/components/layout';
 
-export default function MarketingLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
-    <main className="min-h-screen flex flex-col">
+    <main className="flex min-h-screen flex-col">
       <Header />
-      <section className="flex-1 flex flex-col">
-        {children}
-      </section>
+      <section className="flex flex-1 flex-col">{children}</section>
       <Footer />
     </main>
   );

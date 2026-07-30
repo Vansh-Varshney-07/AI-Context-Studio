@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
+import { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
 
 interface TableOfContentsProps {
   className?: string;
@@ -9,13 +9,13 @@ interface TableOfContentsProps {
 
 export function TableOfContents({ className }: TableOfContentsProps) {
   const [headings, setHeadings] = useState<Array<{ id: string; text: string; level: number }>>([]);
-  const [activeId, setActiveId] = useState<string>("");
+  const [activeId, setActiveId] = useState<string>('');
 
   useEffect(() => {
-    const content = document.querySelector("article.prose");
+    const content = document.querySelector('article.prose');
     if (!content) return;
 
-    const headingElements = content.querySelectorAll("h2, h3");
+    const headingElements = content.querySelectorAll('h2, h3');
     const newHeadings: Array<{ id: string; text: string; level: number }> = [];
 
     headingElements.forEach((heading, index) => {
@@ -23,7 +23,7 @@ export function TableOfContents({ className }: TableOfContentsProps) {
       heading.id = id;
       newHeadings.push({
         id,
-        text: heading.textContent || "",
+        text: heading.textContent || '',
         level: parseInt(heading.tagName.charAt(1)),
       });
     });
@@ -40,7 +40,7 @@ export function TableOfContents({ className }: TableOfContentsProps) {
           }
         });
       },
-      { rootMargin: "-100px 0px -66%", threshold: 0.1 }
+      { rootMargin: '-100px 0px -66%', threshold: 0.1 }
     );
 
     headings.forEach((heading) => {
@@ -54,9 +54,9 @@ export function TableOfContents({ className }: TableOfContentsProps) {
   if (headings.length === 0) return null;
 
   return (
-    <aside className={cn("hidden lg:block w-64", className)} aria-label="Table of contents">
+    <aside className={cn('hidden w-64 lg:block', className)} aria-label="Table of contents">
       <div className="sticky top-24 space-y-2">
-        <h3 className="text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider mb-3 px-2">
+        <h3 className="mb-3 px-2 text-xs font-semibold tracking-wider text-[var(--color-text-muted)] uppercase">
           On this page
         </h3>
         <nav aria-label="Table of contents">
@@ -66,11 +66,11 @@ export function TableOfContents({ className }: TableOfContentsProps) {
                 <a
                   href={`#${heading.id}`}
                   className={cn(
-                    "block px-2 py-1 text-sm transition-colors rounded border-l-2",
-                    heading.level === 3 && "pl-6",
+                    'block rounded border-l-2 px-2 py-1 text-sm transition-colors',
+                    heading.level === 3 && 'pl-6',
                     activeId === heading.id
-                      ? "text-[var(--color-accent)] border-[var(--color-accent)] font-medium"
-                      : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border-transparent"
+                      ? 'border-[var(--color-accent)] font-medium text-[var(--color-accent)]'
+                      : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
                   )}
                 >
                   {heading.text}

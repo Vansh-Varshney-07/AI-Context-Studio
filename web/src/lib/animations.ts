@@ -1,4 +1,4 @@
-import type { Transition, Variants } from "framer-motion";
+import type { Transition, Variants } from 'framer-motion';
 
 /**
  * Canonical easing curves.
@@ -108,17 +108,17 @@ export const listStagger: Variants = {
  * Used by `<MainWorkspace/>` in desktop — kept here so Phase 1 ships the motion vocabulary once.
  */
 export const moduleTransition: Variants = {
-  hidden: { opacity: 0, y: 6, filter: "blur(4px)" },
+  hidden: { opacity: 0, y: 6, filter: 'blur(4px)' },
   visible: {
     opacity: 1,
     y: 0,
-    filter: "blur(0px)",
+    filter: 'blur(0px)',
     transition: { duration: DURATION.slow, ease: EASE.spring },
   },
   exit: {
     opacity: 0,
     y: -6,
-    filter: "blur(4px)",
+    filter: 'blur(4px)',
     transition: { duration: DURATION.fast, ease: EASE.out },
   },
 };
@@ -132,5 +132,9 @@ export const reducedMotionVariants = {
   slideUp: { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.01 } } },
   cardHover: { rest: {}, hover: {}, tap: {} },
   listStagger: { hidden: {}, visible: { transition: { staggerChildren: 0 } } },
-  moduleTransition: { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.01 } }, exit: { opacity: 0, transition: { duration: 0.01 } } },
+  moduleTransition: {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.01 } },
+    exit: { opacity: 0, transition: { duration: 0.01 } },
+  },
 } as const satisfies Record<string, Variants>;

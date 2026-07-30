@@ -20,7 +20,7 @@ export interface RoadmapItem {
   id: string;
   title: string;
   description: string;
-  status: "completed" | "in-progress" | "planned" | "future";
+  status: 'completed' | 'in-progress' | 'planned' | 'future';
   category: string;
   targetQuarter?: string;
   tags: string[];

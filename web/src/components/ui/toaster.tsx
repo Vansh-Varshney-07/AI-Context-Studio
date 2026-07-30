@@ -1,89 +1,101 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import * as ToastPrimitive from "@radix-ui/react-toast";
-import { X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import * as React from 'react';
+import * as ToastPrimitive from '@radix-ui/react-toast';
+import { X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-type ToastVariant = "default" | "success" | "warning" | "error";
+type ToastVariant = 'default' | 'success' | 'warning' | 'error';
 
 interface ToastProps extends React.ComponentPropsWithoutRef<typeof ToastPrimitive.Root> {
   variant?: ToastVariant;
 }
 
 const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
-  ({ className, variant = "default", ...props }, ref) => {
+  ({ className, variant = 'default', ...props }, ref) => {
     const variantStyles = {
-      default: "bg-[var(--color-bg-surface)] border-[var(--color-border)]",
-      success: "bg-[var(--color-success-bg)] border-[var(--color-success)]",
-      warning: "bg-[var(--color-warning-bg)] border-[var(--color-warning)]",
-      error: "bg-[var(--color-error-bg)] border-[var(--color-error)]",
+      default: 'bg-[var(--color-bg-surface)] border-[var(--color-border)]',
+      success: 'bg-[var(--color-success-bg)] border-[var(--color-success)]',
+      warning: 'bg-[var(--color-warning-bg)] border-[var(--color-warning)]',
+      error: 'bg-[var(--color-error-bg)] border-[var(--color-error)]',
     };
 
     return (
       <ToastPrimitive.Root
         ref={ref as React.Ref<HTMLLIElement>}
         className={cn(
-          "rounded-lg border px-4 py-3 shadow-lg grid gap-2 grid-cols-[1fr_auto] items-start min-w-[320px] max-w-[480px]",
+          'grid max-w-[480px] min-w-[320px] grid-cols-[1fr_auto] items-start gap-2 rounded-lg border px-4 py-3 shadow-lg',
           variantStyles[variant],
-          className,
+          className
         )}
         {...props}
       />
     );
-  },
+  }
 );
 
 Toast.displayName = ToastPrimitive.Root.displayName;
 
-const ToastAction = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
-  ({ className, children, ...props }, ref) => (
-    <button
-      ref={ref}
-      className={cn(
-        "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-white transition-colors hover:bg-[var(--color-bg-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-focus)] focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-        className,
-      )}
-      {...props}
-    >
-      {children}
-    </button>
-  ),
-);
+const ToastAction = React.forwardRef<
+  HTMLButtonElement,
+  React.ButtonHTMLAttributes<HTMLButtonElement>
+>(({ className, children, ...props }, ref) => (
+  <button
+    ref={ref}
+    className={cn(
+      'inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-white transition-colors hover:bg-[var(--color-bg-secondary)] focus:ring-2 focus:ring-[var(--color-focus)] focus:ring-offset-2 focus:outline-none disabled:pointer-events-none disabled:opacity-50',
+      className
+    )}
+    {...props}
+  >
+    {children}
+  </button>
+));
 
-ToastAction.displayName = "ToastAction";
+ToastAction.displayName = 'ToastAction';
 
-const ToastClose = React.forwardRef<HTMLButtonElement, React.ComponentPropsWithoutRef<typeof ToastPrimitive.Close>>(
-  ({ className, ...props }, ref) => (
-    <ToastPrimitive.Close
-      ref={ref}
-      className={cn(
-        "absolute right-2 top-2 rounded-md p-1 text-[var(--color-text-muted)] opacity-0 transition-opacity hover:text-[var(--color-text-primary)] focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-[var(--color-focus)] group-hover:opacity-100",
-        className,
-      )}
-      toast-close=""
-      {...props}
-    >
-      <X className="h-4 w-4" />
-    </ToastPrimitive.Close>
-  ),
-);
+const ToastClose = React.forwardRef<
+  HTMLButtonElement,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitive.Close>
+>(({ className, ...props }, ref) => (
+  <ToastPrimitive.Close
+    ref={ref}
+    className={cn(
+      'absolute top-2 right-2 rounded-md p-1 text-[var(--color-text-muted)] opacity-0 transition-opacity group-hover:opacity-100 hover:text-[var(--color-text-primary)] focus:opacity-100 focus:ring-2 focus:ring-[var(--color-focus)] focus:outline-none',
+      className
+    )}
+    toast-close=""
+    {...props}
+  >
+    <X className="h-4 w-4" />
+  </ToastPrimitive.Close>
+));
 
 ToastClose.displayName = ToastPrimitive.Close.displayName;
 
-const ToastTitle = React.forwardRef<HTMLDivElement, React.ComponentPropsWithoutRef<typeof ToastPrimitive.Title>>(
-  ({ className, ...props }, ref) => (
-    <ToastPrimitive.Title ref={ref} className={cn("text-sm font-semibold text-[var(--color-text-primary)]", className)} {...props} />
-  ),
-);
+const ToastTitle = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitive.Title>
+>(({ className, ...props }, ref) => (
+  <ToastPrimitive.Title
+    ref={ref}
+    className={cn('text-sm font-semibold text-[var(--color-text-primary)]', className)}
+    {...props}
+  />
+));
 
 ToastTitle.displayName = ToastPrimitive.Title.displayName;
 
-const ToastDescription = React.forwardRef<HTMLDivElement, React.ComponentPropsWithoutRef<typeof ToastPrimitive.Description>>(
-  ({ className, ...props }, ref) => (
-    <ToastPrimitive.Description ref={ref} className={cn("text-sm opacity-90 text-[var(--color-text-secondary)]", className)} {...props} />
-  ),
-);
+const ToastDescription = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitive.Description>
+>(({ className, ...props }, ref) => (
+  <ToastPrimitive.Description
+    ref={ref}
+    className={cn('text-sm text-[var(--color-text-secondary)] opacity-90', className)}
+    {...props}
+  />
+));
 
 ToastDescription.displayName = ToastPrimitive.Description.displayName;
 
@@ -107,7 +119,7 @@ const ToastContext = React.createContext<ToastContextValue | undefined>(undefine
 export function useToast() {
   const context = React.useContext(ToastContext);
   if (!context) {
-    throw new Error("useToast must be used within a ToastProvider");
+    throw new Error('useToast must be used within a ToastProvider');
   }
   return context;
 }
@@ -140,18 +152,19 @@ export function ToastProvider({ children }: ToasterProps) {
   );
 }
 
-const ToastViewport = React.forwardRef<HTMLOListElement, React.ComponentPropsWithoutRef<typeof ToastPrimitive.Viewport>>(
-  ({ className, ...props }, ref) => (
-    <ToastPrimitive.Viewport
-      ref={ref}
-      className={cn(
-        "fixed bottom-4 right-4 z-[var(--z-toast)] flex flex-col gap-2 w-full max-w-sm sm:max-w-md",
-        className,
-      )}
-      {...props}
-    />
-  ),
-);
+const ToastViewport = React.forwardRef<
+  HTMLOListElement,
+  React.ComponentPropsWithoutRef<typeof ToastPrimitive.Viewport>
+>(({ className, ...props }, ref) => (
+  <ToastPrimitive.Viewport
+    ref={ref}
+    className={cn(
+      'fixed right-4 bottom-4 z-[var(--z-toast)] flex w-full max-w-sm flex-col gap-2 sm:max-w-md',
+      className
+    )}
+    {...props}
+  />
+));
 
 ToastViewport.displayName = ToastPrimitive.Viewport.displayName;
 
@@ -160,7 +173,7 @@ export function Toaster() {
 
   return (
     <div
-      className="fixed bottom-4 right-4 z-[var(--z-toast)] flex flex-col gap-2 w-full max-w-sm sm:max-w-md"
+      className="fixed right-4 bottom-4 z-[var(--z-toast)] flex w-full max-w-sm flex-col gap-2 sm:max-w-md"
       role="region"
       aria-label="Notifications"
     >

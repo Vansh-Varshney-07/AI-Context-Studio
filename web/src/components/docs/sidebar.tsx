@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { ChevronRight, ChevronDown, FileText } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import { docCategories, type DocCategory, type DocSidebarItem } from "@/data/docs";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { ChevronRight, ChevronDown, FileText } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
+import { docCategories, type DocCategory, type DocSidebarItem } from '@/data/docs';
 
 interface DocSidebarProps {
   currentCategory: string;
@@ -16,19 +16,27 @@ export function DocSidebar({ currentCategory, className }: DocSidebarProps) {
   const pathname = usePathname();
   const category = docCategories.find((c) => c.id === currentCategory);
 
-  const isActive = (href: string) => pathname === href || (pathname.startsWith(href + "/") && href !== "/docs");
+  const isActive = (href: string) =>
+    pathname === href || (pathname.startsWith(href + '/') && href !== '/docs');
 
   return (
-    <aside className={cn("w-72 flex-shrink-0 border-r border-[var(--color-border)] bg-[var(--color-bg-surface)] hidden lg:block", className)}>
-      <nav className="h-full flex flex-col" aria-label="Documentation navigation">
-        <div className="p-4 border-b border-[var(--color-border)]">
-          <h2 className="text-sm font-semibold text-[var(--color-text-muted)] uppercase tracking-wider">Documentation</h2>
+    <aside
+      className={cn(
+        'hidden w-72 flex-shrink-0 border-r border-[var(--color-border)] bg-[var(--color-bg-surface)] lg:block',
+        className
+      )}
+    >
+      <nav className="flex h-full flex-col" aria-label="Documentation navigation">
+        <div className="border-b border-[var(--color-border)] p-4">
+          <h2 className="text-sm font-semibold tracking-wider text-[var(--color-text-muted)] uppercase">
+            Documentation
+          </h2>
         </div>
         <div className="flex-1 overflow-y-auto p-4">
           <ul className="space-y-6" role="list">
             {docCategories.map((cat) => (
               <li key={cat.id} className="space-y-2">
-                <h3 className="px-2 text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wider">
+                <h3 className="px-2 text-xs font-semibold tracking-wider text-[var(--color-text-muted)] uppercase">
                   {cat.title}
                 </h3>
                 <ul className="space-y-1" role="list">
@@ -45,12 +53,12 @@ export function DocSidebar({ currentCategory, className }: DocSidebarProps) {
             ))}
           </ul>
         </div>
-        <div className="p-4 border-t border-[var(--color-border)]">
+        <div className="border-t border-[var(--color-border)] p-4">
           <Link
             href="https://github.com/ai-context-studio"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-text-primary)]"
           >
             <FileText className="h-4 w-4" />
             Edit on GitHub
@@ -74,10 +82,12 @@ function SidebarItem({ item, isActive, pathname }: SidebarItemProps) {
   if (hasChildren) {
     return (
       <li>
-        <span className={cn(
-          "w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm font-medium text-[var(--color-text-secondary)]",
-          isActive ? "text-[var(--color-accent)]" : ""
-        )}>
+        <span
+          className={cn(
+            'flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-[var(--color-text-secondary)]',
+            isActive ? 'text-[var(--color-accent)]' : ''
+          )}
+        >
           <span className="truncate">{item.title}</span>
           {item.badge && (
             <Badge variant="accent" className="ml-auto text-xs">
@@ -86,16 +96,16 @@ function SidebarItem({ item, isActive, pathname }: SidebarItemProps) {
           )}
           <ChevronRight className="h-4 w-4 text-[var(--color-text-muted)]" aria-hidden="true" />
         </span>
-        <ul className="mt-1 space-y-1 pl-6 border-l border-[var(--color-border)]" role="list">
+        <ul className="mt-1 space-y-1 border-l border-[var(--color-border)] pl-6" role="list">
           {item.items?.map((child) => (
             <li key={child.href}>
               <Link
                 href={child.href}
                 className={cn(
-                  "block px-2 py-1.5 rounded-lg text-sm font-medium transition-colors",
+                  'block rounded-lg px-2 py-1.5 text-sm font-medium transition-colors',
                   pathname === child.href
-                    ? "text-[var(--color-accent)] bg-[var(--color-accent-light)]"
-                    : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-tertiary)]"
+                    ? 'bg-[var(--color-accent-light)] text-[var(--color-accent)]'
+                    : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-tertiary)] hover:text-[var(--color-text-primary)]'
                 )}
               >
                 {child.title}
@@ -112,10 +122,10 @@ function SidebarItem({ item, isActive, pathname }: SidebarItemProps) {
       <Link
         href={item.href}
         className={cn(
-          "block px-2 py-1.5 rounded-lg text-sm font-medium transition-colors",
+          'block rounded-lg px-2 py-1.5 text-sm font-medium transition-colors',
           isActive
-            ? "text-[var(--color-accent)] bg-[var(--color-accent-light)]"
-            : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-tertiary)]"
+            ? 'bg-[var(--color-accent-light)] text-[var(--color-accent)]'
+            : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-tertiary)] hover:text-[var(--color-text-primary)]'
         )}
       >
         {item.title}

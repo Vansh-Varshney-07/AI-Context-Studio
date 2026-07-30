@@ -1,26 +1,21 @@
-"use client";
+'use client';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 interface SkeletonProps {
   className?: string;
   width?: string | number;
   height?: string | number;
-  variant?: "text" | "circular" | "rectangular";
+  variant?: 'text' | 'circular' | 'rectangular';
 }
 
-export function Skeleton({
-  className,
-  width = "100%",
-  height,
-  variant = "text",
-}: SkeletonProps) {
-  const baseStyles = "animate-pulse bg-[var(--color-border)] rounded";
+export function Skeleton({ className, width = '100%', height, variant = 'text' }: SkeletonProps) {
+  const baseStyles = 'animate-pulse bg-[var(--color-border)] rounded';
 
   const variantStyles = {
-    text: "h-4 rounded",
-    circular: "rounded-full",
-    rectangular: "rounded-lg",
+    text: 'h-4 rounded',
+    circular: 'rounded-full',
+    rectangular: 'rounded-lg',
   };
 
   return (
@@ -34,10 +29,10 @@ export function Skeleton({
 
 export function CardSkeleton({ className }: { className?: string }) {
   return (
-    <div className={cn("p-6 space-y-4", className)}>
+    <div className={cn('space-y-4 p-6', className)}>
       <div className="flex items-center gap-4">
         <Skeleton width={48} height={48} variant="circular" />
-        <div className="space-y-2 flex-1">
+        <div className="flex-1 space-y-2">
           <Skeleton width="40%" height={20} />
           <Skeleton width="60%" height={16} />
         </div>
@@ -55,9 +50,9 @@ export function CardSkeleton({ className }: { className?: string }) {
 
 export function AssetCardSkeleton() {
   return (
-    <div className="group relative flex flex-col h-full border border-[var(--color-border)] rounded-xl bg-[var(--color-bg-surface)] overflow-hidden transition-all duration-200 hover:border-[var(--color-border-strong)] hover:shadow-lg">
-      <div className="aspect-video w-full bg-[var(--color-border)] animate-pulse" />
-      <div className="p-4 space-y-3 flex-1 flex flex-col">
+    <div className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-surface)] transition-all duration-200 hover:border-[var(--color-border-strong)] hover:shadow-lg">
+      <div className="aspect-video w-full animate-pulse bg-[var(--color-border)]" />
+      <div className="flex flex-1 flex-col space-y-3 p-4">
         <div className="flex items-center gap-2">
           <Skeleton width={80} height={20} />
           <Skeleton width={60} height={20} />
@@ -65,7 +60,7 @@ export function AssetCardSkeleton() {
         <Skeleton width="100%" height={16} />
         <Skeleton width="70%" height={16} />
         <Skeleton width="50%" height={16} />
-        <div className="flex items-center gap-2 mt-auto pt-4 border-t border-[var(--color-border)]">
+        <div className="mt-auto flex items-center gap-2 border-t border-[var(--color-border)] pt-4">
           <Skeleton width={24} height={24} variant="circular" />
           <Skeleton width={80} height={14} />
           <span className="ml-auto">
@@ -82,7 +77,7 @@ export function TableRowSkeleton({ columns = 4 }: { columns?: number }) {
     <tr>
       {Array.from({ length: columns }).map((_, i) => (
         <td key={i} className="px-4 py-3">
-          <Skeleton width={i === 0 ? "60%" : "40%"} height={16} />
+          <Skeleton width={i === 0 ? '60%' : '40%'} height={16} />
         </td>
       ))}
     </tr>

@@ -1,9 +1,9 @@
-import { type Metadata } from "next";
-import { Header, Footer } from "@/components/layout";
-import { AssetDetail } from "@/components/marketplace/asset-detail";
-import { assets } from "@/data/marketplace";
-import { generateMetadata as generatePageMetadata } from "@/lib/metadata";
-import { notFound } from "next/navigation";
+import { type Metadata } from 'next';
+import { Header, Footer } from '@/components/layout';
+import { AssetDetail } from '@/components/marketplace/asset-detail';
+import { assets } from '@/data/marketplace';
+import { generateMetadata as generatePageMetadata } from '@/lib/metadata';
+import { notFound } from 'next/navigation';
 
 interface AssetDetailPageProps {
   params: Promise<{ asset: string }>;
@@ -18,9 +18,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: AssetDetailPageProps): Promise<Metadata> {
   const { asset } = await params;
   const assetData = assets.find((a) => a.id === asset);
-  
+
   if (!assetData) {
-    return generatePageMetadata({ title: "Asset Not Found" });
+    return generatePageMetadata({ title: 'Asset Not Found' });
   }
 
   return generatePageMetadata({
@@ -30,10 +30,10 @@ export async function generateMetadata({ params }: AssetDetailPageProps): Promis
       title: `${assetData.name} | AI Context Studio Marketplace`,
       description: assetData.description,
       images: assetData.thumbnail ? [assetData.thumbnail] : [],
-      type: "website",
+      type: 'website',
     },
     twitter: {
-      card: "summary_large_image",
+      card: 'summary_large_image',
       title: assetData.name,
       description: assetData.description,
       images: assetData.thumbnail ? [assetData.thumbnail] : [],
@@ -50,9 +50,9 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
   }
 
   return (
-    <main className="min-h-screen flex flex-col">
+    <main className="flex min-h-screen flex-col">
       <Header />
-      <section className="flex-1 flex flex-col">
+      <section className="flex flex-1 flex-col">
         <AssetDetail asset={assetData} />
       </section>
       <Footer />

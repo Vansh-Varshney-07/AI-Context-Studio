@@ -1,65 +1,60 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* =========================================================================
    AI Context Studio — Premium Design System (Light First)
-   Inspired by Apple, Linear, Vercel, Raycast, Framer
+   Matching Desktop App: Forest Green Accent + Tri-Color Palette
    ========================================================================= */
 
 @theme inline {
-  /* Colors — Light Theme First */
-  --color-bg-primary: #FFFFFF;
-  --color-bg-secondary: #F5F1E8;
-  --color-bg-tertiary: #FAF7F2;
-  --color-bg-surface: #FFFFFF;
+  /* Colors — Light Theme First (Desktop Aligned) */
+  --color-bg-primary: #f5f1e8;       /* Warm Beige - Primary background */
+  --color-bg-secondary: #e7efe6;     /* Soft Sage - Secondary background */
+  --color-bg-tertiary: #faf7f2;      /* Cream - Tertiary background / Cards */
+  --color-bg-surface: #ffffff;       /* Pure White - Elevated surfaces */
 
-  --color-accent: #3B82F6;
-  --color-accent-hover: #2563EB;
-  --color-accent-light: #DBEAFE;
+  --color-accent: #4f7a5a;           /* Forest Green - Primary accent / CTA */
+  --color-accent-hover: #446b4e;     /* Darker Forest Green - Hover */
+  --color-accent-light: #e7efe6;     /* Soft Sage - Accent backgrounds / badges */
 
-  --color-violet: #8B5CF6;
-  --color-violet-hover: #7C3AED;
-  --color-violet-light: #EDE9FE;
+  --color-olive: #7b8f6a;            /* Supporting Olive - Muted accent */
+  --color-muted-gold: #c8a96a;       /* Muted Gold - Warm accent */
 
-  --color-cyan: #06B6D4;
-  --color-cyan-hover: #0891B2;
-  --color-cyan-light: #CFFAFE;
+  --color-text-primary: #222222;     /* Near Black - Primary text */
+  --color-text-secondary: #6b6b6b;   /* Medium Gray - Secondary text */
+  --color-text-muted: #9b9b9b;       /* Light Gray - Muted text */
+  --color-text-inverse: #faf7f2;     /* Cream - Inverse text (on accent) */
 
-  --color-text-primary: #111827;
-  --color-text-secondary: #4B5563;
-  --color-text-muted: #9CA3AF;
-  --color-text-inverse: #FFFFFF;
+  --color-border: #ddd7cc;           /* Warm border */
+  --color-border-strong: #d0c8bb;    /* Stronger border */
+  --color-border-subtle: #e8e3d9;    /* Subtle border */
 
-  --color-border: #E5E7EB;
-  --color-border-strong: #D1D5DB;
-  --color-border-subtle: #F3F4F6;
-
-  --color-success: #10B981;
-  --color-success-bg: #ECFDF5;
-  --color-warning: #F59E0B;
-  --color-warning-bg: #FFFBEB;
-  --color-error: #EF4444;
-  --color-error-bg: #FEF2F2;
+  --color-success: #5f8d4e;          /* Green status */
+  --color-success-bg: #e7efe6;       /* Sage status bg */
+  --color-warning: #d8a84e;          /* Gold warning */
+  --color-warning-bg: #f5f0e5;       /* Warm warning bg */
+  --color-error: #d16666;            /* Red error */
+  --color-error-bg: #f5e8e8;         /* Light error bg */
 
   --color-glass: rgba(255, 255, 255, 0.7);
   --color-glass-border: rgba(255, 255, 255, 0.3);
 
-  --color-focus: #3B82F6;
-  --color-focus-ring: rgba(59, 130, 246, 0.2);
+  --color-focus: #4f7a5a;
+  --color-focus-ring: rgba(79, 122, 90, 0.2);
 
   /* Typography */
-  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-mono: var(--font-geist-mono), "SF Mono", "Fira Code", monospace;
+  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: var(--font-geist-mono), 'SF Mono', 'Fira Code', monospace;
 
-  --text-xs: 0.6875rem;    /* 11px */
-  --text-sm: 0.8125rem;    /* 13px */
-  --text-base: 0.9375rem;  /* 15px */
-  --text-lg: 1.0625rem;    /* 17px */
-  --text-xl: 1.25rem;      /* 20px */
-  --text-2xl: 1.5rem;      /* 24px */
-  --text-3xl: 1.875rem;    /* 30px */
-  --text-4xl: 2.25rem;     /* 36px */
-  --text-5xl: 3rem;        /* 48px */
-  --text-6xl: 4.5rem;      /* 72px */
+  --text-xs: 0.6875rem;   /* 11px */
+  --text-sm: 0.8125rem;   /* 13px */
+  --text-base: 0.9375rem; /* 15px */
+  --text-lg: 1.0625rem;   /* 17px */
+  --text-xl: 1.25rem;     /* 20px */
+  --text-2xl: 1.5rem;     /* 24px */
+  --text-3xl: 1.875rem;   /* 30px */
+  --text-4xl: 2.25rem;    /* 36px */
+  --text-5xl: 3rem;       /* 48px */
+  --text-6xl: 4.5rem;     /* 72px */
 
   --font-light: 300;
   --font-normal: 400;
@@ -96,12 +91,12 @@
   --radius-full: 9999px;
 
   /* Shadows — Subtle, Calm Elevation */
-  --shadow-xs: 0 1px 2px rgba(17, 24, 39, 0.04);
-  --shadow-sm: 0 1px 3px rgba(17, 24, 39, 0.06);
-  --shadow-md: 0 4px 8px rgba(17, 24, 39, 0.06);
-  --shadow-lg: 0 8px 24px rgba(17, 24, 39, 0.07);
-  --shadow-xl: 0 16px 48px rgba(17, 24, 39, 0.08);
-  --shadow-inner: inset 0 1px 2px rgba(17, 24, 39, 0.04);
+  --shadow-xs: 0 1px 2px rgba(34, 34, 34, 0.04);
+  --shadow-sm: 0 1px 3px rgba(34, 34, 34, 0.06);
+  --shadow-md: 0 4px 8px rgba(34, 34, 34, 0.06);
+  --shadow-lg: 0 8px 24px rgba(34, 34, 34, 0.07);
+  --shadow-xl: 0 16px 48px rgba(34, 34, 34, 0.08);
+  --shadow-inner: inset 0 1px 2px rgba(34, 34, 34, 0.04);
 
   /* Motion */
   --duration-fast: 150ms;
@@ -216,29 +211,29 @@ body {
 
 /* Card base */
 .card {
-  @apply bg-[var(--color-bg-surface)] border border-[var(--color-border)] rounded-xl shadow-sm;
+  @apply rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-surface)] shadow-sm;
 }
 .card-hover {
-  @apply transition-all duration-200 ease-smooth hover:shadow-md hover:border-[var(--color-border-strong)];
+  @apply ease-smooth transition-all duration-200 hover:border-[var(--color-border-strong)] hover:shadow-md;
 }
 .card-elevated {
   @apply shadow-lg;
 }
 .card-glass {
-  @apply bg-[var(--color-glass)] border-[var(--color-glass-border)] backdrop-blur-md;
+  @apply border-[var(--color-glass-border)] bg-[var(--color-glass)] backdrop-blur-md;
 }
 
 /* Button base */
 .btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-150 ease-smooth focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)] disabled:opacity-50 disabled:pointer-events-none;
+  @apply ease-smooth inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--color-focus-ring)] disabled:pointer-events-none disabled:opacity-50;
 }
 
 .btn-primary {
-  @apply bg-[var(--color-accent)] text-[var(--color-text-inverse)] hover:bg-[var(--color-accent-hover)] active:bg-[var(--color-accent-hover)]/90 active:scale-[0.98] shadow-sm;
+  @apply bg-[var(--color-accent)] text-[var(--color-text-inverse)] shadow-sm hover:bg-[var(--color-accent-hover)] active:scale-[0.98] active:bg-[var(--color-accent-hover)]/90;
 }
 
 .btn-secondary {
-  @apply bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] border border-[var(--color-border)] hover:bg-[var(--color-bg-secondary)] hover:border-[var(--color-border-strong)] active:scale-[0.98];
+  @apply border border-[var(--color-border)] bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] hover:border-[var(--color-border-strong)] hover:bg-[var(--color-bg-secondary)] active:scale-[0.98];
 }
 
 .btn-ghost {
@@ -246,19 +241,19 @@ body {
 }
 
 .btn-outline {
-  @apply bg-transparent border border-[var(--color-border)] text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] hover:border-[var(--color-border-strong)] active:scale-[0.98];
+  @apply border border-[var(--color-border)] bg-transparent text-[var(--color-text-primary)] hover:border-[var(--color-border-strong)] hover:bg-[var(--color-bg-secondary)] active:scale-[0.98];
 }
 
 .btn-danger {
-  @apply bg-[var(--color-error)] text-white hover:bg-[var(--color-error)]/90 active:scale-[0.98] shadow-sm;
+  @apply bg-[var(--color-error)] text-white shadow-sm hover:bg-[var(--color-error)]/90 active:scale-[0.98];
 }
 
 .btn-glass {
-  @apply bg-[var(--color-glass)] border-[var(--color-glass-border)] text-[var(--color-text-primary)] backdrop-blur-md hover:bg-white/80 active:scale-[0.98];
+  @apply border-[var(--color-glass-border)] bg-[var(--color-glass)] text-[var(--color-text-primary)] backdrop-blur-md hover:bg-white/80 active:scale-[0.98];
 }
 
 .btn-icon {
-  @apply p-2 rounded-lg;
+  @apply rounded-lg p-2;
 }
 
 .btn-xl {
@@ -283,7 +278,7 @@ body {
 
 /* Input base */
 .input {
-  @apply w-full rounded-lg bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] px-3 py-2.5 text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] transition-all duration-150 ease-smooth;
+  @apply ease-smooth w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-tertiary)] px-3 py-2.5 text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] transition-all duration-150;
 }
 .input:focus {
   @apply border-[var(--color-accent)] ring-2 ring-[var(--color-focus-ring)];
@@ -292,21 +287,21 @@ body {
   @apply border-[var(--color-error)] focus:border-[var(--color-error)] focus:ring-[var(--color-error-bg)];
 }
 .input-search {
-  @apply pl-10 pr-4;
+  @apply pr-4 pl-10;
 }
 
 /* Label */
 .label {
-  @apply block text-xs font-medium text-[var(--color-text-secondary)] mb-1.5;
+  @apply mb-1.5 block text-xs font-medium text-[var(--color-text-secondary)];
 }
 
 /* Badge / Tag */
 .badge {
-  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors whitespace-nowrap;
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap transition-colors;
 }
 
 .badge-default {
-  @apply bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] border border-[var(--color-border)];
+  @apply border border-[var(--color-border)] bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)];
 }
 
 .badge-accent {
@@ -334,22 +329,34 @@ body {
 }
 
 .badge-outline {
-  @apply bg-transparent border border-[var(--color-border-strong)] text-[var(--color-text-secondary)];
+  @apply border border-[var(--color-border-strong)] bg-transparent text-[var(--color-text-secondary)];
 }
 
 .badge-dot {
   @apply relative pl-6;
 }
 .badge-dot::before {
-  content: "";
-  @apply absolute left-2 top-1/2 -translate-y-1/2 size-1.5 rounded-full;
+  content: '';
+  @apply absolute top-1/2 left-2 size-1.5 -translate-y-1/2 rounded-full;
 }
-.badge-dot-accent::before { @apply bg-[var(--color-accent)]; }
-.badge-dot-violet::before { @apply bg-[var(--color-violet)]; }
-.badge-dot-cyan::before { @apply bg-[var(--color-cyan)]; }
-.badge-dot-success::before { @apply bg-[var(--color-success)]; }
-.badge-dot-warning::before { @apply bg-[var(--color-warning)]; }
-.badge-dot-error::before { @apply bg-[var(--color-error)]; }
+.badge-dot-accent::before {
+  @apply bg-[var(--color-accent)];
+}
+.badge-dot-violet::before {
+  @apply bg-[var(--color-violet)];
+}
+.badge-dot-cyan::before {
+  @apply bg-[var(--color-cyan)];
+}
+.badge-dot-success::before {
+  @apply bg-[var(--color-success)];
+}
+.badge-dot-warning::before {
+  @apply bg-[var(--color-warning)];
+}
+.badge-dot-error::before {
+  @apply bg-[var(--color-error)];
+}
 
 /* Divider */
 .divider {
@@ -386,13 +393,25 @@ body {
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideDown {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Reduced motion */

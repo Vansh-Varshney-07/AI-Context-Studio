@@ -1,34 +1,61 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useMemo, useCallback } from "react";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { ChevronDown, ChevronUp, Search, Filter, X, Star, Download, Package, User, Tag, Clock, CheckCircle, SlidersHorizontal, Loader2 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Skeleton, EmptyState, AssetCardSkeleton } from "@/components/common";
-import { assets, type Asset, getAssetsByCategory, getCategories, getAssetKinds } from "@/data/marketplace";
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import {
+  ChevronDown,
+  ChevronUp,
+  Search,
+  Filter,
+  X,
+  Star,
+  Download,
+  Package,
+  User,
+  Tag,
+  Clock,
+  CheckCircle,
+  SlidersHorizontal,
+  Loader2,
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
+import { Skeleton, EmptyState, AssetCardSkeleton } from '@/components/common';
+import {
+  assets,
+  type Asset,
+  getAssetsByCategory,
+  getCategories,
+  getAssetKinds,
+} from '@/data/marketplace';
 
 const CATEGORIES = getCategories();
 const KINDS = getAssetKinds();
 const SORT_OPTIONS = [
-  { value: "trending", label: "Trending" },
-  { value: "recent", label: "Most Recent" },
-  { value: "rating", label: "Highest Rated" },
-  { value: "downloads", label: "Most Downloads" },
-  { value: "alphabetical", label: "A-Z" },
+  { value: 'trending', label: 'Trending' },
+  { value: 'recent', label: 'Most Recent' },
+  { value: 'rating', label: 'Highest Rated' },
+  { value: 'downloads', label: 'Most Downloads' },
+  { value: 'alphabetical', label: 'A-Z' },
 ];
 
 function SortDropdown({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="w-full justify-between gap-2 h-10 px-3">
+      <SelectTrigger className="h-10 w-full justify-between gap-2 px-3">
         <SelectValue placeholder="Sort" />
       </SelectTrigger>
       <SelectContent className="w-48">
@@ -42,40 +69,58 @@ function SortDropdown({ value, onChange }: { value: string; onChange: (v: string
   );
 }
 
-function RatingStars({ rating, count, size = "sm" }: { rating: number; count?: number; size?: "sm" | "md" }) {
-  const starSize = size === "sm" ? "h-3 w-3" : "h-4 w-4";
+function RatingStars({
+  rating,
+  count,
+  size = 'sm',
+}: {
+  rating: number;
+  count?: number;
+  size?: 'sm' | 'md';
+}) {
+  const starSize = size === 'sm' ? 'h-3 w-3' : 'h-4 w-4';
   return (
     <div className="flex items-center gap-1" aria-label={`${rating} out of 5 stars`}>
       {[1, 2, 3, 4, 5].map((n) => (
         <Star
           key={n}
-          className={cn(starSize, n <= Math.round(rating) ? "text-yellow-400 fill-current" : "text-[var(--color-border)]")}
-          fill={n <= Math.round(rating) ? "currentColor" : "none"}
+          className={cn(
+            starSize,
+            n <= Math.round(rating) ? 'fill-current text-yellow-400' : 'text-[var(--color-border)]'
+          )}
+          fill={n <= Math.round(rating) ? 'currentColor' : 'none'}
         />
       ))}
-      {count && <span className="text-xs text-[var(--color-text-muted)] ml-1">({count.toLocaleString()})</span>}
+      {count && (
+        <span className="ml-1 text-xs text-[var(--color-text-muted)]">
+          ({count.toLocaleString()})
+        </span>
+      )}
     </div>
   );
 }
 
 function CompatibilityBadge({ targets }: { targets: string[] }) {
   const targetIcons: Record<string, React.ReactNode> = {
-    "Cursor": <Package className="h-3 w-3" />,
-    "Claude Code": <User className="h-3 w-3" />,
-    "Windsurf": <Tag className="h-3 w-3" />,
-    "VS Code": <Package className="h-3 w-3" />,
-    "Custom": <Package className="h-3 w-3" />,
+    Cursor: <Package className="h-3 w-3" />,
+    'Claude Code': <User className="h-3 w-3" />,
+    Windsurf: <Tag className="h-3 w-3" />,
+    'VS Code': <Package className="h-3 w-3" />,
+    Custom: <Package className="h-3 w-3" />,
   };
   return (
     <div className="flex flex-wrap gap-1.5" aria-label="Compatible targets">
       {targets.slice(0, 4).map((t) => (
-        <span key={t} className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)] border border-[var(--color-border)]">
+        <span
+          key={t}
+          className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-[var(--color-bg-tertiary)] px-2 py-0.5 text-xs font-medium text-[var(--color-text-secondary)]"
+        >
           {targetIcons[t] || <Package className="h-3 w-3" />}
           <span>{t}</span>
         </span>
       ))}
       {targets.length > 4 && (
-        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[var(--color-accent-light)] text-[var(--color-accent)] border border-[var(--color-accent)]">
+        <span className="inline-flex items-center rounded border border-[var(--color-accent)] bg-[var(--color-accent-light)] px-2 py-0.5 text-xs font-medium text-[var(--color-accent)]">
           +{targets.length - 4}
         </span>
       )}
@@ -85,7 +130,7 @@ function CompatibilityBadge({ targets }: { targets: string[] }) {
 
 function VersionBadge({ version }: { version: string }) {
   return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+    <span className="inline-flex items-center rounded border border-green-200 bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
       v{version}
     </span>
   );
@@ -94,24 +139,26 @@ function VersionBadge({ version }: { version: string }) {
 function AssetCard({ asset }: { asset: Asset }) {
   return (
     <div className="group">
-      <Card className="card-hover h-full flex flex-col overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg-surface)]">
+      <Card className="card-hover flex h-full flex-col overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg-surface)]">
         <div className="relative aspect-video overflow-hidden bg-[var(--color-bg-tertiary)]">
           {asset.thumbnail ? (
             <img
               src={asset.thumbnail}
               alt={asset.name}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
               loading="lazy"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-[var(--color-text-muted)]">
+            <div className="flex h-full w-full items-center justify-center text-[var(--color-text-muted)]">
               <Package className="h-12 w-12" />
             </div>
           )}
           <div className="absolute top-3 right-3 flex gap-1.5">
-            <Badge variant="outline" className="text-xs">{asset.kind}</Badge>
+            <Badge variant="outline" className="text-xs">
+              {asset.kind}
+            </Badge>
             {asset.verified && (
-              <Badge variant="accent" className="text-xs gap-1">
+              <Badge variant="accent" className="gap-1 text-xs">
                 <CheckCircle className="h-3 w-3" />
                 Verified
               </Badge>
@@ -119,38 +166,54 @@ function AssetCard({ asset }: { asset: Asset }) {
           </div>
         </div>
 
-        <div className="p-4 space-y-3 flex-1 flex flex-col">
+        <div className="flex flex-1 flex-col space-y-3 p-4">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <h3 className="font-semibold text-[var(--color-text-primary)] truncate">{asset.name}</h3>
-              <p className="text-sm text-[var(--color-text-muted)] truncate">by {asset.author}</p>
+              <h3 className="truncate font-semibold text-[var(--color-text-primary)]">
+                {asset.name}
+              </h3>
+              <p className="truncate text-sm text-[var(--color-text-muted)]">by {asset.author}</p>
             </div>
             <VersionBadge version={asset.version} />
           </div>
 
-          <p className="text-sm text-[var(--color-text-secondary)] line-clamp-2">{asset.description}</p>
+          <p className="line-clamp-2 text-sm text-[var(--color-text-secondary)]">
+            {asset.description}
+          </p>
 
           <div className="flex items-center justify-between">
             <RatingStars rating={asset.rating} count={asset.reviewCount} size="sm" />
             <div className="flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
-              <span className="flex items-center gap-1">{asset.downloads.toLocaleString()} downloads</span>
-              <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {asset.updatedAt}</span>
+              <span className="flex items-center gap-1">
+                {asset.downloads.toLocaleString()} downloads
+              </span>
+              <span className="flex items-center gap-1">
+                <Clock className="h-3 w-3" /> {asset.updatedAt}
+              </span>
             </div>
           </div>
 
           <CompatibilityBadge targets={asset.compatibility} />
 
-          <div className="flex flex-wrap gap-1.5 pt-2 border-t border-[var(--color-border)]">
+          <div className="flex flex-wrap gap-1.5 border-t border-[var(--color-border)] pt-2">
             {asset.tags.slice(0, 4).map((tag) => (
-              <Badge key={tag} variant="outline" className="text-xs h-5 px-2">{tag}</Badge>
+              <Badge key={tag} variant="outline" className="h-5 px-2 text-xs">
+                {tag}
+              </Badge>
             ))}
             {asset.tags.length > 4 && (
-              <Badge variant="outline" className="text-xs h-5 px-2">+{asset.tags.length - 4}</Badge>
+              <Badge variant="outline" className="h-5 px-2 text-xs">
+                +{asset.tags.length - 4}
+              </Badge>
             )}
           </div>
 
-          <div className="flex items-center gap-2 mt-auto pt-3 border-t border-[var(--color-border)]">
-            <Button variant="ghost" size="sm" className="flex-1 flex items-center justify-center gap-1.5">
+          <div className="mt-auto flex items-center gap-2 border-t border-[var(--color-border)] pt-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex flex-1 items-center justify-center gap-1.5"
+            >
               <Download className="h-4 w-4" />
               Install
             </Button>
@@ -165,17 +228,17 @@ function AssetCard({ asset }: { asset: Asset }) {
   );
 }
 
-function FilterSidebar({ 
-  selectedCategory, 
-  onCategoryChange, 
-  selectedKinds, 
-  onKindsChange, 
-  verifiedOnly, 
+function FilterSidebar({
+  selectedCategory,
+  onCategoryChange,
+  selectedKinds,
+  onKindsChange,
+  verifiedOnly,
   onVerifiedChange,
-  compatibility, 
+  compatibility,
   onCompatibilityChange,
   resultsCount,
-  onClearFilters 
+  onClearFilters,
 }: {
   selectedCategory: string;
   onCategoryChange: (c: string) => void;
@@ -188,36 +251,47 @@ function FilterSidebar({
   resultsCount: number;
   onClearFilters: () => void;
 }) {
-  const [openSections, setOpenSections] = useState<string[]>(["Category", "Type", "Compatibility"]);
+  const [openSections, setOpenSections] = useState<string[]>(['Category', 'Type', 'Compatibility']);
 
   const toggleSection = (section: string) => {
-    setOpenSections(prev => prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section]);
+    setOpenSections((prev) =>
+      prev.includes(section) ? prev.filter((s) => s !== section) : [...prev, section]
+    );
   };
 
   return (
-    <aside className="w-72 flex-shrink-0 hidden lg:block">
+    <aside className="hidden w-72 flex-shrink-0 lg:block">
       <ScrollArea className="h-[calc(100vh-8rem)]">
-        <div className="p-4 space-y-6">
+        <div className="space-y-6 p-4">
           <div className="flex items-center justify-between">
             <h2 className="font-semibold text-[var(--color-text-primary)]">Filters</h2>
-            <Button variant="ghost" size="sm" onClick={onClearFilters} className="text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]">
-              <X className="h-4 w-4 mr-1" />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClearFilters}
+              className="text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+            >
+              <X className="mr-1 h-4 w-4" />
               Clear all
             </Button>
           </div>
 
           <Separator />
 
-          <FilterSection title="Category" open={openSections.includes("Category")} onToggle={() => toggleSection("Category")}>
+          <FilterSection
+            title="Category"
+            open={openSections.includes('Category')}
+            onToggle={() => toggleSection('Category')}
+          >
             <div className="space-y-2">
               {CATEGORIES.map((cat) => (
-                <label key={cat} className="flex items-center gap-2 cursor-pointer">
+                <label key={cat} className="flex cursor-pointer items-center gap-2">
                   <input
                     type="radio"
                     name="category"
                     checked={selectedCategory === cat}
                     onChange={() => onCategoryChange(cat)}
-                    className="h-4 w-4 text-[var(--color-accent)] border-[var(--color-border)] focus:ring-[var(--color-accent)]"
+                    className="h-4 w-4 border-[var(--color-border)] text-[var(--color-accent)] focus:ring-[var(--color-accent)]"
                   />
                   <span className="text-sm text-[var(--color-text-secondary)]">{cat}</span>
                 </label>
@@ -225,15 +299,25 @@ function FilterSidebar({
             </div>
           </FilterSection>
 
-          <FilterSection title="Type" open={openSections.includes("Type")} onToggle={() => toggleSection("Type")}>
+          <FilterSection
+            title="Type"
+            open={openSections.includes('Type')}
+            onToggle={() => toggleSection('Type')}
+          >
             <div className="space-y-2">
               {KINDS.map((kind) => (
-                <label key={kind} className="flex items-center gap-2 cursor-pointer">
+                <label key={kind} className="flex cursor-pointer items-center gap-2">
                   <input
                     type="checkbox"
                     checked={selectedKinds.includes(kind)}
-                    onChange={(e) => onKindsChange(e.target.checked ? [...selectedKinds, kind] : selectedKinds.filter(k => k !== kind))}
-                    className="h-4 w-4 text-[var(--color-accent)] border-[var(--color-border)] rounded focus:ring-[var(--color-accent)]"
+                    onChange={(e) =>
+                      onKindsChange(
+                        e.target.checked
+                          ? [...selectedKinds, kind]
+                          : selectedKinds.filter((k) => k !== kind)
+                      )
+                    }
+                    className="h-4 w-4 rounded border-[var(--color-border)] text-[var(--color-accent)] focus:ring-[var(--color-accent)]"
                   />
                   <span className="text-sm text-[var(--color-text-secondary)]">{kind}</span>
                 </label>
@@ -241,15 +325,25 @@ function FilterSidebar({
             </div>
           </FilterSection>
 
-          <FilterSection title="Compatibility" open={openSections.includes("Compatibility")} onToggle={() => toggleSection("Compatibility")}>
+          <FilterSection
+            title="Compatibility"
+            open={openSections.includes('Compatibility')}
+            onToggle={() => toggleSection('Compatibility')}
+          >
             <div className="space-y-2">
-              {["Cursor", "Claude Code", "Windsurf", "VS Code", "Custom"].map((target) => (
-                <label key={target} className="flex items-center gap-2 cursor-pointer">
+              {['Cursor', 'Claude Code', 'Windsurf', 'VS Code', 'Custom'].map((target) => (
+                <label key={target} className="flex cursor-pointer items-center gap-2">
                   <input
                     type="checkbox"
                     checked={compatibility.includes(target)}
-                    onChange={(e) => onCompatibilityChange(e.target.checked ? [...compatibility, target] : compatibility.filter(t => t !== target))}
-                    className="h-4 w-4 text-[var(--color-accent)] border-[var(--color-border)] rounded focus:ring-[var(--color-accent)]"
+                    onChange={(e) =>
+                      onCompatibilityChange(
+                        e.target.checked
+                          ? [...compatibility, target]
+                          : compatibility.filter((t) => t !== target)
+                      )
+                    }
+                    className="h-4 w-4 rounded border-[var(--color-border)] text-[var(--color-accent)] focus:ring-[var(--color-accent)]"
                   />
                   <span className="text-sm text-[var(--color-text-secondary)]">{target}</span>
                 </label>
@@ -257,16 +351,22 @@ function FilterSidebar({
             </div>
           </FilterSection>
 
-          <FilterSection title="Verified Only" open={openSections.includes("Verified")} onToggle={() => toggleSection("Verified")}>
+          <FilterSection
+            title="Verified Only"
+            open={openSections.includes('Verified')}
+            onToggle={() => toggleSection('Verified')}
+          >
             <div className="space-y-2">
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex cursor-pointer items-center gap-2">
                 <input
                   type="checkbox"
                   checked={verifiedOnly}
                   onChange={(e) => onVerifiedChange(e.target.checked)}
-                  className="h-4 w-4 text-[var(--color-accent)] border-[var(--color-border)] rounded focus:ring-[var(--color-accent)]"
+                  className="h-4 w-4 rounded border-[var(--color-border)] text-[var(--color-accent)] focus:ring-[var(--color-accent)]"
                 />
-                <span className="text-sm text-[var(--color-text-secondary)]">Verified publishers only</span>
+                <span className="text-sm text-[var(--color-text-secondary)]">
+                  Verified publishers only
+                </span>
               </label>
             </div>
           </FilterSection>
@@ -276,22 +376,34 @@ function FilterSidebar({
   );
 }
 
-function FilterSection({ title, open, onToggle, children }: { title: string; open: boolean; onToggle: () => void; children: React.ReactNode }) {
+function FilterSection({
+  title,
+  open,
+  onToggle,
+  children,
+}: {
+  title: string;
+  open: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
   return (
     <div className="space-y-2">
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between text-sm font-medium text-[var(--color-text-primary)] hover:text-[var(--color-accent)]"
+        className="flex w-full items-center justify-between text-sm font-medium text-[var(--color-text-primary)] hover:text-[var(--color-accent)]"
         aria-expanded={open}
       >
         <span>{title}</span>
-        {open ? <ChevronUp className="h-4 w-4 text-[var(--color-text-muted)]" /> : <ChevronDown className="h-4 w-4 text-[var(--color-text-muted)]" />}
+        {open ? (
+          <ChevronUp className="h-4 w-4 text-[var(--color-text-muted)]" />
+        ) : (
+          <ChevronDown className="h-4 w-4 text-[var(--color-text-muted)]" />
+        )}
       </button>
       <AnimatePresence>
         {open && (
-          <div
-            className="overflow-hidden"
-          >
+          <div className="overflow-hidden">
             <div className="pt-2">{children}</div>
           </div>
         )}
@@ -300,22 +412,33 @@ function FilterSection({ title, open, onToggle, children }: { title: string; ope
   );
 }
 
-function SearchBar({ value, onChange, onClear }: { value: string; onChange: (v: string) => void; onClear: () => void }) {
+function SearchBar({
+  value,
+  onChange,
+  onClear,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  onClear: () => void;
+}) {
   return (
-    <div className="relative flex-1 max-w-xl">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--color-text-muted)]" aria-hidden="true" />
+    <div className="relative max-w-xl flex-1">
+      <Search
+        className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-[var(--color-text-muted)]"
+        aria-hidden="true"
+      />
       <Input
         type="search"
         placeholder="Search assets..."
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="pl-10 pr-10 h-10"
+        className="h-10 pr-10 pl-10"
         aria-label="Search marketplace"
       />
       {value && (
         <button
           onClick={onClear}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+          className="absolute top-1/2 right-3 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
           aria-label="Clear search"
         >
           <X className="h-5 w-5" />
@@ -325,19 +448,33 @@ function SearchBar({ value, onChange, onClear }: { value: string; onChange: (v: 
   );
 }
 
-function ResultsHeader({ count, selectedCategory, searchQuery, hasActiveFilters }: { 
-  count: number; 
-  selectedCategory: string; 
-  searchQuery: string; 
-  hasActiveFilters: boolean; 
+function ResultsHeader({
+  count,
+  selectedCategory,
+  searchQuery,
+  hasActiveFilters,
+}: {
+  count: number;
+  selectedCategory: string;
+  searchQuery: string;
+  hasActiveFilters: boolean;
 }) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <p className="text-sm text-[var(--color-text-secondary)]">
-          Showing <span className="font-semibold text-[var(--color-text-primary)]">{count}</span> asset{count !== 1 ? "s" : ""}
-          {selectedCategory !== "All" && <span className="ml-2">in <span className="font-medium">{selectedCategory}</span></span>}
-          {searchQuery && <span className="ml-2">for <span className="font-medium">"{searchQuery}"</span></span>}
+          Showing <span className="font-semibold text-[var(--color-text-primary)]">{count}</span>{' '}
+          asset{count !== 1 ? 's' : ''}
+          {selectedCategory !== 'All' && (
+            <span className="ml-2">
+              in <span className="font-medium">{selectedCategory}</span>
+            </span>
+          )}
+          {searchQuery && (
+            <span className="ml-2">
+              for <span className="font-medium">"{searchQuery}"</span>
+            </span>
+          )}
         </p>
       </div>
       {hasActiveFilters && (
@@ -355,77 +492,97 @@ export function MarketplaceCategoryPage() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "All");
-  const [selectedKinds, setSelectedKinds] = useState<string[]>(searchParams.get("kind")?.split(",").filter(Boolean) || []);
-  const [verifiedOnly, setVerifiedOnly] = useState(searchParams.get("verified") === "true");
-  const [compatibility, setCompatibility] = useState<string[]>(searchParams.get("compat")?.split(",").filter(Boolean) || []);
-  const [sortBy, setSortBy] = useState(searchParams.get("sort") || "trending");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'All');
+  const [selectedKinds, setSelectedKinds] = useState<string[]>(
+    searchParams.get('kind')?.split(',').filter(Boolean) || []
+  );
+  const [verifiedOnly, setVerifiedOnly] = useState(searchParams.get('verified') === 'true');
+  const [compatibility, setCompatibility] = useState<string[]>(
+    searchParams.get('compat')?.split(',').filter(Boolean) || []
+  );
+  const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'trending');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showSidebar, setShowSidebar] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams();
-    if (searchQuery) params.set("q", searchQuery);
-    if (selectedCategory && selectedCategory !== "All") params.set("category", selectedCategory);
-    if (selectedKinds.length > 0) params.set("kind", selectedKinds.join(","));
-    if (verifiedOnly) params.set("verified", "true");
-    if (compatibility.length > 0) params.set("compat", compatibility.join(","));
-    if (sortBy !== "trending") params.set("sort", sortBy);
+    if (searchQuery) params.set('q', searchQuery);
+    if (selectedCategory && selectedCategory !== 'All') params.set('category', selectedCategory);
+    if (selectedKinds.length > 0) params.set('kind', selectedKinds.join(','));
+    if (verifiedOnly) params.set('verified', 'true');
+    if (compatibility.length > 0) params.set('compat', compatibility.join(','));
+    if (sortBy !== 'trending') params.set('sort', sortBy);
     router.replace(`${pathname}?${params.toString()}`);
-  }, [searchQuery, selectedCategory, selectedKinds, verifiedOnly, compatibility, sortBy, router, pathname]);
+  }, [
+    searchQuery,
+    selectedCategory,
+    selectedKinds,
+    verifiedOnly,
+    compatibility,
+    sortBy,
+    router,
+    pathname,
+  ]);
 
   const filteredAssets = useMemo(() => {
     let result = getAssetsByCategory(selectedCategory);
 
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      result = result.filter(a => 
-        a.name.toLowerCase().includes(query) ||
-        a.description.toLowerCase().includes(query) ||
-        a.author.toLowerCase().includes(query) ||
-        a.tags.some(t => t.toLowerCase().includes(query))
+      result = result.filter(
+        (a) =>
+          a.name.toLowerCase().includes(query) ||
+          a.description.toLowerCase().includes(query) ||
+          a.author.toLowerCase().includes(query) ||
+          a.tags.some((t) => t.toLowerCase().includes(query))
       );
     }
 
     if (selectedKinds.length > 0) {
-      result = result.filter(a => selectedKinds.includes(a.kind));
+      result = result.filter((a) => selectedKinds.includes(a.kind));
     }
 
     if (verifiedOnly) {
-      result = result.filter(a => a.verified);
+      result = result.filter((a) => a.verified);
     }
 
     if (compatibility.length > 0) {
-      result = result.filter(a => compatibility.every(t => a.compatibility.includes(t)));
+      result = result.filter((a) => compatibility.every((t) => a.compatibility.includes(t)));
     }
 
     switch (sortBy) {
-      case "recent":
+      case 'recent':
         result.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
         break;
-      case "rating":
+      case 'rating':
         result.sort((a, b) => b.rating - a.rating);
         break;
-      case "downloads":
+      case 'downloads':
         result.sort((a, b) => b.downloads - a.downloads);
         break;
-      case "alphabetical":
+      case 'alphabetical':
         result.sort((a, b) => a.name.localeCompare(b.name));
         break;
-      case "trending":
+      case 'trending':
       default:
-        result.sort((a, b) => (b.rating * Math.log(b.downloads + 1)) - (a.rating * Math.log(a.downloads + 1)));
+        result.sort(
+          (a, b) => b.rating * Math.log(b.downloads + 1) - a.rating * Math.log(a.downloads + 1)
+        );
         break;
     }
 
     return result;
   }, [searchQuery, selectedCategory, selectedKinds, verifiedOnly, compatibility, sortBy]);
 
-  const hasActiveFilters = selectedCategory !== "All" || selectedKinds.length > 0 || verifiedOnly || compatibility.length > 0;
+  const hasActiveFilters =
+    selectedCategory !== 'All' ||
+    selectedKinds.length > 0 ||
+    verifiedOnly ||
+    compatibility.length > 0;
 
   const clearFilters = useCallback(() => {
-    setSelectedCategory("All");
+    setSelectedCategory('All');
     setSelectedKinds([]);
     setVerifiedOnly(false);
     setCompatibility([]);
@@ -433,17 +590,28 @@ export function MarketplaceCategoryPage() {
 
   return (
     <div className="min-h-screen bg-[var(--color-bg-primary)]">
-      <header className="border-b border-[var(--color-border)] bg-[var(--color-bg-surface)] sticky top-0 z-50">
+      <header className="sticky top-0 z-50 border-b border-[var(--color-border)] bg-[var(--color-bg-surface)]">
         <div className="container-app px-4 py-4">
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+          <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <div>
               <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">Marketplace</h1>
-              <p className="text-sm text-[var(--color-text-secondary)]">Discover, install, and publish community AI assets</p>
+              <p className="text-sm text-[var(--color-text-secondary)]">
+                Discover, install, and publish community AI assets
+              </p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-              <SearchBar value={searchQuery} onChange={setSearchQuery} onClear={() => setSearchQuery("")} />
-              <Button variant="outline" size="sm" onClick={() => setShowSidebar(true)} className="lg:hidden">
-                <Filter className="h-4 w-4 mr-2" />
+            <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+              <SearchBar
+                value={searchQuery}
+                onChange={setSearchQuery}
+                onClear={() => setSearchQuery('')}
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowSidebar(true)}
+                className="lg:hidden"
+              >
+                <Filter className="mr-2 h-4 w-4" />
                 Filters
               </Button>
             </div>
@@ -465,43 +633,53 @@ export function MarketplaceCategoryPage() {
           onClearFilters={clearFilters}
         />
 
-        <main className="flex-1 min-w-0 p-4 lg:p-6 lg:ml-0">
-          <ResultsHeader 
-            count={filteredAssets.length} 
-            selectedCategory={selectedCategory} 
-            searchQuery={searchQuery} 
-            hasActiveFilters={hasActiveFilters} 
+        <main className="min-w-0 flex-1 p-4 lg:ml-0 lg:p-6">
+          <ResultsHeader
+            count={filteredAssets.length}
+            selectedCategory={selectedCategory}
+            searchQuery={searchQuery}
+            hasActiveFilters={hasActiveFilters}
           />
 
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="mb-6 flex flex-col gap-4 sm:flex-row">
             <div className="flex-1" />
             <div className="flex items-center gap-3">
               <span className="text-sm text-[var(--color-text-muted)]">Sort by:</span>
               <SortDropdown value={sortBy} onChange={setSortBy} />
-              <div className="flex border border-[var(--color-border)] rounded-lg overflow-hidden">
+              <div className="flex overflow-hidden rounded-lg border border-[var(--color-border)]">
                 <button
-                  onClick={() => setViewMode("grid")}
-                  className={cn("p-2 transition-colors", viewMode === "grid" ? "bg-[var(--color-accent-light)] text-[var(--color-accent)]" : "text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]")}
+                  onClick={() => setViewMode('grid')}
+                  className={cn(
+                    'p-2 transition-colors',
+                    viewMode === 'grid'
+                      ? 'bg-[var(--color-accent-light)] text-[var(--color-accent)]'
+                      : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]'
+                  )}
                   aria-label="Grid view"
                 >
                   <div className="flex gap-1">
-                    <div className="w-2 h-2 bg-current rounded" />
-                    <div className="w-2 h-2 bg-current rounded" />
+                    <div className="h-2 w-2 rounded bg-current" />
+                    <div className="h-2 w-2 rounded bg-current" />
                   </div>
                   <div className="flex gap-1">
-                    <div className="w-2 h-2 bg-current rounded" />
-                    <div className="w-2 h-2 bg-current rounded" />
+                    <div className="h-2 w-2 rounded bg-current" />
+                    <div className="h-2 w-2 rounded bg-current" />
                   </div>
                 </button>
                 <button
-                  onClick={() => setViewMode("list")}
-                  className={cn("p-2 transition-colors", viewMode === "list" ? "bg-[var(--color-accent-light)] text-[var(--color-accent)]" : "text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]")}
+                  onClick={() => setViewMode('list')}
+                  className={cn(
+                    'p-2 transition-colors',
+                    viewMode === 'list'
+                      ? 'bg-[var(--color-accent-light)] text-[var(--color-accent)]'
+                      : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]'
+                  )}
                   aria-label="List view"
                 >
                   <div className="flex flex-col gap-1">
-                    <div className="w-full h-1 bg-current rounded" />
-                    <div className="w-full h-1 bg-current rounded" />
-                    <div className="w-full h-1 bg-current rounded" />
+                    <div className="h-1 w-full rounded bg-current" />
+                    <div className="h-1 w-full rounded bg-current" />
+                    <div className="h-1 w-full rounded bg-current" />
                   </div>
                 </button>
               </div>
@@ -510,17 +688,29 @@ export function MarketplaceCategoryPage() {
 
           {filteredAssets.length === 0 ? (
             <EmptyState
-              variant={searchQuery ? "search" : selectedCategory !== "All" ? "marketplace" : "default"}
-              title={searchQuery ? `No results for "${searchQuery}"` : selectedCategory !== "All" ? `No assets in ${selectedCategory}` : "Marketplace is empty"}
-              description={searchQuery ? "Try adjusting your search terms or filters." : "Be the first to publish an asset!"}
-              action={searchQuery ? { label: "Clear search", href: pathname } : undefined}
+              variant={
+                searchQuery ? 'search' : selectedCategory !== 'All' ? 'marketplace' : 'default'
+              }
+              title={
+                searchQuery
+                  ? `No results for "${searchQuery}"`
+                  : selectedCategory !== 'All'
+                    ? `No assets in ${selectedCategory}`
+                    : 'Marketplace is empty'
+              }
+              description={
+                searchQuery
+                  ? 'Try adjusting your search terms or filters.'
+                  : 'Be the first to publish an asset!'
+              }
+              action={searchQuery ? { label: 'Clear search', href: pathname } : undefined}
             />
           ) : (
             <div
               className={cn(
-                viewMode === "grid" 
-                  ? "grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
-                  : "space-y-4"
+                viewMode === 'grid'
+                  ? 'grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+                  : 'space-y-4'
               )}
               role="list"
               aria-label="Marketplace assets"
@@ -534,7 +724,7 @@ export function MarketplaceCategoryPage() {
           {filteredAssets.length > 0 && (
             <div className="mt-8 flex justify-center">
               <Button variant="outline" size="lg" className="min-w-[200px]">
-                <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 Load more
               </Button>
             </div>
@@ -545,10 +735,13 @@ export function MarketplaceCategoryPage() {
       {showSidebar && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setShowSidebar(false)} />
-          <div className="absolute right-0 top-0 bottom-0 w-96 bg-[var(--color-bg-surface)] border-l border-[var(--color-border)] overflow-y-auto">
-            <div className="p-4 border-b border-[var(--color-border)] flex items-center justify-between">
+          <div className="absolute top-0 right-0 bottom-0 w-96 overflow-y-auto border-l border-[var(--color-border)] bg-[var(--color-bg-surface)]">
+            <div className="flex items-center justify-between border-b border-[var(--color-border)] p-4">
               <h2 className="font-semibold">Filters</h2>
-              <button onClick={() => setShowSidebar(false)} className="p-2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]">
+              <button
+                onClick={() => setShowSidebar(false)}
+                className="p-2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              >
                 <X className="h-5 w-5" />
               </button>
             </div>

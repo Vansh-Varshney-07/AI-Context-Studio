@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState, type ReactNode } from "react";
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { useState, type ReactNode } from 'react';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
 
-import { ToastProvider, Toaster } from "@/components/ui/toaster";
+import { ToastProvider, Toaster } from '@/components/ui/toaster';
 
 function createQueryClient(): QueryClient {
   return new QueryClient({
