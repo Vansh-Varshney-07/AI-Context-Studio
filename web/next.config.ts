@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   productionBrowserSourceMaps: false,
   output: "export",
+  turbopack: {
+    root: "../.."
+  },
   images: {
     unoptimized: true,
   },
