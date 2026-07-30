@@ -18,6 +18,8 @@ export const mainNav: NavItem[] = [
   { label: 'Download', href: '/download' },
   { label: 'Roadmap', href: '/roadmap' },
   { label: 'Security', href: '/security' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'FAQ', href: '/faq' },
   { label: 'About', href: '/about' },
 ];
 

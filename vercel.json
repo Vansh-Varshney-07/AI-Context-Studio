@@ -1,5 +1,5 @@
 {
-  "installCommand": "npm install --legacy-peer-deps --workspaces --if-present",
+  "installCommand": "npm ci --workspaces --if-present",
   "buildCommand": "npm run build --workspace=web",
   "outputDirectory": "web/out",
   "framework": "nextjs",
