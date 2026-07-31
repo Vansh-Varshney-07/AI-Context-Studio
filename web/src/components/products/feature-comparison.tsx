@@ -439,7 +439,7 @@ export function FeatureComparison() {
               </tr>
             </thead>
             <tbody>
-              {features.map((section, sectionIndex) => (
+              {features.map((section, _sectionIndex) => (
                 <React.Fragment key={section.category}>
                   <tr className="bg-[var(--color-bg-secondary)]">
                     <td

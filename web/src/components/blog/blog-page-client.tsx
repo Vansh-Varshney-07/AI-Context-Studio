@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Calendar, Tag } from 'lucide-react';
@@ -37,7 +37,7 @@ interface BlogPostWithRelations {
 
 interface BlogPageClientProps {
   initialPosts: BlogPostWithRelations[];
-  initialTotalCount: number;
+  _initialTotalCount: number;
   initialTotalPages: number;
   categories: Array<{ id: string; slug: string; name: string; color: string | null; _count: { posts: number } }>;
   featuredPosts: BlogPostWithRelations[];
@@ -269,33 +269,29 @@ function CategoryBadge({ category }: { category: { slug: string; name: string; c
 
 export function BlogPageClient({
   initialPosts,
-  initialTotalCount,
+  _initialTotalCount,
   initialTotalPages,
   categories,
   featuredPosts,
 }: BlogPageClientProps) {
   const [posts, setPosts] = useState<BlogPostWithRelations[]>(initialPosts);
-  const [_totalCount, setTotalCount] = useState(initialTotalCount);
   const [totalPages, setTotalPages] = useState(initialTotalPages);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
 
-  const _fetchPosts = useCallback(async () => {
+  const fetchPosts = useCallback(async () => {
     setIsLoading(true);
     try {
       const params = new URLSearchParams();
       params.set('page', currentPage.toString());
       params.set('limit', '10');
       if (selectedCategory) params.set('category', selectedCategory);
-      if (searchQuery) params.set('q', searchQuery);
 
       const response = await fetch(`/api/blog?${params.toString()}`);
       if (response.ok) {
         const data = await response.json();
         setPosts(data.posts);
-        setTotalCount(data.totalCount);
         setTotalPages(data.totalPages);
       }
     } catch (error) {
@@ -303,17 +299,16 @@ export function BlogPageClient({
     } finally {
       setIsLoading(false);
     }
-  }, [currentPage, selectedCategory, searchQuery]);
+  }, [currentPage, selectedCategory]);
 
   const handleCategoryChange = (slug: string | null) => {
     setSelectedCategory(slug);
     setCurrentPage(1);
   };
 
-  const _handleSearch = (query: string) => {
-    setSearchQuery(query);
-    setCurrentPage(1);
-  };
+  useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
 
   return (
     <section id="blog" className="section" aria-labelledby="blog-heading">

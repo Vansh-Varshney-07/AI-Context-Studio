@@ -24,7 +24,7 @@ export default async function BlogPage() {
       <Header />
       <BlogPageClient
         initialPosts={initialData.posts}
-        initialTotalCount={initialData.totalCount}
+        _initialTotalCount={initialData.totalCount}
         initialTotalPages={initialData.totalPages}
         categories={categories}
         featuredPosts={featuredPosts}

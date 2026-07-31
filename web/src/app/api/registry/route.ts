@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
 
   if (action === "publish") {
     try {
-      const session = await requireAuth();
+      await requireAuth();
       const body = await request.json();
       const { packageId, version, manifest, tarballUrl, tarballSize, checksum, signature, changelog, readme, isPrerelease } = body;
 
@@ -65,9 +65,8 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
       }
 
-      // Verify ownership
-      const pkg = await getRegistryPackageByName(""); // This needs packageId lookup
-      // In real implementation, check if session.user.id === pkg.authorId
+      // Verify ownership - in real implementation, check if session.user.id === pkg.authorId
+      // const pkg = await getRegistryPackageByName(""); // This needs packageId lookup
 
       const pkgVersion = await prisma.registryVersion.create({
         data: {

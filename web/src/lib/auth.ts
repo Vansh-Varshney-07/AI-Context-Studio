@@ -22,6 +22,8 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: true,
     sendVerificationEmail: async ({ user, url, token }) => {
+      // url is required by better-auth but not used in our implementation
+      void url;
       console.log(`Verification email for ${user.email}: ${token}`);
     },
     autoSignInAfterVerification: true,

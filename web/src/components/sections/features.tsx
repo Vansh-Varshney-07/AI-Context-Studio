@@ -1,6 +1,5 @@
 'use client';
 
-import { listStagger, slideUp } from '@/lib/animations';
 import { features } from '@/data/constants';
 import { Card } from '@/components/ui/card';
 import {

@@ -2,8 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Calendar, Tag, ArrowRight, Clock, User, Eye, MessageSquare, Share2, Heart, Bookmark } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Clock, Eye, MessageSquare, Share2, Heart, Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';

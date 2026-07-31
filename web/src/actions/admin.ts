@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@prisma/client";
 import { requireAdmin, requireModerator } from "@/actions/auth";
-import type { AnnouncementType } from "@prisma/client";
+import type { AnnouncementType, AssetStatus } from "@prisma/client";
 
 export async function getAdminStats() {
   const [
@@ -53,9 +53,8 @@ export async function getAllUsers(params: {
   limit?: number;
   search?: string;
   role?: string;
-  status?: string;
 }) {
-  const { page = 1, limit = 50, search, role, status } = params;
+  const { page = 1, limit = 50, search, role } = params;
   const where: Prisma.UserWhereInput = {};
 
   if (search) {
@@ -65,7 +64,7 @@ export async function getAllUsers(params: {
       { username: { contains: search, mode: "insensitive" } },
     ];
   }
-  if (role) where.role = role as any;
+  if (role) where.role = role as "USER" | "MODERATOR" | "ADMIN" | "OWNER";
 
   const [users, totalCount] = await Promise.all([
     prisma.user.findMany({
@@ -109,7 +108,7 @@ export async function updateUserRole(userId: string, role: "USER" | "MODERATOR" 
   return prisma.user.update({ where: { id: userId }, data: { role } });
 }
 
-export async function banUser(userId: string, reason: string) {
+export async function banUser(userId: string) {
   await requireAdmin();
   return prisma.user.update({
     where: { id: userId },
@@ -171,7 +170,7 @@ export async function getAllAssetsAdmin(params: {
       { author: { name: { contains: search, mode: "insensitive" } } },
     ];
   }
-  if (status) where.status = status as any;
+  if (status) where.status = status as AssetStatus;
 
   const [assets, totalCount] = await Promise.all([
     prisma.asset.findMany({

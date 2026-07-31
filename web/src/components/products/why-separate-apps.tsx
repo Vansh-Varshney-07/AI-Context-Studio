@@ -1,20 +1,12 @@
-'use client';
-
 import React from 'react';
 import { ScrollReveal } from '@/components/common/scroll-reveal';
 import {
-  Monitor,
-  Globe,
-  Store,
-  Database,
-  Users,
-  Cloud,
-  Shield,
   Cpu,
-  Share2,
-  Lock,
-  Zap,
+  Shield,
   Layers,
+  Share2,
+  Zap,
+  Lock,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -118,7 +110,7 @@ export function WhySeparateApps() {
         </ScrollReveal>
 
         <div className="space-y-16">
-          {reasons.map((reason, index) => (
+          {reasons.map((reason, _index) => (
             <ScrollReveal key={reason.title}>
               <div className="grid items-start gap-8 lg:grid-cols-12">
                 <div className="flex-shrink-0 lg:col-span-3">

@@ -6,7 +6,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Search,
-  Tag,
   Star,
   Download,
   ExternalLink,
@@ -18,7 +17,6 @@ import {
   Server,
   Layers,
   Boxes,
-  Check,
 } from 'lucide-react';
 import { marketplaceCategories, featuredAssets } from '@/data/marketplace';
 

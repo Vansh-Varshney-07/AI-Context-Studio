@@ -68,13 +68,13 @@ export async function PATCH(request: NextRequest) {
 
   if (action === "ban") {
     const body = await request.json();
-    const { userId, reason } = body;
+    const { userId } = body;
 
     if (!userId) {
       return NextResponse.json({ error: "User ID required" }, { status: 400 });
     }
 
-    const user = await banUser(userId, reason);
+    const user = await banUser(userId);
     return NextResponse.json(user);
   }
 

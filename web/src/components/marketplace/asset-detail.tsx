@@ -20,7 +20,6 @@ import {
   Verified,
   Package,
   Code,
-  Tag,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';

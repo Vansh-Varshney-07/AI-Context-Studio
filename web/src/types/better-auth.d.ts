@@ -1,4 +1,4 @@
-import type { BetterAuthPlugin, User as BetterAuthUser } from "better-auth";
+import type { User as BetterAuthUser } from "better-auth";
 
 declare module "better-auth" {
   interface User extends BetterAuthUser {

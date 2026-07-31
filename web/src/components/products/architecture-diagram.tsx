@@ -98,7 +98,7 @@ export function ArchitectureDiagram() {
         </ScrollReveal>
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-          {products.map((product, index) => (
+          {products.map((product, _index) => (
             <ScrollReveal key={product.id}>
               <div
                 className={cn(
@@ -161,7 +161,7 @@ export function ArchitectureDiagram() {
               title: 'You Own Your Data',
               desc: 'Assets stored locally as .acs packages. Export to any format. No proprietary lock-in.',
             },
-          ].map((item, index) => (
+          ].map((item, _index) => (
             <ScrollReveal key={item.title}>
               <div className="card p-6 text-center">
                 <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--color-accent-light)] text-[var(--color-accent)]">

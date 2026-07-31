@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { getSecurityAdvisories, getSecurityAdvisoryById, getSecurityAdvisoryByCVE, getAuditReports, getAuditReportById, getSecurityPolicy } from "@/actions/security";
+import type { Severity, AdvisoryStatus } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -41,8 +42,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(advisory);
   }
 
-  const severity = searchParams.get("severity") as any;
-  const status = searchParams.get("status") as any;
+  const severityParam = searchParams.get("severity");
+  const statusParam = searchParams.get("status");
+  const severity = severityParam ? severityParam as Severity : undefined;
+  const status = statusParam ? statusParam as AdvisoryStatus : undefined;
   const page = parseInt(searchParams.get("page") || "1");
   const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 100);
 

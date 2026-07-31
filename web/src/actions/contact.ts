@@ -111,7 +111,7 @@ export async function updateContactMessage(id: string, data: {
   });
 }
 
-export async function sendReply(id: string, reply: string, fromEmail: string) {
+export async function sendReply(id: string, reply: string, _fromEmail: string) {
   const message = await prisma.contactMessage.findUnique({ where: { id } });
   if (!message) return { success: false, error: "Message not found" };
 

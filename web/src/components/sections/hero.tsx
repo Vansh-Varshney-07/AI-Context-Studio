@@ -15,7 +15,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { fadeIn, slideUp } from '@/lib/animations';
+import { fadeIn } from '@/lib/animations';
 
 export function Hero() {
   return (

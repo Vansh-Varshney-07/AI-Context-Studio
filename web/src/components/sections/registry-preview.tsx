@@ -6,16 +6,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   FileJson,
-  Code,
   GitBranch,
   Package,
   Shield,
   Search,
   Tag,
-  Clock,
-  Link,
-  CheckCircle,
-  ChevronRight,
 } from 'lucide-react';
 
 const manifestSchema = {
@@ -111,7 +106,7 @@ export function RegistryPreview() {
               Schema Fields
             </h3>
             <div className="space-y-3">
-              {schemaFields.map((field, index) => (
+              {schemaFields.map((field, _index) => (
                 <div
                   key={field.field}
                   className="flex items-start gap-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-tertiary)] p-3"

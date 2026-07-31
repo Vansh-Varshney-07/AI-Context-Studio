@@ -29,7 +29,8 @@ export default async function MarketplacePage() {
         initialTotalCount={initialData.totalCount}
         initialTotalPages={initialData.totalPages}
         categories={categories}
-        kinds={kinds}
+        _kinds={kinds}
+        _resultsCount={initialData.totalCount}
       />
       <Footer />
     </main>

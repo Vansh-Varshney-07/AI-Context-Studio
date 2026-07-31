@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { docCategories, type DocSidebarItem } from '@/data/docs';
-import { Github, FileText, ExternalLink, ChevronDown, ChevronRight } from 'lucide-react';
+import { Github, FileText, ExternalLink, ChevronDown } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface DocLayoutProps {

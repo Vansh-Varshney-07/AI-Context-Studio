@@ -1,16 +1,12 @@
 import Link from 'next/link';
 import {
   Github,
-  Twitter,
-  MessageCircle,
-  Rss,
   Star,
   Users,
   Code,
   Eye,
   Forklift,
   Shield,
-  BookOpen,
   ArrowRight,
   CheckCircle,
 } from 'lucide-react';

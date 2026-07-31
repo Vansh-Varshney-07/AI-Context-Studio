@@ -15,7 +15,6 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { useState } from 'react';
-import { getRoadmapItems } from '@/actions/roadmap';
 import type { RoadmapItem } from '@prisma/client';
 
 const phaseIcons = {
@@ -47,13 +46,11 @@ interface RoadmapClientProps {
 export function RoadmapClient({ initialItems = [] }: RoadmapClientProps) {
   const [filter, setFilter] = useState<string>('all');
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
-  const [items, setItems] = useState<RoadmapItem[]>(initialItems);
-  const [isLoading, setIsLoading] = useState(!initialItems.length);
 
   // Fetch items on mount if not provided
   // Note: In a real app, you'd use React Query or SWR for this
 
-  const allItems = items;
+  const allItems = initialItems;
 
   const filteredItems =
     filter === 'all' ? allItems : allItems.filter((item) => item.status === filter);

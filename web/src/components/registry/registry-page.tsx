@@ -1,38 +1,28 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { ScrollReveal } from '@/components/common/scroll-reveal';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { CodeBlock } from '@/components/docs/code-block';
 import { Callout } from '@/components/docs/callout';
+import Link from 'next/link';
 import {
   FileJson,
-  Code,
+  Tag,
   GitBranch,
   Package,
   Shield,
   Search,
-  Tag,
-  Clock,
-  Link,
-  CheckCircle,
-  ChevronRight,
   Zap,
-  Terminal,
-  Database,
-  Network,
-  Layout,
-  Layers,
-  HelpCircle,
-  Copy,
+  CheckCircle,
   AlertCircle,
   RotateCcw,
+  ChevronRight,
 } from 'lucide-react';
 
 const manifestSchema = {
@@ -179,62 +169,6 @@ const compatibilityMatrix = [
     custom: true,
   },
 ];
-
-const validatorSchema = {
-  $schema: 'http://json-schema.org/draft-07/schema#',
-  type: 'object',
-  required: [
-    'id',
-    'name',
-    'version',
-    'author',
-    'type',
-    'description',
-    'minAppVersion',
-    'checksum',
-    'license',
-    'targets',
-  ],
-  properties: {
-    id: { type: 'string', format: 'uuid', description: 'Unique identifier (UUID v4)' },
-    name: { type: 'string', minLength: 1, maxLength: 100 },
-    version: {
-      type: 'string',
-      pattern: '^\\d+\\.\\d+\\.d+$',
-      description: 'Semantic version (MAJOR.MINOR.PATCH)',
-    },
-    author: { type: 'string', minLength: 1, maxLength: 100 },
-    type: {
-      type: 'string',
-      enum: [
-        'skill',
-        'persona',
-        'workflow',
-        'promptPack',
-        'memory',
-        'instructionFile',
-        'systemPrompt',
-        'moduleConfig',
-      ],
-    },
-    description: { type: 'string', minLength: 10, maxLength: 5000 },
-    tags: { type: 'array', items: { type: 'string' }, maxItems: 20 },
-    minAppVersion: { type: 'string', pattern: '^\\d+\\.\\d+\\.\\d+$' },
-    checksum: { type: 'string', pattern: '^sha256:[a-f0-9]{64}$' },
-    license: { type: 'string', description: 'SPDX license identifier' },
-    dependencies: {
-      type: 'object',
-      additionalProperties: { type: 'string', pattern: '^\\^?\\d+\\.\\d+\\.\\d+$' },
-    },
-    targets: {
-      type: 'array',
-      items: { type: 'string', enum: ['cursor', 'claude', 'windsurf', 'vscode', 'custom'] },
-      minItems: 1,
-    },
-    screenshots: { type: 'array', items: { type: 'string', format: 'uri' }, maxItems: 10 },
-    readme: { type: 'string', maxLength: 200 },
-  },
-};
 
 function VersionBadge({ version, label }: { version: string; label?: string }) {
   return (
@@ -518,11 +452,13 @@ function ScreenshotGallery() {
           key={i}
           className="group relative aspect-video overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-tertiary)]"
         >
-          <img
+          <Image
             src={shot.src}
             alt={shot.alt}
+            fill
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
           />
           <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
             <span className="font-medium text-white">View full size</span>
@@ -611,7 +547,7 @@ export function RegistryPageContent() {
                 'Compatibility',
                 'Validator',
                 'Package Structure',
-              ].map((item, i) => (
+              ].map((item, _i) => (
                 <Badge key={item} variant="outline" className="text-sm">
                   {item}
                 </Badge>

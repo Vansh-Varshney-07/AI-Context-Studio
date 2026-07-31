@@ -1,4 +1,4 @@
-import type { StatItem } from './stats';
+
 
 export interface DownloadVariant {
   label: string;

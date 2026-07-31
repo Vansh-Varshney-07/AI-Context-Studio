@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import Image from 'next/image';
+import { AnimatePresence } from 'framer-motion';
 import {
   ChevronDown,
   ChevronUp,
@@ -16,9 +18,7 @@ import {
   Clock,
   CheckCircle,
   SlidersHorizontal,
-  Loader2,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -41,10 +41,10 @@ interface MarketplaceCategoryPageClientProps {
   initialTotalCount: number;
   initialTotalPages: number;
   categories: Array<{ id: string; slug: string; name: string; icon: string | null; _count: { assets: number } }>;
-  kinds: string[];
+  _kinds: string[];
+  _resultsCount: number;
 }
 
-const CATEGORIES = ['All', 'Skills', 'Personas', 'Templates', 'Prompt Packs', 'Instruction Files', 'Workflows', 'MCP Servers', 'Collections', 'Bundles'];
 const SORT_OPTIONS = [
   { value: 'trending', label: 'Trending' },
   { value: 'recent', label: 'Most Recent' },
@@ -145,11 +145,13 @@ function AssetCard({ asset }: { asset: AssetWithRelations }) {
       <Card className="card-hover flex h-full flex-col overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg-surface)]">
         <div className="relative aspect-video overflow-hidden bg-[var(--color-bg-tertiary)]">
           {asset.screenshots[0] ? (
-            <img
+            <Image
               src={asset.screenshots[0].url}
               alt={asset.name}
+              fill
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
               loading="lazy"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-[var(--color-text-muted)]">
@@ -240,7 +242,7 @@ function FilterSidebar({
   onVerifiedChange,
   compatibility,
   onCompatibilityChange,
-  resultsCount,
+  _resultsCount,
   onClearFilters,
   categories,
 }: {
@@ -252,7 +254,7 @@ function FilterSidebar({
   onVerifiedChange: (v: boolean) => void;
   compatibility: string[];
   onCompatibilityChange: (c: string[]) => void;
-  resultsCount: number;
+  _resultsCount: number;
   onClearFilters: () => void;
   categories: Array<{ id: string; slug: string; name: string; icon: string | null; _count: { assets: number } }>;
 }) {
@@ -499,7 +501,7 @@ export function MarketplaceCategoryPageClient({
   initialTotalCount,
   initialTotalPages,
   categories,
-  kinds,
+  _kinds,
 }: MarketplaceCategoryPageClientProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -634,7 +636,7 @@ export function MarketplaceCategoryPageClient({
           onVerifiedChange={setVerifiedOnly}
           compatibility={compatibility}
           onCompatibilityChange={setCompatibility}
-          resultsCount={totalCount}
+          _resultsCount={totalCount}
           onClearFilters={clearFilters}
           categories={categories}
         />
@@ -812,7 +814,7 @@ export function MarketplaceCategoryPageClient({
               onVerifiedChange={setVerifiedOnly}
               compatibility={compatibility}
               onCompatibilityChange={setCompatibility}
-              resultsCount={totalCount}
+_resultsCount={totalCount}
               onClearFilters={clearFilters}
               categories={categories}
             />
