@@ -698,7 +698,7 @@ acs install postgres-mcp-server
       "command": "npx",
       "args": ["@ai-context-studio/postgres-mcp"],
       "env": {
-        "DATABASE_URL": "postgresql://user:pass@localhost:5432/db",
+        "DATABASE_URL": "postgresql://user:pass@your-neon-host/db",
         "READ_ONLY": "true",
         "MAX_ROWS": "100",
         "QUERY_TIMEOUT": "30000"
