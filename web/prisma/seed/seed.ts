@@ -3,6 +3,10 @@ import { hash } from "bcryptjs";
 
 const prisma = new PrismaClient();
 
+function slugify(str: string): string {
+  return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+}
+
 async function main() {
   console.log("🌱 Starting database seed...");
 
@@ -203,6 +207,21 @@ async function main() {
     { slug: "secrets", name: "secrets", color: "#F59E0B" },
     { slug: "owasp", name: "owasp", color: "#EF4444" },
     { slug: "audit", name: "audit", color: "#6366F1" },
+    { slug: "career", name: "career", color: "#8B5CF6" },
+    { slug: "ui", name: "ui", color: "#EC4899" },
+    { slug: "design", name: "design", color: "#F59E0B" },
+    { slug: "layers", name: "layers", color: "#6366F1" },
+    { slug: "dependency-inversion", name: "dependency-inversion", color: "#8B5CF6" },
+    { slug: "readonly", name: "readonly", color: "#10B981" },
+    { slug: "vue", name: "vue", color: "#42B883" },
+    { slug: "svelte", name: "svelte", color: "#FF3E00" },
+    { slug: "solid", name: "solid", color: "#2C4F7C" },
+    { slug: "agents", name: "agents", color: "#8B5CF6" },
+    { slug: "plugin-sdk", name: "plugin-sdk", color: "#6366F1" },
+    { slug: "workflows", name: "workflows", color: "#3B82F6" },
+    { slug: "marketplace", name: "marketplace", color: "#EC4899" },
+    { slug: "community", name: "community", color: "#10B981" },
+    { slug: "milestone", name: "milestone", color: "#F59E0B" },
   ];
 
   for (const tag of tags) {
@@ -1381,7 +1400,7 @@ Thank you to the Trail of Bits team for their thorough analysis!`,
         },
         tags: {
           create: tags.map((tagSlug) => ({
-            tag: { connect: { slug: tagSlug } },
+            tag: { connect: { slug: slugify(tagSlug) } },
           })),
         },
       },
@@ -1539,10 +1558,10 @@ Let's create a **Skill** — an atomic AI capability.
 1. Click **Skills** in the sidebar
 2. Click **New Skill**
 3. Fill in:
-   - **Name**: `code-reviewer`
-   - **Description**: Reviews code for bugs and style
-   - **Input**: Code snippet (string)
-   - **Output**: Review comments (structured)
+- **Name**: \`code-reviewer\`
+    - **Description**: Reviews code for bugs and style
+    - **Input**: Code snippet (string)
+    - **Output**: Review comments (structured)
 4. Write the prompt in the editor
 5. Click **Save**
 
@@ -1557,7 +1576,7 @@ The app generates the appropriate config files in your project.
 
 ## 6. Test It
 
-Open a file in Cursor, type `// @code-reviewer`, and watch the AI review your code!
+Open a file in Cursor, type \`// @code-reviewer\`, and watch the AI review your code!
 
 ## Next Steps
 
