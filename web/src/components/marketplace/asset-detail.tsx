@@ -2,32 +2,31 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Download,
   Star,
   Github,
   ExternalLink,
-  Tag,
   Clock,
   CheckCircle,
-  Code,
   ArrowRight,
   ChevronDown,
   ChevronUp,
   ChevronRight,
   Share2,
   Heart,
-  Eye,
   User,
   Verified,
   Package,
+  Code,
+  Tag,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
-import type { Asset } from '@/data/marketplace';
 
 const targetLabels: Record<string, string> = {
   Cursor: 'Cursor',
@@ -38,41 +37,88 @@ const targetLabels: Record<string, string> = {
 };
 
 const kindLabels: Record<string, string> = {
-  Skill: 'Skill',
-  Persona: 'Persona',
-  Template: 'Template',
-  'Prompt Pack': 'Prompt Pack',
-  'Instruction File': 'Instruction File',
-  Workflow: 'Workflow',
-  'MCP Server': 'MCP Server',
-  Collection: 'Collection',
-  Bundle: 'Bundle',
+  SKILL: 'Skill',
+  PERSONA: 'Persona',
+  TEMPLATE: 'Template',
+  PROMPT_PACK: 'Prompt Pack',
+  INSTRUCTION_FILE: 'Instruction File',
+  WORKFLOW: 'Workflow',
+  MCP_SERVER: 'MCP Server',
+  COLLECTION: 'Collection',
+  BUNDLE: 'Bundle',
 };
 
 const kindColors: Record<string, string> = {
-  Skill: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
-  Persona: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300',
-  Template: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
-  'Prompt Pack': 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300',
-  'Instruction File': 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
-  Workflow: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300',
-  'MCP Server': 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300',
-  Collection: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
-  Bundle: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+  SKILL: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
+  PERSONA: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300',
+  TEMPLATE: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+  PROMPT_PACK: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300',
+  INSTRUCTION_FILE: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
+  WORKFLOW: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300',
+  MCP_SERVER: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300',
+  COLLECTION: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
+  BUNDLE: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
 };
 
-export function AssetDetail({ asset }: { asset: Asset }) {
+interface AssetWithRelations {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  shortDesc: string | null;
+  kind: string;
+  authorId: string;
+  categoryId: string;
+  status: string;
+  visibility: string;
+  currentVersionId: string | null;
+  downloads: number;
+  stars: number;
+  rating: number;
+  reviewCount: number;
+  verified: boolean;
+  featured: boolean;
+  deprecated: boolean;
+  deprecationReason: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  author: { id: string; name: string | null; username: string | null; avatar: string | null; bio: string | null };
+  category: { id: string; slug: string; name: string; icon: string | null } | null;
+  tags: Array<{ tag: { id: string; slug: string; name: string; color: string | null } }>;
+  compatibilities: Array<{ target: string; minVersion: string | null; maxVersion: string | null; verified: boolean }>;
+  versions: Array<{ id: string; version: string; changelog: string; readme: string | null; createdAt: Date; status: string; isPrerelease: boolean }>;
+  screenshots: Array<{ url: string; alt: string | null; sortOrder: number }>;
+  dependencies: Array<{
+    id: string;
+    versionRange: string;
+    isOptional: boolean;
+    type: string;
+    dependency: { id: string; slug: string; name: string; kind: string; author: { username: string | null } };
+  }>;
+  reviews: Array<{
+    id: string;
+    rating: number;
+    title: string | null;
+    content: string;
+    createdAt: Date;
+    user: { id: string; name: string | null; username: string | null; avatar: string | null };
+  }>;
+  _count: { reviews: number; downloads_: number };
+}
+
+export function AssetDetail({ asset }: { asset: AssetWithRelations }) {
   const [readmeExpanded, setReadmeExpanded] = useState(false);
   const [showFullChangelog, setShowFullChangelog] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const copyInstallCommand = () => {
-    navigator.clipboard.writeText(`acs install ${asset.id}`);
+    navigator.clipboard.writeText(`acs install ${asset.slug}`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const formatDate = (dateStr: string) => {
+  const formatDate = (dateStr: string | Date) => {
     return new Date(dateStr).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
@@ -80,7 +126,11 @@ export function AssetDetail({ asset }: { asset: Asset }) {
     });
   };
 
-  const installCommand = `acs install ${asset.id}`;
+  const installCommand = `acs install ${asset.slug}`;
+  const currentVersion = asset.versions[0];
+  const tags = asset.tags.map((t) => t.tag);
+  const compatibilities = asset.compatibilities;
+  const dependencies = asset.dependencies;
 
   return (
     <div className="min-h-screen bg-[var(--color-bg-primary)]">
@@ -147,28 +197,30 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                 <div className="flex items-center gap-2">
                   <User className="h-4 w-4" aria-hidden="true" />
                   <Link
-                    href={`https://github.com/${asset.author}`}
+                    href={`https://github.com/${asset.author.username}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="font-medium text-[var(--color-text-primary)] transition-colors hover:text-[var(--color-accent)]"
                   >
-                    {asset.author}
+                    {asset.author.name || asset.author.username}
                   </Link>
                 </div>
                 <div className="flex items-center gap-1">
                   <Clock className="h-4 w-4" aria-hidden="true" />
-                  <time dateTime={asset.updatedAt}>{formatDate(asset.updatedAt)}</time>
+                  <time dateTime={asset.updatedAt.toISOString()}>{formatDate(asset.updatedAt)}</time>
                 </div>
                 <div className="flex items-center gap-1">
                   <Download className="h-4 w-4" aria-hidden="true" />
                   <span>{asset.downloads.toLocaleString()} downloads</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Package className="h-4 w-4" aria-hidden="true" />
-                  <Badge variant="outline" className="gap-1">
-                    {asset.category}
-                  </Badge>
-                </div>
+                {asset.category && (
+                  <div className="flex items-center gap-1">
+                    <Package className="h-4 w-4" aria-hidden="true" />
+                    <Badge variant="outline" className="gap-1">
+                      {asset.category.name}
+                    </Badge>
+                  </div>
+                )}
               </div>
             </header>
 
@@ -191,10 +243,11 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                       Compatibility
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                      {asset.compatibility.map((target) => (
-                        <Badge key={target} variant="outline" className="gap-1.5">
+                      {compatibilities.map((target) => (
+                        <Badge key={target.target} variant="outline" className="gap-1.5">
                           <Code className="h-3 w-3" aria-hidden="true" />
-                          {targetLabels[target] || target}
+                          {targetLabels[target.target] || target.target}
+                          {target.verified && <CheckCircle className="h-3 w-3 text-green-500" />}
                         </Badge>
                       ))}
                     </div>
@@ -203,9 +256,9 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Tags</h3>
                     <div className="flex flex-wrap gap-2">
-                      {asset.tags.map((tag) => (
-                        <Badge key={tag} variant="outline" className="text-xs">
-                          {tag}
+                      {tags.map((tag) => (
+                        <Badge key={tag.id} variant="outline" className="text-xs">
+                          {tag.name}
                         </Badge>
                       ))}
                     </div>
@@ -223,11 +276,7 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => {
-                            navigator.clipboard.writeText(installCommand);
-                            setCopied(true);
-                            setTimeout(() => setCopied(false), 2000);
-                          }}
+                          onClick={copyInstallCommand}
                           className="flex-shrink-0"
                         >
                           {copied ? (
@@ -254,7 +303,7 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                   <div className="space-y-3">
                     {asset.versions.map((version, index) => (
                       <Card
-                        key={version.version}
+                        key={version.id}
                         className="p-4 transition-colors hover:border-[var(--color-border-strong)]"
                       >
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -264,23 +313,27 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                                 v{version.version}
                               </span>
                               {index === 0 && <Badge variant="accent">Latest</Badge>}
+                              {version.isPrerelease && <Badge variant="outline" className="text-xs">Pre-release</Badge>}
+                              <Badge variant="outline" className="text-xs capitalize">{version.status.toLowerCase()}</Badge>
                             </div>
                             <time className="text-sm text-[var(--color-text-muted)]">
-                              {formatDate(version.date)}
+                              {formatDate(version.createdAt)}
                             </time>
                           </div>
                           <div className="flex items-center gap-2">
                             <Button variant="ghost" size="sm">
-                              <Link href={`/marketplace/${asset.id}?version=${version.version}`}>
-                                View Details
-                                <ArrowRight className="ml-1 h-4 w-4" />
-                              </Link>
+                              View Details <ArrowRight className="ml-1 h-4 w-4" />
                             </Button>
                           </div>
                         </div>
                         <div className="mt-3 line-clamp-2 text-sm text-[var(--color-text-secondary)]">
                           {version.changelog}
                         </div>
+                        {version.readme && (
+                          <div className="mt-3 line-clamp-2 text-sm text-[var(--color-text-secondary)]">
+                            {version.readme}
+                          </div>
+                        )}
                       </Card>
                     ))}
                     {asset.versions.length > 5 && (
@@ -307,15 +360,42 @@ export function AssetDetail({ asset }: { asset: Asset }) {
 
                 <TabsContent value="dependencies" className="mt-6">
                   <div className="space-y-4">
-                    <p className="text-[var(--color-text-secondary)]">
-                      This asset has no declared dependencies. It can be installed independently.
-                    </p>
+                    {dependencies.length === 0 ? (
+                      <p className="text-[var(--color-text-secondary)]">
+                        This asset has no declared dependencies. It can be installed independently.
+                      </p>
+                    ) : (
+                      <div className="space-y-3">
+                        {dependencies.map((dep) => (
+                          <Card key={dep.id} className="p-4">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <Link
+                                  href={`/marketplace/${dep.dependency.slug}`}
+                                  className="font-mono font-medium text-[var(--color-text-primary)] hover:text-[var(--color-accent)]"
+                                >
+                                  {dep.dependency.name}
+                                </Link>
+                                <Badge variant="outline" className="text-xs">{dep.dependency.kind}</Badge>
+                                <span className="text-xs text-[var(--color-text-muted)]">by @{dep.dependency.author.username}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Badge variant="outline" className="text-xs">{dep.versionRange}</Badge>
+                                {dep.isOptional && <Badge variant="outline" className="text-xs">Optional</Badge>}
+                                <Badge variant="outline" className="text-xs capitalize">{dep.type.toLowerCase()}</Badge>
+                              </div>
+                            </div>
+                          </Card>
+                        ))}
+                      </div>
+                    )}
+
                     <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-tertiary)] p-4">
                       <h4 className="mb-2 font-medium text-[var(--color-text-primary)]">
                         Transitive Dependencies
                       </h4>
                       <p className="text-sm text-[var(--color-text-muted)]">
-                        No transitive dependencies detected. This asset is self-contained.
+                        Dependencies are resolved automatically during installation. A lockfile pins exact versions.
                       </p>
                     </div>
                   </div>
@@ -330,31 +410,37 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                       )}
                     >
                       <div className="space-y-4 text-[var(--color-text-secondary)]">
-                        <h2 className="text-xl font-semibold text-[var(--color-text-primary)]">
-                          {asset.name}
-                        </h2>
-                        <p>{asset.description}</p>
-                        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
-                          Installation
-                        </h3>
-                        <pre className="overflow-x-auto rounded border border-[var(--color-border)] bg-[var(--color-bg-primary)] p-4">
-                          <code className="font-mono text-sm">{installCommand}</code>
-                        </pre>
-                        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
-                          Usage
-                        </h3>
-                        <p>
-                          Import and use this {kindLabels[asset.kind]?.toLowerCase() || 'asset'} in
-                          your AI Context Studio workspace.
-                        </p>
-                        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
-                          Compatibility
-                        </h3>
-                        <ul className="list-inside list-disc space-y-1">
-                          {asset.compatibility.map((target) => (
-                            <li key={target}>{targetLabels[target] || target}</li>
-                          ))}
-                        </ul>
+                        {currentVersion?.readme ? (
+                          <div dangerouslySetInnerHTML={{ __html: currentVersion.readme }} />
+                        ) : (
+                          <>
+                            <h2 className="text-xl font-semibold text-[var(--color-text-primary)]">
+                              {asset.name}
+                            </h2>
+                            <p>{asset.description}</p>
+                            <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
+                              Installation
+                            </h3>
+                            <pre className="overflow-x-auto rounded border border-[var(--color-border)] bg-[var(--color-bg-primary)] p-4">
+                              <code className="font-mono text-sm">{installCommand}</code>
+                            </pre>
+                            <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
+                              Usage
+                            </h3>
+                            <p>
+                              Import and use this {kindLabels[asset.kind]?.toLowerCase() || 'asset'} in
+                              your AI Context Studio workspace.
+                            </p>
+                            <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
+                              Compatibility
+                            </h3>
+                            <ul className="list-inside list-disc space-y-1">
+                              {compatibilities.map((target) => (
+                                <li key={target.target}>{targetLabels[target.target] || target.target}</li>
+                              ))}
+                            </ul>
+                          </>
+                        )}
                       </div>
                       <Button
                         variant="ghost"
@@ -383,10 +469,12 @@ export function AssetDetail({ asset }: { asset: Asset }) {
             <aside className="space-y-6 lg:col-span-1">
               <Card className="sticky top-24 space-y-6 p-6">
                 <div className="flex items-start gap-4">
-                  {asset.thumbnail && (
-                    <img
-                      src={asset.thumbnail}
+                  {asset.screenshots[0] && (
+                    <Image
+                      src={asset.screenshots[0].url}
                       alt=""
+                      width={64}
+                      height={64}
                       className="h-16 w-16 flex-shrink-0 rounded-lg object-cover"
                       aria-hidden="true"
                     />
@@ -395,7 +483,7 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                     <h3 className="truncate font-semibold text-[var(--color-text-primary)]">
                       {asset.name}
                     </h3>
-                    <p className="text-sm text-[var(--color-text-muted)]">by {asset.author}</p>
+                    <p className="text-sm text-[var(--color-text-muted)]">by {asset.author.name || asset.author.username}</p>
                   </div>
                 </div>
 
@@ -425,7 +513,7 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                     <span className="text-sm text-[var(--color-text-secondary)]">Last Updated</span>
                     <time
                       className="font-medium text-[var(--color-text-primary)]"
-                      dateTime={asset.updatedAt}
+                      dateTime={asset.updatedAt.toISOString()}
                     >
                       {formatDate(asset.updatedAt)}
                     </time>
@@ -433,7 +521,7 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-[var(--color-text-secondary)]">Version</span>
                     <span className="font-mono font-medium text-[var(--color-text-primary)]">
-                      v{asset.version}
+                      v{currentVersion?.version || '1.0.0'}
                     </span>
                   </div>
                 </div>
@@ -441,11 +529,7 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                 <div className="space-y-3 border-t border-[var(--color-border)] pt-4">
                   <Button
                     className="w-full justify-center gap-2"
-                    onClick={() => {
-                      navigator.clipboard.writeText(installCommand);
-                      setCopied(true);
-                      setTimeout(() => setCopied(false), 2000);
-                    }}
+                    onClick={copyInstallCommand}
                   >
                     {copied ? (
                       <>
@@ -461,7 +545,7 @@ export function AssetDetail({ asset }: { asset: Asset }) {
                   </Button>
                   <Button variant="outline" className="w-full justify-center gap-2">
                     <Link
-                      href={`https://github.com/${asset.author}/${asset.id}`}
+                      href={`https://github.com/${asset.author.username}/${asset.slug}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >

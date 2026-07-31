@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import {
   ChevronDown,
@@ -33,17 +33,18 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select';
-import { Skeleton, EmptyState, AssetCardSkeleton } from '@/components/common';
-import {
-  assets,
-  type Asset,
-  getAssetsByCategory,
-  getCategories,
-  getAssetKinds,
-} from '@/data/marketplace';
+import { Skeleton, EmptyState } from '@/components/common';
+import type { AssetWithRelations } from '@/actions/marketplace';
 
-const CATEGORIES = getCategories();
-const KINDS = getAssetKinds();
+interface MarketplaceCategoryPageClientProps {
+  initialAssets: AssetWithRelations[];
+  initialTotalCount: number;
+  initialTotalPages: number;
+  categories: Array<{ id: string; slug: string; name: string; icon: string | null; _count: { assets: number } }>;
+  kinds: string[];
+}
+
+const CATEGORIES = ['All', 'Skills', 'Personas', 'Templates', 'Prompt Packs', 'Instruction Files', 'Workflows', 'MCP Servers', 'Collections', 'Bundles'];
 const SORT_OPTIONS = [
   { value: 'trending', label: 'Trending' },
   { value: 'recent', label: 'Most Recent' },
@@ -100,7 +101,7 @@ function RatingStars({
   );
 }
 
-function CompatibilityBadge({ targets }: { targets: string[] }) {
+function CompatibilityBadge({ targets }: { targets: Array<{ target: string; minVersion?: string | null; maxVersion?: string | null; verified: boolean }> }) {
   const targetIcons: Record<string, React.ReactNode> = {
     Cursor: <Package className="h-3 w-3" />,
     'Claude Code': <User className="h-3 w-3" />,
@@ -112,11 +113,11 @@ function CompatibilityBadge({ targets }: { targets: string[] }) {
     <div className="flex flex-wrap gap-1.5" aria-label="Compatible targets">
       {targets.slice(0, 4).map((t) => (
         <span
-          key={t}
+          key={t.target}
           className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-[var(--color-bg-tertiary)] px-2 py-0.5 text-xs font-medium text-[var(--color-text-secondary)]"
         >
-          {targetIcons[t] || <Package className="h-3 w-3" />}
-          <span>{t}</span>
+          {targetIcons[t.target] || <Package className="h-3 w-3" />}
+          <span>{t.target}</span>
         </span>
       ))}
       {targets.length > 4 && (
@@ -136,14 +137,16 @@ function VersionBadge({ version }: { version: string }) {
   );
 }
 
-function AssetCard({ asset }: { asset: Asset }) {
+function AssetCard({ asset }: { asset: AssetWithRelations }) {
+  const currentVersion = asset.versions[0];
+  const tags = asset.tags.map((t) => t.tag);
   return (
     <div className="group">
       <Card className="card-hover flex h-full flex-col overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg-surface)]">
         <div className="relative aspect-video overflow-hidden bg-[var(--color-bg-tertiary)]">
-          {asset.thumbnail ? (
+          {asset.screenshots[0] ? (
             <img
-              src={asset.thumbnail}
+              src={asset.screenshots[0].url}
               alt={asset.name}
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
               loading="lazy"
@@ -172,13 +175,13 @@ function AssetCard({ asset }: { asset: Asset }) {
               <h3 className="truncate font-semibold text-[var(--color-text-primary)]">
                 {asset.name}
               </h3>
-              <p className="truncate text-sm text-[var(--color-text-muted)]">by {asset.author}</p>
+              <p className="truncate text-sm text-[var(--color-text-muted)]">by {asset.author.name || asset.author.username}</p>
             </div>
-            <VersionBadge version={asset.version} />
+            {currentVersion && <VersionBadge version={currentVersion.version} />}
           </div>
 
           <p className="line-clamp-2 text-sm text-[var(--color-text-secondary)]">
-            {asset.description}
+            {asset.shortDesc || asset.description.slice(0, 200)}
           </p>
 
           <div className="flex items-center justify-between">
@@ -188,22 +191,22 @@ function AssetCard({ asset }: { asset: Asset }) {
                 {asset.downloads.toLocaleString()} downloads
               </span>
               <span className="flex items-center gap-1">
-                <Clock className="h-3 w-3" /> {asset.updatedAt}
+                <Clock className="h-3 w-3" /> {currentVersion ? new Date(currentVersion.createdAt).toLocaleDateString() : '—'}
               </span>
             </div>
           </div>
 
-          <CompatibilityBadge targets={asset.compatibility} />
+          <CompatibilityBadge targets={asset.compatibilities} />
 
           <div className="flex flex-wrap gap-1.5 border-t border-[var(--color-border)] pt-2">
-            {asset.tags.slice(0, 4).map((tag) => (
-              <Badge key={tag} variant="outline" className="h-5 px-2 text-xs">
-                {tag}
+            {tags.slice(0, 4).map((tag) => (
+              <Badge key={tag.id} variant="outline" className="h-5 px-2 text-xs">
+                {tag.name}
               </Badge>
             ))}
-            {asset.tags.length > 4 && (
+            {tags.length > 4 && (
               <Badge variant="outline" className="h-5 px-2 text-xs">
-                +{asset.tags.length - 4}
+                +{tags.length - 4}
               </Badge>
             )}
           </div>
@@ -239,6 +242,7 @@ function FilterSidebar({
   onCompatibilityChange,
   resultsCount,
   onClearFilters,
+  categories,
 }: {
   selectedCategory: string;
   onCategoryChange: (c: string) => void;
@@ -250,6 +254,7 @@ function FilterSidebar({
   onCompatibilityChange: (c: string[]) => void;
   resultsCount: number;
   onClearFilters: () => void;
+  categories: Array<{ id: string; slug: string; name: string; icon: string | null; _count: { assets: number } }>;
 }) {
   const [openSections, setOpenSections] = useState<string[]>(['Category', 'Type', 'Compatibility']);
 
@@ -258,6 +263,8 @@ function FilterSidebar({
       prev.includes(section) ? prev.filter((s) => s !== section) : [...prev, section]
     );
   };
+
+  const categoryOptions = ['All', ...categories.map((c) => c.name)];
 
   return (
     <aside className="hidden w-72 flex-shrink-0 lg:block">
@@ -284,7 +291,7 @@ function FilterSidebar({
             onToggle={() => toggleSection('Category')}
           >
             <div className="space-y-2">
-              {CATEGORIES.map((cat) => (
+              {categoryOptions.map((cat) => (
                 <label key={cat} className="flex cursor-pointer items-center gap-2">
                   <input
                     type="radio"
@@ -305,7 +312,7 @@ function FilterSidebar({
             onToggle={() => toggleSection('Type')}
           >
             <div className="space-y-2">
-              {KINDS.map((kind) => (
+              {['Skill', 'Persona', 'Template', 'Prompt Pack', 'Instruction File', 'Workflow', 'MCP Server', 'Collection', 'Bundle'].map((kind) => (
                 <label key={kind} className="flex cursor-pointer items-center gap-2">
                   <input
                     type="checkbox"
@@ -487,11 +494,22 @@ function ResultsHeader({
   );
 }
 
-export function MarketplaceCategoryPage() {
+export function MarketplaceCategoryPageClient({
+  initialAssets,
+  initialTotalCount,
+  initialTotalPages,
+  categories,
+  kinds,
+}: MarketplaceCategoryPageClientProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
 
+  const [assets, setAssets] = useState<AssetWithRelations[]>(initialAssets);
+  const [totalCount, setTotalCount] = useState(initialTotalCount);
+  const [totalPages, setTotalPages] = useState(initialTotalPages);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'All');
   const [selectedKinds, setSelectedKinds] = useState<string[]>(
@@ -504,6 +522,37 @@ export function MarketplaceCategoryPage() {
   const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'trending');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showSidebar, setShowSidebar] = useState(false);
+
+  const fetchAssets = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (searchQuery) params.set('q', searchQuery);
+      if (selectedCategory && selectedCategory !== 'All') params.set('category', selectedCategory);
+      if (selectedKinds.length > 0) params.set('kind', selectedKinds.join(','));
+      if (verifiedOnly) params.set('verified', 'true');
+      if (compatibility.length > 0) params.set('compat', compatibility.join(','));
+      if (sortBy !== 'trending') params.set('sort', sortBy);
+      params.set('page', currentPage.toString());
+      params.set('limit', '20');
+
+      const response = await fetch(`/api/marketplace?${params.toString()}`);
+      if (response.ok) {
+        const data = await response.json();
+        setAssets(data.assets);
+        setTotalCount(data.totalCount);
+        setTotalPages(data.totalPages);
+      }
+    } catch (error) {
+      console.error('Failed to fetch assets:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [searchQuery, selectedCategory, selectedKinds, verifiedOnly, compatibility, sortBy, currentPage]);
+
+  useEffect(() => {
+    fetchAssets();
+  }, [fetchAssets]);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -525,56 +574,6 @@ export function MarketplaceCategoryPage() {
     pathname,
   ]);
 
-  const filteredAssets = useMemo(() => {
-    let result = getAssetsByCategory(selectedCategory);
-
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(
-        (a) =>
-          a.name.toLowerCase().includes(query) ||
-          a.description.toLowerCase().includes(query) ||
-          a.author.toLowerCase().includes(query) ||
-          a.tags.some((t) => t.toLowerCase().includes(query))
-      );
-    }
-
-    if (selectedKinds.length > 0) {
-      result = result.filter((a) => selectedKinds.includes(a.kind));
-    }
-
-    if (verifiedOnly) {
-      result = result.filter((a) => a.verified);
-    }
-
-    if (compatibility.length > 0) {
-      result = result.filter((a) => compatibility.every((t) => a.compatibility.includes(t)));
-    }
-
-    switch (sortBy) {
-      case 'recent':
-        result.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
-        break;
-      case 'rating':
-        result.sort((a, b) => b.rating - a.rating);
-        break;
-      case 'downloads':
-        result.sort((a, b) => b.downloads - a.downloads);
-        break;
-      case 'alphabetical':
-        result.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case 'trending':
-      default:
-        result.sort(
-          (a, b) => b.rating * Math.log(b.downloads + 1) - a.rating * Math.log(a.downloads + 1)
-        );
-        break;
-    }
-
-    return result;
-  }, [searchQuery, selectedCategory, selectedKinds, verifiedOnly, compatibility, sortBy]);
-
   const hasActiveFilters =
     selectedCategory !== 'All' ||
     selectedKinds.length > 0 ||
@@ -587,6 +586,12 @@ export function MarketplaceCategoryPage() {
     setVerifiedOnly(false);
     setCompatibility([]);
   }, []);
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[var(--color-bg-primary)]">
@@ -629,13 +634,14 @@ export function MarketplaceCategoryPage() {
           onVerifiedChange={setVerifiedOnly}
           compatibility={compatibility}
           onCompatibilityChange={setCompatibility}
-          resultsCount={filteredAssets.length}
+          resultsCount={totalCount}
           onClearFilters={clearFilters}
+          categories={categories}
         />
 
         <main className="min-w-0 flex-1 p-4 lg:ml-0 lg:p-6">
           <ResultsHeader
-            count={filteredAssets.length}
+            count={totalCount}
             selectedCategory={selectedCategory}
             searchQuery={searchQuery}
             hasActiveFilters={hasActiveFilters}
@@ -686,7 +692,21 @@ export function MarketplaceCategoryPage() {
             </div>
           </div>
 
-          {filteredAssets.length === 0 ? (
+          {isLoading ? (
+            <div
+              className={cn(
+                viewMode === 'grid'
+                  ? 'grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+                  : 'space-y-4'
+              )}
+              role="list"
+              aria-label="Marketplace assets"
+            >
+              {[...Array(8)].map((_, i) => (
+                <Skeleton key={i} className="h-64" />
+              ))}
+            </div>
+          ) : assets.length === 0 ? (
             <EmptyState
               variant={
                 searchQuery ? 'search' : selectedCategory !== 'All' ? 'marketplace' : 'default'
@@ -715,17 +735,55 @@ export function MarketplaceCategoryPage() {
               role="list"
               aria-label="Marketplace assets"
             >
-              {filteredAssets.map((asset) => (
+              {assets.map((asset) => (
                 <AssetCard key={asset.id} asset={asset} />
               ))}
             </div>
           )}
 
-          {filteredAssets.length > 0 && (
-            <div className="mt-8 flex justify-center">
-              <Button variant="outline" size="lg" className="min-w-[200px]">
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Load more
+          {totalPages > 1 && (
+            <div className="mt-8 flex items-center justify-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1 || isLoading}
+              >
+                Previous
+              </Button>
+              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                let pageNum = i + 1;
+                if (totalPages > 5) {
+                  if (currentPage > 3 && currentPage < totalPages - 1) {
+                    pageNum = currentPage - 2 + i;
+                  } else if (currentPage >= totalPages - 1) {
+                    pageNum = totalPages - 4 + i;
+                  }
+                }
+                return (
+                  <Button
+                    key={pageNum}
+                    variant={currentPage === pageNum ? 'primary' : 'outline'}
+                    size="sm"
+                    onClick={() => handlePageChange(pageNum)}
+                    disabled={isLoading}
+                  >
+                    {pageNum}
+                  </Button>
+                );
+              })}
+              {totalPages > 5 && currentPage < totalPages - 2 && (
+                <Button variant="outline" size="sm" disabled>
+                  ...
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages || isLoading}
+              >
+                Next
               </Button>
             </div>
           )}
@@ -754,8 +812,9 @@ export function MarketplaceCategoryPage() {
               onVerifiedChange={setVerifiedOnly}
               compatibility={compatibility}
               onCompatibilityChange={setCompatibility}
-              resultsCount={filteredAssets.length}
+              resultsCount={totalCount}
               onClearFilters={clearFilters}
+              categories={categories}
             />
           </div>
         </div>

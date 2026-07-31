@@ -2,7 +2,6 @@ import { type Metadata } from 'next';
 import { Header, Footer } from '@/components/layout';
 import { generateMetadata } from '@/lib/metadata';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CTA } from '@/components/sections/cta';
 import {
@@ -12,13 +11,8 @@ import {
   Code,
   Users,
   Globe,
-  BookOpen,
-  Zap,
   Lightbulb,
-  Award,
-  Rocket,
   GitBranch,
-  Star,
   ExternalLink,
 } from 'lucide-react';
 
@@ -215,7 +209,7 @@ export function AboutPage() {
                   aria-hidden="true"
                 />
                 <div className="space-y-10">
-                  {history.map((item, index) => (
+                  {history.map((item, _index) => (
                     <div key={item.year} className="relative flex">
                       <div className="relative z-10 flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full border-2 border-[var(--color-accent)] bg-[var(--color-bg-primary)]">
                         <span className="font-mono text-sm font-bold text-[var(--color-accent)]">

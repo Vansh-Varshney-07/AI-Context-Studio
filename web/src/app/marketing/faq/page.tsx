@@ -12,12 +12,10 @@ import {
   Package,
   Shield,
   Plug,
-  Users,
   BookOpen,
   Search,
   ChevronRight,
 } from 'lucide-react';
-import Link from 'next/link';
 import { Callout } from '@/components/docs/callout';
 
 export const metadata: Metadata = generateMetadata({

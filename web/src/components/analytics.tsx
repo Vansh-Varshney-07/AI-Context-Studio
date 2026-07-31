@@ -3,20 +3,26 @@
 import Script from 'next/script';
 import { useEffect } from 'react';
 
+interface WindowWithDataLayer extends Window {
+  dataLayer: unknown[];
+  gtag: (...args: unknown[]) => void;
+  doNotTrack: string;
+}
+
 export function Analytics() {
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
   useEffect(() => {
     if (!gaId || typeof window === 'undefined') return;
 
-    const win = window as any;
+    const win = window as unknown as WindowWithDataLayer;
     const doNotTrack = win.doNotTrack || navigator.doNotTrack;
     if (doNotTrack === '1') {
       return;
     }
 
     win.dataLayer = win.dataLayer || [];
-    function gtag(...args: any[]) {
+    function gtag(...args: unknown[]) {
       win.dataLayer.push(args);
     }
     gtag('js', new Date());

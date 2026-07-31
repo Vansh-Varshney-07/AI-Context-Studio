@@ -11,13 +11,10 @@ import {
   Star,
   Code,
   MessageCircle,
-  Heart,
   Github,
   Twitter,
   ExternalLink,
-  ArrowRight,
 } from 'lucide-react';
-import Link from 'next/link';
 
 export const metadata: Metadata = generateMetadata({
   title: 'Community',

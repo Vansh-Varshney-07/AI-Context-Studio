@@ -2,10 +2,10 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronRight, ChevronDown, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { docCategories, type DocSidebarItem } from '@/data/docs';
+import { FileText, ChevronRight, Github } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { docCategories, type DocCategory, type DocSidebarItem } from '@/data/docs';
 
 interface DocSidebarProps {
   currentCategory: string;
@@ -14,7 +14,7 @@ interface DocSidebarProps {
 
 export function DocSidebar({ currentCategory, className }: DocSidebarProps) {
   const pathname = usePathname();
-  const category = docCategories.find((c) => c.id === currentCategory);
+  docCategories.find((c) => c.id === currentCategory);
 
   const isActive = (href: string) =>
     pathname === href || (pathname.startsWith(href + '/') && href !== '/docs');

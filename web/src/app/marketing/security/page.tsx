@@ -14,7 +14,6 @@ import {
   CheckCircle,
   AlertCircle,
   Github,
-  ExternalLink,
   Link as LinkIcon,
 } from 'lucide-react';
 

@@ -34,17 +34,22 @@
       ],
       "@shared/*": [
         "../shared/*"
+      ],
+      "@prisma/client": [
+        "./prisma/generated/prisma"
       ]
     }
   },
   "include": [
     "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts",
+    "prisma/generated/prisma/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "prisma/seed"
   ]
 }

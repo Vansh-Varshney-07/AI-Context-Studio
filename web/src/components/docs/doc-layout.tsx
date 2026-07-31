@@ -3,19 +3,18 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronRight, ChevronDown, Github, ExternalLink, FileText, Code } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { docCategories, type DocCategory, type DocSidebarItem } from '@/data/docs';
+import { docCategories, type DocSidebarItem } from '@/data/docs';
+import { Github, FileText, ExternalLink, ChevronDown, ChevronRight } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 interface DocLayoutProps {
   children: React.ReactNode;
   currentCategory: string;
-  currentPage?: string;
+  _currentPage?: string;
 }
 
-export function DocLayout({ children, currentCategory, currentPage }: DocLayoutProps) {
+export function DocLayout({ children, currentCategory, _currentPage }: DocLayoutProps) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
   const pathname = usePathname();

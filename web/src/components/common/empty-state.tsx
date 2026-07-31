@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Search, Package, Loader2, Shield, AlertCircle, FileText } from 'lucide-react';
+import { Search, Package, Loader2, Shield, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
 type EmptyStateVariant = 'default' | 'search' | 'marketplace' | 'loading' | 'error' | 'security';
@@ -95,7 +95,7 @@ export function EmptyState({
   );
 }
 
-export function SearchEmptyState({ query, onClear }: { query: string; onClear: () => void }) {
+export function SearchEmptyState({ query }: { query: string }) {
   return (
     <EmptyState
       variant="search"

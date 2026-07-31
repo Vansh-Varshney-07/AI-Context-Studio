@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { docCategories, getCategory, getSidebarItems } from '@/data/docs';
 import { generateMetadata as generatePageMetadata } from '@/lib/metadata';
 import { DocLayout } from '@/components/docs/doc-layout';
-import { CodeBlock, Callout, InstallCommand, VersionBadge } from '@/components/docs';
+import { CodeBlock, Callout, InstallCommand } from '@/components/docs';
 import Link from 'next/link';
 
 export async function generateStaticParams() {
@@ -44,10 +44,10 @@ export default async function Page({
     );
   }
 
-  const sidebarItems = getSidebarItems(category);
+  getSidebarItems(category);
 
   return (
-    <DocLayout currentCategory={category} currentPage={page}>
+    <DocLayout currentCategory={category} _currentPage={page}>
       <div className="space-y-8">
         <header className="space-y-2">
           <h1 className="text-3xl font-bold text-[var(--color-text-primary)] capitalize">

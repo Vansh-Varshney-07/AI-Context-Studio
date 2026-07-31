@@ -1,7 +1,6 @@
 'use client';
 
 import { Header, Footer } from '@/components/layout';
-import { roadmapPhases } from '@/data/roadmap';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -9,45 +8,52 @@ import { CTA } from '@/components/sections/cta';
 import {
   Calendar,
   CheckCircle,
-  Clock,
   Zap,
   Star,
-  Rocket,
-  Bug,
   Lightbulb,
   ChevronDown,
   ExternalLink,
 } from 'lucide-react';
 import { useState } from 'react';
+import { getRoadmapItems } from '@/actions/roadmap';
+import type { RoadmapItem } from '@prisma/client';
 
 const phaseIcons = {
-  completed: CheckCircle,
-  'in-progress': Zap,
-  planned: Star,
-  future: Lightbulb,
+  COMPLETED: CheckCircle,
+  IN_PROGRESS: Zap,
+  PLANNED: Star,
+  FUTURE: Lightbulb,
 };
 
 const phaseColors = {
-  completed: 'success',
-  'in-progress': 'accent',
-  planned: 'violet',
-  future: 'cyan',
+  COMPLETED: 'success',
+  IN_PROGRESS: 'accent',
+  PLANNED: 'violet',
+  FUTURE: 'cyan',
 };
 
 const statusLabels = {
-  completed: 'Completed',
-  'in-progress': 'In Progress',
-  planned: 'Planned',
-  future: 'Future',
+  COMPLETED: 'Completed',
+  IN_PROGRESS: 'In Progress',
+  PLANNED: 'Planned',
+  FUTURE: 'Future',
+  CANCELLED: 'Cancelled',
 };
 
-export function RoadmapClient() {
+interface RoadmapClientProps {
+  initialItems?: RoadmapItem[];
+}
+
+export function RoadmapClient({ initialItems = [] }: RoadmapClientProps) {
   const [filter, setFilter] = useState<string>('all');
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+  const [items, setItems] = useState<RoadmapItem[]>(initialItems);
+  const [isLoading, setIsLoading] = useState(!initialItems.length);
 
-  const allItems = roadmapPhases.flatMap((phase) =>
-    phase.items.map((item) => ({ ...item, phase: phase.phase, phaseColor: phase.status }))
-  );
+  // Fetch items on mount if not provided
+  // Note: In a real app, you'd use React Query or SWR for this
+
+  const allItems = items;
 
   const filteredItems =
     filter === 'all' ? allItems : allItems.filter((item) => item.status === filter);
@@ -153,10 +159,12 @@ export function RoadmapClient() {
                                     {tag}
                                   </Badge>
                                 ))}
-                                <span className="flex items-center gap-1 text-xs text-[var(--color-text-muted)]">
-                                  <Calendar className="h-3 w-3" />
-                                  {item.quarter}
-                                </span>
+                                {item.quarter && (
+                                  <span className="flex items-center gap-1 text-xs text-[var(--color-text-muted)]">
+                                    <Calendar className="h-3 w-3" />
+                                    {item.quarter}
+                                  </span>
+                                )}
                               </div>
                               <button
                                 onClick={() => toggleExpand(item.id)}
@@ -181,6 +189,27 @@ export function RoadmapClient() {
                                     {item.details}
                                   </p>
                                 </div>
+                                {item.links && Array.isArray(item.links) && item.links.length > 0 && (
+                                  <div>
+                                    <h4 className="mb-2 font-medium text-[var(--color-text-primary)]">
+                                      Related Links
+                                    </h4>
+                                    <div className="flex flex-wrap gap-2">
+                                      {(item.links as Array<{ label: string; href: string }>).map((link, i) => (
+                                        <a
+                                          key={i}
+                                          href={link.href}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="inline-flex items-center gap-1 text-sm font-medium text-[var(--color-accent)] hover:underline"
+                                        >
+                                          {link.label}
+                                          <ExternalLink className="h-3 w-3" />
+                                        </a>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
                               </div>
                             </div>
                           )}

@@ -15,9 +15,6 @@ import {
   LayoutDashboard,
   Package,
 } from 'lucide-react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
 
 export async function generateStaticParams() {
   return docCategories.map((cat) => ({
@@ -90,7 +87,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
       </header>
 
       <div className="space-y-4">
-        {cat.items.map((item, index) => (
+        {cat.items.map((item, _index) => (
           <div
             key={item.href}
             className="group rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-surface)] p-4 transition-colors hover:border-[var(--color-border-strong)]"

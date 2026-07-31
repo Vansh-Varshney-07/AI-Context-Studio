@@ -1,11 +1,34 @@
 {
+  "name": "ai-context-studio",
+  "version": "1.0.0",
   "private": true,
   "workspaces": [
     "web",
-    "shared"
+    "shared",
+    "desktop"
   ],
+  "scripts": {
+    "dev": "npm run dev --workspace=web",
+    "build": "npm run build --workspaces --if-present",
+    "build:web": "npm run build --workspace=web",
+    "build:desktop": "npm run build --workspace=desktop",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "format": "npm run format --workspaces --if-present",
+    "db:generate": "npm run db:generate --workspace=web",
+    "db:push": "npm run db:push --workspace=web",
+    "db:migrate": "npm run db:migrate --workspace=web",
+    "db:seed": "npm run db:seed --workspace=web",
+    "db:studio": "npm run db:studio --workspace=web"
+  },
   "devDependencies": {
     "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3"
+    "@types/react-dom": "^19.2.3",
+    "turbo": "^2.0.0"
+  },
+  "packageManager": "npm@10.8.0",
+  "engines": {
+    "node": ">=20.0.0"
   }
 }

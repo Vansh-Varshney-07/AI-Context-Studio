@@ -1,0 +1,1357 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// AUTHENTICATION & USERS
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  name          String?
+  username      String?   @unique
+  avatar        String?
+  bio           String?
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastLoginAt   DateTime?
+
+  // Auth
+  passwordHash  String?
+  accounts      Account[]
+  sessions      Session[]
+  apiKeys       ApiKey[]
+
+  // Profile & Social
+  profile       Profile?
+  followers     Follow[]  @relation("following")
+  following     Follow[]  @relation("follower")
+  bookmarks     Bookmark[]
+  likes         Like[]
+
+  // Content
+  assets        Asset[]           @relation("author")
+  reviews       Review[]
+  ratings       Rating[]
+  collections   Collection[]
+  purchases     Purchase[]
+  posts         Post[]
+  comments      Comment[]
+  notifications Notification[]
+  blogPosts     BlogPost[]
+  roadmapVotes  RoadmapVote[]
+  registryPackages RegistryPackage[]
+
+  // Activity
+  auditLogs     AuditLog[]
+  downloads     Download[]
+  contactMessages ContactMessage[]
+
+  @@index([email])
+  @@index([username])
+  @@index([role])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String  // oauth, email, credentials
+  provider          String
+  providerAccountId String
+  refreshToken      String? @db.Text
+  accessToken       String? @db.Text
+  expiresAt         Int?
+  tokenType         String?
+  scope             String?
+  idToken           String? @db.Text
+  sessionState      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expires])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model ApiKey {
+  id        String   @id @default(cuid())
+  name      String
+  keyHash   String   @unique
+  prefix    String   // e.g., "acs_"
+  userId    String
+  scopes    String[] @default(["read"])
+  lastUsedAt DateTime?
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+  revokedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([keyHash])
+}
+
+enum Role {
+  USER
+  MODERATOR
+  ADMIN
+  OWNER
+}
+
+// ============================================
+// PROFILE
+// ============================================
+
+model Profile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  displayName String?
+  headline    String?
+  location    String?
+  website     String?
+  twitter     String?
+  github      String?
+  linkedin    String?
+  skills      String[]
+  socialLinks Json?    // { label, url, icon }[]
+  preferences Json?    // theme, notifications, etc.
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ============================================
+// FOLLOW / SOCIAL
+// ============================================
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower  User @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+// ============================================
+// MARKETPLACE / ASSETS
+// ============================================
+
+model Category {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?
+  icon        String?
+  parentId    String?
+  parent      Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  assets      Asset[]    // inverse of Asset.category
+  assetCategories AssetCategory[]
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([parentId])
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String   @unique
+  color     String?  // hex color
+  createdAt DateTime @default(now())
+
+  assets      AssetTag[]
+  posts       PostTag[]
+  blogPosts   BlogPostTag[]
+
+  @@index([slug])
+}
+
+model Asset {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  name          String
+  description   String   @db.Text
+  shortDesc     String?  // for cards/previews
+  kind          AssetKind
+  authorId      String
+  categoryId    String
+  status        AssetStatus @default(DRAFT)
+  visibility    Visibility  @default(PUBLIC)
+
+  // Versioning - reference to current version (FK only, no explicit relation)
+  currentVersionId String? @unique
+
+  // Stats
+  downloads     Int      @default(0)
+  stars         Int      @default(0)
+  rating        Float    @default(0)
+  reviewCount   Int      @default(0)
+
+  // Metadata
+  verified      Boolean  @default(false)
+  featured      Boolean  @default(false)
+  deprecated    Boolean  @default(false)
+  deprecationReason String?
+
+  // Compatibility
+  compatibilities AssetCompatibility[]
+
+  // Relations
+  author        User              @relation("author", fields: [authorId], references: [id], onDelete: Cascade)
+  category      Category          @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  categories    AssetCategory[]
+  tags          AssetTag[]
+  versions      AssetVersion[]
+  screenshots   AssetScreenshot[]
+  dependencies  AssetDependency[] @relation("asset")
+  dependents    AssetDependency[] @relation("dependency")
+  reviews       Review[]
+  ratings       Rating[]
+  downloads_    Download[]
+  purchases     Purchase[]
+  collections   CollectionAsset[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  publishedAt   DateTime?
+
+  @@index([authorId])
+  @@index([categoryId])
+  @@index([status])
+  @@index([visibility])
+  @@index([kind])
+  @@index([featured])
+  @@index([createdAt])
+  @@index([downloads])
+  @@index([rating])
+}
+
+enum AssetKind {
+  SKILL
+  PERSONA
+  TEMPLATE
+  PROMPT_PACK
+  INSTRUCTION_FILE
+  WORKFLOW
+  MCP_SERVER
+  COLLECTION
+  BUNDLE
+}
+
+enum AssetStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  PUBLISHED
+  ARCHIVED
+}
+
+enum Visibility {
+  PUBLIC
+  PRIVATE
+  UNLISTED
+}
+
+model AssetVersion {
+  id          String   @id @default(cuid())
+  assetId     String
+  version     String   // semver
+  changelog   String   @db.Text
+  readme      String   @db.Text
+  manifest    Json     // registry manifest.json
+  packageUrl  String?  // download URL
+  packageSize Int?     // bytes
+  checksum    String?  // SHA256
+  isPrerelease Boolean @default(false)
+  status      VersionStatus @default(DRAFT)
+
+  // Relations
+  asset       Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  downloads   Download[]
+  purchases   Purchase[]
+
+  createdAt   DateTime @default(now())
+  publishedAt DateTime?
+
+  @@unique([assetId, version])
+  @@index([assetId])
+  @@index([status])
+}
+
+enum VersionStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  PUBLISHED
+  DEPRECATED
+}
+
+model AssetCategory {
+  assetId     String
+  categoryId  String
+  isPrimary   Boolean @default(false)
+
+  asset     Asset     @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  category  Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([assetId, categoryId])
+}
+
+model AssetTag {
+  assetId String
+  tagId   String
+
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  tag   Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([assetId, tagId])
+}
+
+model AssetScreenshot {
+  id        String   @id @default(cuid())
+  assetId   String
+  url       String
+  alt       String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([assetId])
+}
+
+model AssetCompatibility {
+  id        String   @id @default(cuid())
+  assetId   String
+  target    String   // Cursor, Claude Code, etc.
+  minVersion String?
+  maxVersion String?
+  verified  Boolean  @default(false)
+
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@unique([assetId, target])
+  @@index([assetId])
+}
+
+model AssetDependency {
+  id           String   @id @default(cuid())
+  assetId      String
+  dependencyId String
+  versionRange String   // semver range
+  isOptional   Boolean  @default(false)
+  type         DependencyType @default(RUNTIME)
+
+  asset       Asset @relation("asset", fields: [assetId], references: [id], onDelete: Cascade)
+  dependency  Asset @relation("dependency", fields: [dependencyId], references: [id], onDelete: Cascade)
+
+  @@unique([assetId, dependencyId])
+  @@index([assetId])
+  @@index([dependencyId])
+}
+
+enum DependencyType {
+  RUNTIME
+  DEVELOPMENT
+  PEER
+  OPTIONAL
+}
+
+// ============================================
+// DOWNLOADS & PURCHASES
+// ============================================
+
+model Download {
+  id        String   @id @default(cuid())
+  assetId   String
+  versionId String?
+  userId    String?
+  ipAddress String?
+  userAgent String?
+  referrer  String?
+  platform  String?  // windows, macos, linux
+  createdAt DateTime @default(now())
+
+  asset   Asset   @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  version AssetVersion? @relation(fields: [versionId], references: [id], onDelete: SetNull)
+  user    User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([assetId])
+  @@index([userId])
+  @@index([createdAt])
+  @@index([platform])
+}
+
+model Purchase {
+  id            String        @id @default(cuid())
+  userId        String
+  assetId       String
+  versionId     String?
+  amount        Int           // in cents
+  currency      String        @default("USD")
+  status        PurchaseStatus @default(PENDING)
+  stripePaymentIntentId String? @unique
+  stripeSessionId String?     @unique
+  metadata      Json?
+  createdAt     DateTime      @default(now())
+  completedAt   DateTime?
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  asset   Asset   @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  version AssetVersion? @relation(fields: [versionId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([assetId])
+  @@index([status])
+  @@index([stripePaymentIntentId])
+}
+
+enum PurchaseStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+// ============================================
+// REVIEWS & RATINGS
+// ============================================
+
+model Review {
+  id        String   @id @default(cuid())
+  assetId   String
+  userId    String
+  rating    Int      // 1-5
+  title     String?
+  content   String   @db.Text
+  helpful   Int      @default(0)
+  verified  Boolean  @default(false) // verified purchase
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([assetId, userId])
+  @@index([assetId])
+  @@index([userId])
+  @@index([rating])
+}
+
+model Rating {
+  id        String   @id @default(cuid())
+  assetId   String
+  userId    String
+  value     Int      // 1-5
+  createdAt DateTime @default(now())
+
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([assetId, userId])
+  @@index([assetId])
+  @@index([userId])
+}
+
+// ============================================
+// LIKES & BOOKMARKS (polymorphic - no inverse on target models)
+// ============================================
+
+model Like {
+  id        String       @id @default(cuid())
+  userId    String
+  targetId  String
+  targetType LikeTargetType
+  createdAt DateTime     @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, targetId, targetType])
+  @@index([userId])
+  @@index([targetId, targetType])
+}
+
+enum LikeTargetType {
+  ASSET
+  POST
+  COMMENT
+  COLLECTION
+}
+
+model Bookmark {
+  id            String            @id @default(cuid())
+  userId        String
+  targetId      String
+  targetType    BookmarkTargetType
+  collectionId  String?
+  note          String?
+  createdAt     DateTime          @default(now())
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  collection Collection? @relation("collectionBookmarks", fields: [collectionId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, targetId, targetType])
+  @@index([userId])
+  @@index([targetId, targetType])
+  @@index([collectionId])
+}
+
+enum BookmarkTargetType {
+  ASSET
+  POST
+  COMMENT
+  COLLECTION
+}
+
+// ============================================
+// COLLECTIONS
+// ============================================
+
+model Collection {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?  @db.Text
+  userId      String
+  isPublic    Boolean  @default(true)
+  isFeatured  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user    User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assets  CollectionAsset[]
+  bookmarks Bookmark[]        @relation("collectionBookmarks")
+
+  @@index([userId])
+  @@index([slug])
+  @@index([isPublic])
+}
+
+model CollectionAsset {
+  id           String   @id @default(cuid())
+  collectionId String
+  assetId      String
+  sortOrder    Int      @default(0)
+  note         String?
+  addedAt      DateTime @default(now())
+
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  asset      Asset      @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@unique([collectionId, assetId])
+  @@index([collectionId])
+  @@index([assetId])
+}
+
+// ============================================
+// COMMUNITY / DISCUSSIONS
+// ============================================
+
+model Post {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  content     String   @db.Text
+  excerpt     String?
+  authorId    String
+  type        PostType @default(DISCUSSION)
+  status      PostStatus @default(PUBLISHED)
+  pinned      Boolean  @default(false)
+  locked      Boolean  @default(false)
+  viewCount   Int      @default(0)
+
+  // Relations
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  tags        PostTag[]
+  comments    Comment[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  publishedAt DateTime?
+
+  @@index([authorId])
+  @@index([type])
+  @@index([status])
+  @@index([pinned])
+  @@index([createdAt])
+  @@index([viewCount])
+}
+
+enum PostType {
+  DISCUSSION
+  ANNOUNCEMENT
+  TUTORIAL
+  SHOWCASE
+  QUESTION
+  DEVLOG
+  RELEASE
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+  MODERATED
+}
+
+model PostTag {
+  postId String
+  tagId  String
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  postId    String
+  authorId  String
+  parentId  String?
+  depth     Int      @default(0)
+  status    CommentStatus @default(PUBLISHED)
+
+  // Relations
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent    Comment? @relation("replies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("replies")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([postId])
+  @@index([authorId])
+  @@index([parentId])
+  @@index([status])
+}
+
+enum CommentStatus {
+  PUBLISHED
+  DELETED
+  MODERATED
+}
+
+// ============================================
+// BLOG
+// ============================================
+
+model BlogPost {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  excerpt     String?
+  content     String   @db.Text
+  contentHtml String?  @db.Text
+  coverImage  String?
+  authorId    String
+  status      BlogStatus @default(DRAFT)
+  featured    Boolean  @default(false)
+  publishedAt DateTime?
+  viewCount   Int      @default(0)
+  readTime    Int?     // minutes
+
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+  ogImage         String?
+  canonicalUrl    String?
+
+  // Relations
+  author      User            @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  categories  BlogPostCategory[]
+  tags        BlogPostTag[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([authorId])
+  @@index([status])
+  @@index([featured])
+  @@index([publishedAt])
+  @@index([slug])
+}
+
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model BlogCategory {
+  id          String     @id @default(cuid())
+  slug        String     @unique
+  name        String
+  description String?
+  color       String?
+  sortOrder   Int        @default(0)
+  posts       BlogPostCategory[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([slug])
+}
+
+model BlogPostCategory {
+  postId     String
+  categoryId String
+
+  post     BlogPost     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  category BlogCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([postId, categoryId])
+}
+
+model BlogPostTag {
+  postId String
+  tagId  String
+
+  post BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag  Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+}
+
+// ============================================
+// DOCUMENTATION
+// ============================================
+
+model DocPage {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String?
+  content     String   @db.Text
+  contentHtml String?  @db.Text
+  categoryId  String
+  parentId    String?
+  sortOrder   Int      @default(0)
+  isPublished Boolean  @default(true)
+  version     String?  // for versioned docs
+  toc         Json?    // table of contents
+
+  // Relations
+  category    DocCategory     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  parent      DocPage?        @relation("DocHierarchy", fields: [parentId], references: [id])
+  children    DocPage[]       @relation("DocHierarchy")
+  translations DocTranslation[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([categoryId])
+  @@index([parentId])
+  @@index([slug])
+  @@index([isPublished])
+}
+
+model DocCategory {
+  id          String       @id @default(cuid())
+  slug        String       @unique
+  name        String
+  description String?
+  icon        String?
+  parentId    String?
+  parent      DocCategory? @relation("DocCatHierarchy", fields: [parentId], references: [id])
+  children    DocCategory[] @relation("DocCatHierarchy")
+  pages       DocPage[]
+  sortOrder   Int          @default(0)
+  version     String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([slug])
+  @@index([parentId])
+}
+
+model DocTranslation {
+  id        String   @id @default(cuid())
+  pageId    String
+  locale    String   // en, es, fr, etc.
+  title     String
+  content   String   @db.Text
+  contentHtml String? @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  page DocPage @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@unique([pageId, locale])
+  @@index([pageId])
+}
+
+// ============================================
+// DOWNLOADS / RELEASES
+// ============================================
+
+model Release {
+  id          String   @id @default(cuid())
+  version     String   @unique
+  title       String
+  description String   @db.Text
+  isPrerelease Boolean @default(false)
+  isDraft     Boolean  @default(false)
+  publishedAt DateTime?
+
+  // Platform assets
+  assets      ReleaseAsset[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([version])
+  @@index([publishedAt])
+}
+
+model ReleaseAsset {
+  id          String   @id @default(cuid())
+  releaseId   String
+  platform    Platform
+  arch        String
+  filename    String
+  size        Int      // bytes
+  checksum    String   // SHA256
+  url         String
+  signature   String?  // GPG signature
+  isRecommended Boolean @default(false)
+
+  release Release @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+
+  @@index([releaseId])
+  @@index([platform])
+}
+
+enum Platform {
+  WINDOWS_X64
+  WINDOWS_ARM64
+  MACOS_UNIVERSAL
+  MACOS_ARM64
+  MACOS_X64
+  LINUX_X64
+  LINUX_ARM64
+  LINUX_APPARMOR
+  SOURCE_CODE
+}
+
+// ============================================
+// ROADMAP
+// ============================================
+
+model RoadmapItem {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  status      RoadmapStatus @default(PLANNED)
+  phase       String   // Completed, In Progress, Planned, Future
+  quarter     String?  // Q1 2024, etc.
+  progress    Int      @default(0) // 0-100
+  order       Int      @default(0)
+
+  // Voting
+  votes       RoadmapVote[]
+
+  // Metadata
+  tags        String[]
+  details     String?  @db.Text
+  links       Json?    // [{ label, href }]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([phase])
+  @@index([order])
+}
+
+enum RoadmapStatus {
+  COMPLETED
+  IN_PROGRESS
+  PLANNED
+  FUTURE
+  CANCELLED
+}
+
+model RoadmapVote {
+  id          String   @id @default(cuid())
+  itemId      String
+  userId      String
+  type        VoteType @default(UP)
+  createdAt   DateTime @default(now())
+
+  item RoadmapItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  user User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([itemId, userId])
+  @@index([itemId])
+  @@index([userId])
+}
+
+enum VoteType {
+  UP
+  DOWN
+}
+
+// ============================================
+// SECURITY
+// ============================================
+
+model SecurityAdvisory {
+  id          String   @id @default(cuid())
+  cveId       String?  @unique // CVE-XXXX-XXXX
+  ghsaId      String?  @unique // GHSA-xxxx-xxxx-xxxx
+  title       String
+  description String   @db.Text
+  severity    Severity
+  cvssScore   Float?
+  cvssVector  String?
+  affectedVersions String[] // semver ranges
+  patchedVersions  String[] // semver ranges
+  status      AdvisoryStatus @default(PUBLISHED)
+  publishedAt DateTime?
+  withdrawnAt DateTime?
+
+  // References
+  references  Json?    // [{ type, url }]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([cveId])
+  @@index([ghsaId])
+  @@index([severity])
+  @@index([status])
+  @@index([publishedAt])
+}
+
+enum Severity {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+  NONE
+}
+
+enum AdvisoryStatus {
+  DRAFT
+  PUBLISHED
+  WITHDRAWN
+}
+
+model AuditReport {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  auditor     String
+  reportUrl   String?
+  findings    Json     // [{ severity, title, description, status }]
+  publishedAt DateTime
+  createdAt   DateTime @default(now())
+
+  @@index([publishedAt])
+}
+
+// ============================================
+// REGISTRY
+// ============================================
+
+model RegistryPackage {
+  id            String   @id @default(cuid())
+  name          String   @unique // e.g., @ai-context-studio/code-review-assistant
+  displayName   String
+  description   String   @db.Text
+  authorId      String
+  repository    String?
+  homepage      String?
+  license       String?
+  isOfficial    Boolean  @default(false)
+  isDeprecated  Boolean  @default(false)
+
+  // Stats
+  downloads     Int      @default(0)
+  stars         Int      @default(0)
+  dependents    Int      @default(0)
+
+  // Relations
+  author        User                 @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  versions      RegistryVersion[]
+  keywords      RegistryPackageKeyword[]
+  dependencies  RegistryDependency[] @relation("package")
+  dependents_   RegistryDependency[] @relation("dependent")
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([authorId])
+  @@index([name])
+  @@index([isOfficial])
+}
+
+model RegistryVersion {
+  id            String   @id @default(cuid())
+  packageId     String
+  version       String   // semver
+  manifest      Json     // full registry manifest
+  tarballUrl    String
+  tarballSize   Int
+  checksum      String   // SHA256
+  signature     String?  // GPG signature
+  changelog     String?  @db.Text
+  readme        String?  @db.Text
+  isPrerelease  Boolean  @default(false)
+  isDeprecated  Boolean  @default(false)
+  deprecationReason String?
+  downloads     Int      @default(0)
+  createdAt     DateTime @default(now())
+  publishedAt   DateTime?
+
+  package RegistryPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  @@unique([packageId, version])
+  @@index([packageId])
+  @@index([version])
+}
+
+model RegistryKeyword {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  packages  RegistryPackageKeyword[]
+  createdAt DateTime @default(now())
+}
+
+model RegistryPackageKeyword {
+  packageId  String
+  keywordId  String
+
+  package RegistryPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  keyword RegistryKeyword @relation(fields: [keywordId], references: [id], onDelete: Cascade)
+
+  @@id([packageId, keywordId])
+}
+
+model RegistryDependency {
+  id          String   @id @default(cuid())
+  packageId   String
+  dependentId String
+  versionRange String
+  type        DependencyType @default(RUNTIME)
+
+  package   RegistryPackage @relation("package", fields: [packageId], references: [id], onDelete: Cascade)
+  dependent RegistryPackage @relation("dependent", fields: [dependentId], references: [id], onDelete: Cascade)
+
+  @@unique([packageId, dependentId])
+  @@index([packageId])
+  @@index([dependentId])
+}
+
+// ============================================
+// ANNOUNCEMENTS & NOTIFICATIONS
+// ============================================
+
+model Announcement {
+  id          String   @id @default(cuid())
+  title       String
+  content     String   @db.Text
+  type        AnnouncementType @default(INFO)
+  priority    Int      @default(0)
+  isGlobal    Boolean  @default(true)
+  targetRoles Role[]   // which roles see this
+  startsAt    DateTime?
+  endsAt      DateTime?
+  isActive    Boolean  @default(true)
+  actionUrl   String?
+  actionLabel String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([startsAt, endsAt])
+  @@index([type])
+}
+
+enum AnnouncementType {
+  INFO
+  WARNING
+  MAINTENANCE
+  RELEASE
+  SECURITY
+  FEATURE
+}
+
+model Notification {
+  id        String            @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  data      Json?
+  read      Boolean           @default(false)
+  readAt    DateTime?
+  createdAt DateTime          @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([read])
+  @@index([createdAt])
+  @@index([type])
+}
+
+enum NotificationType {
+  FOLLOW
+  LIKE
+  COMMENT
+  REPLY
+  MENTION
+  REVIEW
+  PURCHASE
+  DOWNLOAD
+  ANNOUNCEMENT
+  SECURITY
+  SYSTEM
+}
+
+// ============================================
+// ANALYTICS
+// ============================================
+
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  event     String
+  userId    String?
+  sessionId String?
+  properties Json?
+  url       String?
+  referrer  String?
+  userAgent String?
+  ipAddress String?
+  country   String?
+  createdAt DateTime @default(now())
+
+  @@index([event])
+  @@index([userId])
+  @@index([sessionId])
+  @@index([createdAt])
+  @@index([url])
+}
+
+model PageView {
+  id        String   @id @default(cuid())
+  url       String
+  userId    String?
+  sessionId String?
+  referrer  String?
+  userAgent String?
+  ipAddress String?
+  country   String?
+  duration  Int?     // milliseconds
+  createdAt DateTime @default(now())
+
+  @@index([url])
+  @@index([userId])
+  @@index([sessionId])
+  @@index([createdAt])
+}
+
+model AssetStat {
+  id        String   @id @default(cuid())
+  assetId   String   @unique
+  views     Int      @default(0)
+  downloads Int      @default(0)
+  stars     Int      @default(0)
+  forks     Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@index([assetId])
+}
+
+// ============================================
+// FEATURE FLAGS
+// ============================================
+
+model FeatureFlag {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  name        String
+  description String?
+  enabled     Boolean  @default(false)
+  rollout     Int      @default(0) // 0-100 percentage
+  targeting   Json?    // { users: [], roles: [], groups: [] }
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([key])
+  @@index([enabled])
+}
+
+// ============================================
+// NEWSLETTER
+// ============================================
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  status    SubscriberStatus @default(PENDING)
+  source    String?  // where they subscribed
+  metadata  Json?
+  token     String?  @unique // for email verification
+  confirmedAt DateTime?
+  unsubscribedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([status])
+}
+
+enum SubscriberStatus {
+  PENDING
+  CONFIRMED
+  UNSUBSCRIBED
+  BOUNCED
+}
+
+// ============================================
+// CONTACT / SUPPORT
+// ============================================
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String   @db.Text
+  type      ContactType
+  status    ContactStatus @default(NEW)
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  assignedTo String?
+  response  String?  @db.Text
+  respondedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([status])
+  @@index([type])
+  @@index([createdAt])
+}
+
+enum ContactType {
+  GENERAL
+  SUPPORT
+  BUG_REPORT
+  FEATURE_REQUEST
+  SECURITY
+  PARTNERSHIP
+  PRESS
+  ENTERPRISE
+}
+
+enum ContactStatus {
+  NEW
+  IN_PROGRESS
+  WAITING_USER
+  RESOLVED
+  CLOSED
+}
+
+// ============================================
+// AUDIT LOGS
+// ============================================
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  oldData   Json?
+  newData   Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([entity])
+  @@index([entityId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+// ============================================
+// SEO / SITEMAP
+// ============================================
+
+model SeoPage {
+  id              String   @id @default(cuid())
+  path            String   @unique
+  title           String
+  description     String?
+  ogTitle         String?
+  ogDescription   String?
+  ogImage         String?
+  twitterCard     String?
+  twitterTitle    String?
+  twitterDesc     String?
+  twitterImage    String?
+  canonicalUrl    String?
+  robots          String?  // index, follow, etc.
+  structuredData  Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([path])
+}
