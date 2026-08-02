@@ -39,9 +39,11 @@ jobs:
       - name: Check DATABASE_URL
         run: |
           if [ -z "${{ secrets.DATABASE_URL }}" ]; then
-            echo "WARNING: DATABASE_URL secret is not set!"
+            echo "WARNING: DATABASE_URL secret is not set! Using dummy URL for Prisma generate."
+            echo "DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy" >> $GITHUB_ENV
           else
-            echo "DATABASE_URL is set (length: ${{ secrets.DATABASE_URL | length }})"
+            echo "DATABASE_URL is set"
+            echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
           fi
 
       - name: Generate Prisma Client
@@ -55,7 +57,7 @@ jobs:
           echo "=== Checking for AnnouncementType enum ==="
           grep -r "AnnouncementType" node_modules/.prisma/client/index.d.ts | head -3 || echo "AnnouncementType NOT FOUND in types"
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ env.DATABASE_URL }}
 
       - name: Verify Prisma Schema
         run: npx prisma validate
@@ -93,7 +95,7 @@ jobs:
       - name: Generate Prisma Client
         run: npx prisma generate
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ env.DATABASE_URL }}
 
       - name: Build
         run: npm run build
