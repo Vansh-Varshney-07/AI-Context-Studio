@@ -37,9 +37,7 @@ jobs:
         run: npm ci
 
       - name: Generate Prisma Client
-        run: npm run db:generate
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npx prisma generate
 
       - name: Run ESLint
         run: npm run lint
@@ -72,9 +70,7 @@ jobs:
         run: npm ci
 
       - name: Generate Prisma Client
-        run: npm run db:generate
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npx prisma generate
 
       - name: Build
         run: npm run build
@@ -90,7 +86,7 @@ jobs:
     name: Deploy Preview
     runs-on: ubuntu-latest
     needs: build
-    if: github.event_name == 'pull_request'
+    if: github.event_name == "pull_request"
     steps:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -100,7 +96,7 @@ jobs:
 
       - name: Deploy to Vercel Preview
         uses: amondnet/vercel-action@v25
-        if: ${{ secrets.VERCEL_TOKEN != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != '' }}
+        if: ${{ secrets.VERCEL_TOKEN != "" && secrets.VERCEL_ORG_ID != "" && secrets.VERCEL_PROJECT_ID != "" }}
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
@@ -112,7 +108,7 @@ jobs:
     name: Deploy Production
     runs-on: ubuntu-latest
     needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == "push" && github.ref == "refs/heads/main"
     environment: production
     steps:
       - name: Download build artifacts
@@ -123,7 +119,7 @@ jobs:
 
       - name: Deploy to Vercel Production
         uses: amondnet/vercel-action@v25
-        if: ${{ secrets.VERCEL_TOKEN != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != '' }}
+        if: ${{ secrets.VERCEL_TOKEN != "" && secrets.VERCEL_ORG_ID != "" && secrets.VERCEL_PROJECT_ID != "" }}
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
