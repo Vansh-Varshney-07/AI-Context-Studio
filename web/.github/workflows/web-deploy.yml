@@ -49,6 +49,7 @@ jobs:
       - name: Generate Prisma Client
         run: |
           echo "=== Generating Prisma Client ==="
+          echo "DATABASE_URL: $DATABASE_URL"
           npx prisma generate
           echo "=== Generated Client Files ==="
           ls -la node_modules/.prisma/client/
@@ -56,6 +57,8 @@ jobs:
           grep -r "GeneratedFile" node_modules/.prisma/client/index.d.ts | head -5 || echo "GeneratedFile NOT FOUND in types"
           echo "=== Checking for AnnouncementType enum ==="
           grep -r "AnnouncementType" node_modules/.prisma/client/index.d.ts | head -3 || echo "AnnouncementType NOT FOUND in types"
+          echo "=== Checking for UserWhereInput ==="
+          grep -r "UserWhereInput" node_modules/.prisma/client/index.d.ts | head -3 || echo "UserWhereInput NOT FOUND in types"
         env:
           DATABASE_URL: ${{ env.DATABASE_URL }}
 
