@@ -36,14 +36,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Check DATABASE_URL
+        run: |
+          if [ -z "${{ secrets.DATABASE_URL }}" ]; then
+            echo "WARNING: DATABASE_URL secret is not set!"
+          else
+            echo "DATABASE_URL is set (length: ${{ secrets.DATABASE_URL | length }})"
+          fi
+
       - name: Generate Prisma Client
         run: |
-          echo "Generating Prisma Client..."
+          echo "=== Generating Prisma Client ==="
           npx prisma generate
           echo "=== Generated Client Files ==="
           ls -la node_modules/.prisma/client/
           echo "=== Checking for GeneratedFile type ==="
-          grep -r "GeneratedFile" node_modules/.prisma/client/index.d.ts | head -5 || echo "GeneratedFile not found in types"
+          grep -r "GeneratedFile" node_modules/.prisma/client/index.d.ts | head -5 || echo "GeneratedFile NOT FOUND in types"
+          echo "=== Checking for AnnouncementType enum ==="
+          grep -r "AnnouncementType" node_modules/.prisma/client/index.d.ts | head -3 || echo "AnnouncementType NOT FOUND in types"
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
@@ -125,7 +135,7 @@ jobs:
     environment: production
     steps:
       - name: Download build artifacts
-        uses: actions/download_artifact@v4
+        uses: actions/download-artifact@v4
         with:
           name: web-build
           path: ./out
