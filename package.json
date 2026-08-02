@@ -8,9 +8,10 @@
   ],
   "scripts": {
     "install:all": "npm install --workspaces --include-workspace-root",
-    "build:web": "npm run build --workspace=web",
-    "lint:web": "npm run lint --workspace=web",
-    "typecheck:web": "npm run typecheck --workspace=web",
+    "lint": "npm run lint --workspace=web",
+    "typecheck": "npm run typecheck --workspace=web",
+    "build": "npm run build --workspace=web",
+    "dev": "npm run dev --workspace=web",
     "db:generate": "npm run db:generate --workspace=web",
     "db:push": "npm run db:push --workspace=web",
     "db:migrate": "npm run db:migrate --workspace=web",
