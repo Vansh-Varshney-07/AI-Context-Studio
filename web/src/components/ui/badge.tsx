@@ -19,6 +19,8 @@ const badgeVariants = cva(
         danger: 'bg-[var(--color-error-bg)] text-[var(--color-error)]',
         outline:
           'bg-transparent border border-[var(--color-border-strong)] text-[var(--color-text-secondary)]',
+        secondary: 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)] border border-[var(--color-border)]',
+        muted: 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-muted)]',
         dot: 'relative pl-6',
       },
     },

@@ -120,7 +120,7 @@ export async function sendWelcomeEmail(email: string, name: string) {
             <li>Download the desktop app from <a href="${process.env.NEXT_PUBLIC_APP_URL}/download" style="color: #4F7A5A;">our download page</a></li>
             <li>Browse the <a href="${process.env.NEXT_PUBLIC_APP_URL}/marketplace" style="color: #4F7A5A;">Marketplace</a> for skills, personas, and templates</li>
             <li>Read the <a href="${process.env.NEXT_PUBLIC_APP_URL}/docs" style="color: #4F7A5A;">Documentation</a> to learn the basics</li>
-            <li>Join our <a href="https://discord.gg/ai-context-studio" style="color: #4F7A5A;">Discord community</a></li>
+            <li>Join the <a href="https://github.com/Vansh-Varshney-07/AI-Context-Studio/discussions" style="color: #4F7A5A;">GitHub Discussions</a></li>
           </ul>
         </div>
         <p style="color: #6B7280; font-size: 14px; line-height: 1.5;">

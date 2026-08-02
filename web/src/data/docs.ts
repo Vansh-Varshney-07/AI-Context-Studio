@@ -164,10 +164,10 @@ export const docSearchIndex = [
 export const quickLinks = [
   { label: 'Download', href: '/download', icon: 'Download' },
   { label: 'Marketplace', href: '/marketplace', icon: 'Package' },
-  { label: 'GitHub', href: 'https://github.com/ai-context-studio', icon: 'Github', external: true },
+  { label: 'GitHub', href: 'https://github.com/Vansh-Varshney-07/AI-Context-Studio', icon: 'Github', external: true },
   {
-    label: 'Discord',
-    href: 'https://discord.gg/ai-context-studio',
+    label: 'GitHub Discussions',
+    href: 'https://github.com/Vansh-Varshney-07/AI-Context-Studio/discussions',
     icon: 'MessageCircle',
     external: true,
   },

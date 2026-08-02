@@ -301,3 +301,250 @@ export async function deleteFeatureFlag(id: string) {
   await requireAdmin();
   return prisma.featureFlag.delete({ where: { id } });
 }
+
+// ============================================
+// BLOG MANAGEMENT
+// ============================================
+
+export async function getAllBlogPosts(params: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: string;
+}) {
+  await requireModerator();
+  const { page = 1, limit = 50, search, status } = params;
+  const where: Prisma.BlogPostWhereInput = {};
+
+  if (search) {
+    where.OR = [
+      { title: { contains: search, mode: "insensitive" } },
+      { excerpt: { contains: search, mode: "insensitive" } },
+    ];
+  }
+  if (status) where.status = status as "DRAFT" | "PUBLISHED" | "ARCHIVED";
+
+  const [posts, totalCount] = await Promise.all([
+    prisma.blogPost.findMany({
+      where,
+      include: {
+        author: { select: { id: true, name: true, username: true, avatar: true } },
+        categories: { include: { category: { select: { id: true, slug: true, name: true } } } },
+        tags: { include: { tag: { select: { id: true, slug: true, name: true } } } },
+      },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.blogPost.count({ where }),
+  ]);
+
+  return { posts, totalCount, totalPages: Math.ceil(totalCount / limit), currentPage: page };
+}
+
+export async function getBlogPostById(id: string) {
+  await requireModerator();
+  return prisma.blogPost.findUnique({
+    where: { id },
+    include: {
+      author: { select: { id: true, name: true, username: true } },
+      categories: { include: { category: true } },
+      tags: { include: { tag: true } },
+    },
+  });
+}
+
+export async function createBlogPost(data: {
+  title: string;
+  slug: string;
+  excerpt?: string;
+  content: string;
+  coverImage?: string;
+  status?: "DRAFT" | "PUBLISHED" | "ARCHIVED";
+  featured?: boolean;
+  metaTitle?: string;
+  metaDescription?: string;
+  ogImage?: string;
+  canonicalUrl?: string;
+  authorId: string;
+  publishedAt?: Date;
+}) {
+  await requireModerator();
+  return prisma.blogPost.create({ data });
+}
+
+export async function updateBlogPost(
+  id: string,
+  data: Partial<{
+    title: string;
+    slug: string;
+    excerpt: string;
+    content: string;
+    coverImage: string;
+    status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
+    featured: boolean;
+    metaTitle: string;
+    metaDescription: string;
+    ogImage: string;
+    canonicalUrl: string;
+    publishedAt: Date;
+    readTime: number;
+  }>
+) {
+  await requireModerator();
+  return prisma.blogPost.update({ where: { id }, data });
+}
+
+export async function deleteBlogPost(id: string) {
+  await requireAdmin();
+  return prisma.blogPost.delete({ where: { id } });
+}
+
+// ============================================
+// SYSTEM PROMPT TEMPLATES MANAGEMENT
+// ============================================
+
+export async function getSystemPromptTemplates(params?: {
+  category?: string;
+  targetId?: string;
+  activeOnly?: boolean;
+}) {
+  await requireModerator();
+  const where: Prisma.SystemPromptTemplateWhereInput = {};
+  if (params?.category) where.category = params.category;
+  if (params?.targetId) where.targetId = params.targetId;
+  if (params?.activeOnly) where.isActive = true;
+
+  return prisma.systemPromptTemplate.findMany({
+    where,
+    orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+  });
+}
+
+export async function createSystemPromptTemplate(data: {
+  key: string;
+  name: string;
+  description?: string;
+  category: string;
+  targetId?: string;
+  content: string;
+  constraints?: string;
+  isActive?: boolean;
+  isDefault?: boolean;
+  sortOrder?: number;
+}) {
+  await requireAdmin();
+  return prisma.systemPromptTemplate.create({ data });
+}
+
+export async function updateSystemPromptTemplate(
+  id: string,
+  data: Partial<{
+    key: string;
+    name: string;
+    description: string;
+    category: string;
+    targetId: string;
+    content: string;
+    constraints: string;
+    isActive: boolean;
+    isDefault: boolean;
+    sortOrder: number;
+  }>
+) {
+  await requireAdmin();
+  return prisma.systemPromptTemplate.update({ where: { id }, data });
+}
+
+export async function deleteSystemPromptTemplate(id: string) {
+  await requireAdmin();
+  return prisma.systemPromptTemplate.delete({ where: { id } });
+}
+
+// ============================================
+// CONTACT MESSAGES MANAGEMENT
+// ============================================
+
+export async function getAdminContactMessages(params: {
+  page?: number;
+  limit?: number;
+  status?: string;
+  type?: string;
+}) {
+  await requireModerator();
+  const { page = 1, limit = 50, status, type } = params;
+  const where: Prisma.ContactMessageWhereInput = {};
+
+  if (status) where.status = status as "NEW" | "IN_PROGRESS" | "WAITING_USER" | "RESOLVED" | "CLOSED";
+  if (type) where.type = type as "GENERAL" | "SUPPORT" | "BUG_REPORT" | "FEATURE_REQUEST" | "SECURITY" | "PARTNERSHIP" | "PRESS" | "ENTERPRISE";
+
+  const [messages, totalCount] = await Promise.all([
+    prisma.contactMessage.findMany({
+      where,
+      include: { user: { select: { id: true, name: true, username: true, email: true } } },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.contactMessage.count({ where }),
+  ]);
+
+  return { messages, totalCount, totalPages: Math.ceil(totalCount / limit), currentPage: page };
+}
+
+export async function getContactMessage(id: string) {
+  await requireModerator();
+  return prisma.contactMessage.findUnique({
+    where: { id },
+    include: { user: { select: { id: true, name: true, username: true, email: true } } },
+  });
+}
+
+export async function updateContactMessageStatus(
+  id: string,
+  data: {
+    status?: "NEW" | "IN_PROGRESS" | "WAITING_USER" | "RESOLVED" | "CLOSED";
+    assignedTo?: string;
+  }
+) {
+  await requireModerator();
+  return prisma.contactMessage.update({ where: { id }, data });
+}
+
+// ============================================
+// ANALYTICS
+// ============================================
+
+export async function getAnalyticsOverview(days = 30) {
+  await requireAdmin();
+  const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+
+  const [
+    totalUsers,
+    newUsers,
+    totalAssets,
+    newAssets,
+    totalDownloads,
+    totalPageViews,
+    activeUsers,
+  ] = await Promise.all([
+    prisma.user.count(),
+    prisma.user.count({ where: { createdAt: { gte: startDate } } }),
+    prisma.asset.count(),
+    prisma.asset.count({ where: { createdAt: { gte: startDate } } }),
+    prisma.download.count({ where: { createdAt: { gte: startDate } } }),
+    prisma.pageView.count({ where: { createdAt: { gte: startDate } } }),
+    prisma.user.count({ where: { lastLoginAt: { gte: startDate } } }),
+  ]);
+
+  return {
+    totalUsers,
+    newUsers,
+    totalAssets,
+    newAssets,
+    totalDownloads,
+    totalPageViews,
+    activeUsers,
+    periodDays: days,
+  };
+}

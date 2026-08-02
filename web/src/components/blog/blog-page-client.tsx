@@ -319,7 +319,7 @@ export function BlogPageClient({
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-[var(--color-text-secondary)]">
             Release notes, announcements, development logs, tutorials, and community showcases.
-            Subscribe via <a href="/rss.xml" className="text-[var(--color-accent)] hover:underline">RSS</a> or follow on <a href="https://twitter.com/aicontextstudio" target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline">Twitter</a>.
+            Subscribe via <a href="/rss.xml" className="text-[var(--color-accent)] hover:underline">RSS</a> or join <a href="https://github.com/Vansh-Varshney-07/AI-Context-Studio/discussions" target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline">GitHub Discussions</a>.
           </p>
         </div>
 

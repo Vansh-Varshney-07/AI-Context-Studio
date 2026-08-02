@@ -80,6 +80,7 @@ export const ModelName = {
   BlogCategory: 'BlogCategory',
   BlogPostCategory: 'BlogPostCategory',
   BlogPostTag: 'BlogPostTag',
+  SystemPromptTemplate: 'SystemPromptTemplate',
   DocPage: 'DocPage',
   DocCategory: 'DocCategory',
   DocTranslation: 'DocTranslation',
@@ -103,7 +104,8 @@ export const ModelName = {
   NewsletterSubscriber: 'NewsletterSubscriber',
   ContactMessage: 'ContactMessage',
   AuditLog: 'AuditLog',
-  SeoPage: 'SeoPage'
+  SeoPage: 'SeoPage',
+  GeneratedFile: 'GeneratedFile'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -563,6 +565,26 @@ export const BlogPostTagScalarFieldEnum = {
 export type BlogPostTagScalarFieldEnum = (typeof BlogPostTagScalarFieldEnum)[keyof typeof BlogPostTagScalarFieldEnum]
 
 
+export const SystemPromptTemplateScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  targetId: 'targetId',
+  content: 'content',
+  constraints: 'constraints',
+  isActive: 'isActive',
+  isDefault: 'isDefault',
+  sortOrder: 'sortOrder',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SystemPromptTemplateScalarFieldEnum = (typeof SystemPromptTemplateScalarFieldEnum)[keyof typeof SystemPromptTemplateScalarFieldEnum]
+
+
 export const DocPageScalarFieldEnum = {
   id: 'id',
   slug: 'slug',
@@ -949,6 +971,25 @@ export const SeoPageScalarFieldEnum = {
 } as const
 
 export type SeoPageScalarFieldEnum = (typeof SeoPageScalarFieldEnum)[keyof typeof SeoPageScalarFieldEnum]
+
+
+export const GeneratedFileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  kind: 'kind',
+  title: 'title',
+  content: 'content',
+  metadata: 'metadata',
+  isPublic: 'isPublic',
+  isFavorite: 'isFavorite',
+  slug: 'slug',
+  tokens: 'tokens',
+  modelUsed: 'modelUsed',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GeneratedFileScalarFieldEnum = (typeof GeneratedFileScalarFieldEnum)[keyof typeof GeneratedFileScalarFieldEnum]
 
 
 export const SortOrder = {

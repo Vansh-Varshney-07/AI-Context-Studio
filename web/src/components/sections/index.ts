@@ -1,5 +1,5 @@
 export { Hero } from './hero';
-export { Stats } from './stats';
+export { StatsSection } from './stats';
 export { Features } from './features';
 export { ProductGrid } from './product-grid';
 export { MarketplacePreview } from './marketplace-preview';

@@ -264,3 +264,17 @@ export const ContactStatus = {
 } as const
 
 export type ContactStatus = (typeof ContactStatus)[keyof typeof ContactStatus]
+
+
+export const GeneratedFileKind = {
+  SYSTEM_PROMPT: 'SYSTEM_PROMPT',
+  INSTRUCTION_FILE: 'INSTRUCTION_FILE',
+  PERSONA: 'PERSONA',
+  WORKFLOW: 'WORKFLOW',
+  MEMORY: 'MEMORY',
+  CONTEXT_FILE: 'CONTEXT_FILE',
+  PROMPT_TEMPLATE: 'PROMPT_TEMPLATE',
+  MCP_CONFIG: 'MCP_CONFIG'
+} as const
+
+export type GeneratedFileKind = (typeof GeneratedFileKind)[keyof typeof GeneratedFileKind]

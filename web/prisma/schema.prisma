@@ -59,6 +59,9 @@ model User {
   downloads     Download[]
   contactMessages ContactMessage[]
 
+  // Generated Files
+  generatedFiles GeneratedFile[]
+
   @@index([email])
   @@index([username])
   @@index([role])
@@ -763,6 +766,31 @@ model BlogPostTag {
 }
 
 // ============================================
+// SYSTEM PROMPT TEMPLATES (for AI generation)
+// ============================================
+
+model SystemPromptTemplate {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  name        String
+  description String?
+  category    String
+  targetId    String?
+  content     String   @db.Text
+  constraints String?  @db.Text
+  isActive    Boolean  @default(true)
+  isDefault   Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  createdBy   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([key])
+  @@index([category])
+  @@index([targetId])
+}
+
+// ============================================
 // DOCUMENTATION
 // ============================================
 
@@ -1354,4 +1382,43 @@ model SeoPage {
   updatedAt       DateTime @updatedAt
 
   @@index([path])
+}
+
+// ============================================
+// GENERATED FILES (user-generated AI instruction files)
+// ============================================
+
+model GeneratedFile {
+  id          String   @id @default(cuid())
+  userId      String
+  kind        GeneratedFileKind
+  title       String
+  content     String   @db.Text
+  metadata    Json?    // form inputs, model used, tokens, etc.
+  isPublic    Boolean  @default(false)
+  isFavorite  Boolean  @default(false)
+  slug        String?
+  tokens      Int?
+  modelUsed   String?  // e.g., gpt-4o, claude-3.5-sonnet
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([kind])
+  @@index([isPublic])
+  @@index([isFavorite])
+  @@index([createdAt])
+}
+
+enum GeneratedFileKind {
+  SYSTEM_PROMPT
+  INSTRUCTION_FILE
+  PERSONA
+  WORKFLOW
+  MEMORY
+  CONTEXT_FILE
+  PROMPT_TEMPLATE
+  MCP_CONFIG
 }

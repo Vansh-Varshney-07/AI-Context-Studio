@@ -200,6 +200,11 @@ export type BlogPostCategory = Prisma.BlogPostCategoryModel
  */
 export type BlogPostTag = Prisma.BlogPostTagModel
 /**
+ * Model SystemPromptTemplate
+ * 
+ */
+export type SystemPromptTemplate = Prisma.SystemPromptTemplateModel
+/**
  * Model DocPage
  * 
  */
@@ -319,3 +324,8 @@ export type AuditLog = Prisma.AuditLogModel
  * 
  */
 export type SeoPage = Prisma.SeoPageModel
+/**
+ * Model GeneratedFile
+ * 
+ */
+export type GeneratedFile = Prisma.GeneratedFileModel

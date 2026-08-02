@@ -1,4 +1,4 @@
-import { PrismaClient, AssetKind, AssetStatus, Visibility, Role, Platform, RoadmapStatus, Severity, AdvisoryStatus, AnnouncementType, BlogStatus, ContactType, ContactStatus, PurchaseStatus, VersionStatus, SubscriberStatus } from "@prisma/client";
+import { PrismaClient, Role, RoadmapStatus, AnnouncementType, BlogStatus, ContactType, ContactStatus, PurchaseStatus, VersionStatus, SubscriberStatus } from "@prisma/client";
 import { hash } from "bcryptjs";
 
 const prisma = new PrismaClient();
@@ -20,12 +20,13 @@ async function main() {
     update: {},
     create: {
       email: "admin@aicontextstudio.dev",
-      name: "Admin User",
-      username: "admin",
+      name: "Vansh Varshney",
+      username: "Vansh-Varshney-07",
       role: "OWNER",
       emailVerified: true,
       passwordHash,
-      bio: "Platform administrator",
+      bio: "Founder of AI Context Studio. Building local-first AI tooling.",
+      avatar: "https://github.com/Vansh-Varshney-07.png",
     },
   });
 
@@ -43,36 +44,6 @@ async function main() {
     },
   });
 
-  const creatorUser = await prisma.user.upsert({
-    where: { email: "creator@aicontextstudio.dev" },
-    update: {},
-    create: {
-      email: "creator@aicontextstudio.dev",
-      name: "Sarah Chen",
-      username: "sarahchen",
-      role: "USER",
-      emailVerified: true,
-      passwordHash,
-      bio: "Staff Engineer at Stripe. Building tools for developer productivity. Author of 12 marketplace assets.",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=sarahchen",
-    },
-  });
-
-  const creatorUser2 = await prisma.user.upsert({
-    where: { email: "marcus@aicontextstudio.dev" },
-    update: {},
-    create: {
-      email: "marcus@aicontextstudio.dev",
-      name: "Marcus Johnson",
-      username: "marcusj",
-      role: "USER",
-      emailVerified: true,
-      passwordHash,
-      bio: "Open source maintainer. Creator of 'Code Review Assistant' and 'Senior Engineer Persona' skills.",
-      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=marcusjohnson",
-    },
-  });
-
   console.log("✅ Users created");
 
   // ============================================
@@ -83,9 +54,15 @@ async function main() {
     update: {},
     create: {
       userId: adminUser.id,
-      displayName: "Admin User",
-      headline: "Platform Administrator",
-      skills: ["Platform", "Admin", "Security"],
+      displayName: "Vansh Varshney",
+      headline: "Founder @ AI Context Studio | AI Tooling",
+      location: "India",
+      website: "https://github.com/Vansh-Varshney-07",
+      github: "https://github.com/Vansh-Varshney-07",
+      skills: ["TypeScript", "React", "Rust", "Tauri", "Next.js", "PostgreSQL", "AI/ML"],
+      socialLinks: [
+        { label: "GitHub", url: "https://github.com/Vansh-Varshney-07", icon: "Github" },
+      ],
       preferences: { theme: "system", notifications: true },
     },
   });
@@ -98,46 +75,6 @@ async function main() {
       displayName: "Demo User",
       headline: "Exploring AI Context Studio",
       skills: ["React", "TypeScript", "AI"],
-      preferences: { theme: "system", notifications: true },
-    },
-  });
-
-  await prisma.profile.upsert({
-    where: { userId: creatorUser.id },
-    update: {},
-    create: {
-      userId: creatorUser.id,
-      displayName: "Sarah Chen",
-      headline: "Staff Engineer @ Stripe | AI Tooling Enthusiast",
-      location: "San Francisco, CA",
-      website: "https://sarahchen.dev",
-      github: "https://github.com/sarahchen",
-      twitter: "https://twitter.com/sarahchen_dev",
-      skills: ["TypeScript", "React", "Go", "Rust", "AI/ML", "Developer Tools"],
-      socialLinks: [
-        { label: "GitHub", url: "https://github.com/sarahchen", icon: "Github" },
-        { label: "Twitter", url: "https://twitter.com/sarahchen_dev", icon: "Twitter" },
-        { label: "Website", url: "https://sarahchen.dev", icon: "Globe" },
-      ],
-      preferences: { theme: "dark", notifications: true },
-    },
-  });
-
-  await prisma.profile.upsert({
-    where: { userId: creatorUser2.id },
-    update: {},
-    create: {
-      userId: creatorUser2.id,
-      displayName: "Marcus Johnson",
-      headline: "Open Source Maintainer | AI Coding Assistant Expert",
-      location: "Austin, TX",
-      website: "https://marcusjohnson.dev",
-      github: "https://github.com/marcusjohnson",
-      skills: ["Python", "TypeScript", "Rust", "CLI Tools", "AI Assistants", "Code Analysis"],
-      socialLinks: [
-        { label: "GitHub", url: "https://github.com/marcusjohnson", icon: "Github" },
-        { label: "Website", url: "https://marcusjohnson.dev", icon: "Globe" },
-      ],
       preferences: { theme: "system", notifications: true },
     },
   });
@@ -235,772 +172,32 @@ async function main() {
   console.log("✅ Tags created");
 
   // ============================================
-  // ASSETS
+  // BLOG CATEGORIES
   // ============================================
-  const skillsCategory = await prisma.category.findUnique({ where: { slug: "skills" } });
-  const personasCategory = await prisma.category.findUnique({ where: { slug: "personas" } });
-  const templatesCategory = await prisma.category.findUnique({ where: { slug: "templates" } });
-  const promptPacksCategory = await prisma.category.findUnique({ where: { slug: "prompt-packs" } });
-  const instructionFilesCategory = await prisma.category.findUnique({ where: { slug: "instruction-files" } });
-  const workflowsCategory = await prisma.category.findUnique({ where: { slug: "workflows" } });
-  const mcpServersCategory = await prisma.category.findUnique({ where: { slug: "mcp-servers" } });
-  const collectionsCategory = await prisma.category.findUnique({ where: { slug: "collections" } });
-  const bundlesCategory = await prisma.category.findUnique({ where: { slug: "bundles" } });
-
-  const assets = [
-    {
-      slug: "code-review-assistant",
-      name: "Code Review Assistant",
-      description: `# Code Review Assistant
-
-Automated code review for your pull requests. Analyzes code for bugs, security vulnerabilities, style violations, and performance issues.
-
-## Features
-
-- **Security Analysis**: Detects OWASP Top 10 vulnerabilities, SQL injection, XSS, path traversal
-- **Code Quality**: Enforces consistent style, naming conventions, and best practices
-- **Performance**: Identifies N+1 queries, memory leaks, inefficient algorithms
-- **TypeScript/ESLint Integration**: Runs type checking and linting automatically
-- **Multi-language**: Supports TypeScript, JavaScript, Python, Go, Rust, Java, C#
-- **GitHub/GitLab Integration**: Posts inline comments directly on PRs
-- **Custom Rules**: Define team-specific rules via configuration file
-
-## Installation
-
-\`\`\`bash
-acs install code-review-assistant
-\`\`\`
-
-## Configuration
-
-Create a \`.code-review.yml\` in your repository root:
-
-\`\`\`yaml
-rules:
-  security: strict
-  style: airbnb
-  performance: warn
-  complexity:
-    maxCyclomatic: 10
-    maxNesting: 4
-exclude:
-  - "**/*.test.ts"
-  - "**/*.spec.ts"
-  - "vendor/**"
-\`\`\`
-
-## How It Works
-
-1. Triggers on PR open/update
-2. Analyzes changed files using AST parsing
-3. Runs security scanners (Semgrep, custom rules)
-4. Posts inline comments with suggestions
-5. Provides summary in PR description
-
-## Supported Targets
-
-- Cursor (.cursorrules)
-- Claude Code (CLAUDE.md)
-- Windsurf (.windsurfrules)
-- VS Code (.vscode/prompts)
-- GitHub Copilot (.github/copilot-instructions.md)
-- Generic AGENTS.md`,
-      shortDesc: "AI-powered code review assistant that analyzes PRs for bugs, security issues, and style violations with inline comments.",
-      kind: "SKILL",
-      authorId: creatorUser2.id,
-      categoryId: skillsCategory!.id,
-      status: "PUBLISHED",
-      visibility: "PUBLIC",
-      verified: true,
-      featured: true,
-      downloads: 15420,
-      stars: 1240,
-      rating: 4.8,
-      reviewCount: 127,
-      currentVersionId: null,
-      tags: ["code-review", "security", "automation", "github", "gitlab"],
-      compatibilities: [
-        { target: "Cursor", minVersion: "0.40.0" },
-        { target: "Claude Code", minVersion: "1.0.0" },
-        { target: "Windsurf", minVersion: "1.0.0" },
-        { target: "VS Code", minVersion: "1.85.0" },
-      ],
-      screenshots: [
-        { url: "https://picsum.photos/seed/code-review/800/500", alt: "Code Review Assistant in action", sortOrder: 1 },
-        { url: "https://picsum.photos/seed/code-review-pr/800/500", alt: "PR with inline comments", sortOrder: 2 },
-      ],
-      dependencies: [],
-    },
-    {
-      slug: "senior-engineer-persona",
-      name: "Senior Engineer Persona",
-      description: `# Senior Engineer Persona
-
-A battle-tested senior engineer persona with 15+ years experience. Provides architectural guidance, mentorship, and pragmatic solutions.
-
-## Philosophy
-
-- **Pragmatism over perfection** — Ship working code, iterate later
-- **Code is read more than written** — Optimize for readability
-- **Invest in developer experience** — Tooling pays dividends
-- **Question requirements** — The best code is code you don't write
-
-## Expertise Areas
-
-- **System Design**: Distributed systems, microservices, event-driven architectures
-- **Code Quality**: Clean architecture, SOLID principles, design patterns
-- **Performance**: Profiling, caching strategies, database optimization
-- **Team Leadership**: Code review culture, mentoring, technical decision making
-- **Cloud**: AWS/GCP/Azure, Kubernetes, serverless, observability
-
-## Usage
-
-\`\`\`bash
-acs install senior-engineer-persona
-\`\`\`
-
-Then reference in your prompts:
-
-> "Act as a senior engineer with 15 years experience. Review this architecture proposal..."
-
-## Compatible Targets
-
-- Cursor
-- Claude Code
-- Windsurf
-- VS Code
-- Custom (any target supporting personas)`,
-      shortDesc: "15+ years experience. Architectural guidance, mentoring, pragmatic solutions. Your virtual staff engineer.",
-      kind: "PERSONA",
-      authorId: creatorUser2.id,
-      categoryId: personasCategory!.id,
-      status: "PUBLISHED",
-      visibility: "PUBLIC",
-      verified: true,
-      featured: true,
-      downloads: 8930,
-      stars: 890,
-      rating: 4.9,
-      reviewCount: 89,
-      currentVersionId: null,
-      tags: ["architecture", "mentoring", "best-practices", "career"],
-      compatibilities: [
-        { target: "Cursor", minVersion: "0.40.0" },
-        { target: "Claude Code", minVersion: "1.0.0" },
-        { target: "Windsurf", minVersion: "1.0.0" },
-        { target: "VS Code", minVersion: "1.85.0" },
-        { target: "Custom", minVersion: "1.0.0" },
-      ],
-      screenshots: [
-        { url: "https://picsum.photos/seed/senior-engineer/800/500", alt: "Senior Engineer Persona", sortOrder: 1 },
-      ],
-      dependencies: [],
-    },
-    {
-      slug: "react-component-template-pack",
-      name: "React Component Template Pack",
-      description: `# React Component Template Pack
-
-Production-ready React component templates with TypeScript, testing, Storybook, and accessibility built-in.
-
-## Includes
-
-- **Core Components**: Button, Input, Select, Checkbox, Radio, Switch, Modal, Dropdown, Tooltip, Toast
-- **Form Components**: Form, Field, Validation, FileUpload, DatePicker, RichTextEditor
-- **Layout**: Container, Grid, Flex, Stack, Card, Section, Header, Footer, Sidebar
-- **Data Display**: Table, List, Tree, Accordion, Tabs, Pagination, Badge, Avatar
-- **Feedback**: Alert, Progress, Skeleton, Spinner, EmptyState, ErrorBoundary
-
-## Features
-
-- ✅ TypeScript strict mode
-- ✅ Jest + React Testing Library (100% coverage target)
-- ✅ Storybook 8 with controls, actions, backgrounds
-- ✅ WCAG 2.1 AA compliant
-- ✅ CSS-in-JS (Stitches) + Tailwind variants
-- ✅ Bundle size optimization
-- ✅ Tree-shaking support
-- ✅ Dark mode support
-- ✅ RTL support
-
-## Installation
-
-\`\`\`bash
-acs install react-component-template-pack
-\`\`\`
-
-## Usage
-
-\`\`\`tsx
-import { Button, Card, Modal } from '@my-org/ui-components';
-
-function MyComponent() {
-  return (
-    <Card>
-      <Button variant="primary" onClick={() => {}}>
-        Click me
-      </Button>
-    </Card>
-  );
-}
-\`\`\``,
-      shortDesc: "Production-ready React components with TypeScript, Storybook, testing, and accessibility built-in.",
-      kind: "TEMPLATE",
-      authorId: creatorUser.id,
-      categoryId: templatesCategory!.id,
-      status: "PUBLISHED",
-      visibility: "PUBLIC",
-      verified: true,
-      featured: true,
-      downloads: 22100,
-      stars: 2310,
-      rating: 4.7,
-      reviewCount: 203,
-      currentVersionId: null,
-      tags: ["react", "typescript", "storybook", "testing", "accessibility", "ui"],
-      compatibilities: [
-        { target: "Cursor", minVersion: "0.40.0" },
-        { target: "VS Code", minVersion: "1.85.0" },
-        { target: "Windsurf", minVersion: "1.0.0" },
-      ],
-      screenshots: [
-        { url: "https://picsum.photos/seed/react-template/800/500", alt: "Component library showcase", sortOrder: 1 },
-        { url: "https://picsum.photos/seed/react-storybook/800/500", alt: "Storybook documentation", sortOrder: 2 },
-      ],
-      dependencies: ["@testing-library/react", "storybook"],
-    },
-    {
-      slug: "api-design-prompt-pack",
-      name: "API Design Prompt Pack",
-      description: `# API Design Prompt Pack
-
-Curated prompts for designing REST, GraphQL, and gRPC APIs. Covers versioning, error handling, pagination, and security.
-
-## Prompts Included
-
-### REST API Design
-- Resource modeling and naming conventions
-- HTTP status codes and error formats
-- Pagination, filtering, and sorting patterns
-- Versioning strategies (URL, header, media type)
-- HATEOAS and hypermedia controls
-
-### GraphQL Schema Design
-- Type system best practices
-- Query/mutation design patterns
-- Pagination (Relay cursor vs offset)
-- Federation and schema stitching
-- N+1 prevention with DataLoader
-
-### gRPC Service Design
-- Protobuf schema organization
-- Unary vs streaming RPCs
-- Error handling with gRPC status codes
-- Interceptors for auth, logging, metrics
-- Backward/forward compatibility
-
-### Cross-cutting Concerns
-- Authentication & authorization (OAuth2, OIDC, JWT)
-- Rate limiting and throttling
-- Request/response validation
-- API documentation (OpenAPI, GraphQL introspection)
-- Testing strategies (contract, integration, load)
-
-## Installation
-
-\`\`\`bash
-acs install api-design-prompt-pack
-\`\`\``,
-      shortDesc: "Professional API design guidance for REST, GraphQL, and gRPC. Covers versioning, errors, pagination, auth.",
-      kind: "PROMPT_PACK",
-      authorId: creatorUser.id,
-      categoryId: promptPacksCategory!.id,
-      status: "PUBLISHED",
-      visibility: "PUBLIC",
-      verified: false,
-      featured: false,
-      downloads: 5420,
-      stars: 420,
-      rating: 4.6,
-      reviewCount: 56,
-      currentVersionId: null,
-      tags: ["api", "rest", "graphql", "grpc", "design", "architecture"],
-      compatibilities: [
-        { target: "Cursor", minVersion: "0.40.0" },
-        { target: "Claude Code", minVersion: "1.0.0" },
-        { target: "Windsurf", minVersion: "1.0.0" },
-        { target: "VS Code", minVersion: "1.85.0" },
-      ],
-      screenshots: [],
-      dependencies: [],
-    },
-    {
-      slug: "clean-architecture-instructions",
-      name: "Clean Architecture Instructions",
-      description: `# Clean Architecture Instructions
-
-AGENTS.md instruction files for implementing Clean Architecture in any language. Includes layer definitions, dependency rules, and testing strategies.
-
-## Layers
-
-1. **Entities** (Enterprise Business Rules)
-   - Core business logic, no external dependencies
-   - Domain models, value objects, domain events
-
-2. **Use Cases** (Application Business Rules)
-   - Orchestrate entities, define application-specific rules
-   - Input/output ports, interactors, presenters
-
-3. **Interface Adapters**
-   - Convert data between use cases and external formats
-   - Controllers, presenters, gateways, repositories
-
-4. **Frameworks & Drivers**
-   - Web frameworks, databases, UI, external services
-   - Implementation details, easily swappable
-
-## Dependency Rule
-
-> Source code dependencies must point inward. Inner layers know nothing of outer layers.
-
-## Testing Strategy
-
-- **Entities**: Unit tests, property-based tests
-- **Use Cases**: Unit tests with mocked ports
-- **Adapters**: Integration tests with test doubles
-- **Frameworks**: E2E tests, contract tests
-
-## Installation
-
-\`\`\`bash
-acs install clean-architecture-instructions
-\`\`\`
-
-## Supported Languages
-
-- TypeScript/JavaScript
-- Python
-- Go
-- Rust
-- Java/Kotlin
-- C#/.NET
-- Ruby
-- PHP`,
-      shortDesc: "Universal Clean Architecture patterns with AGENTS.md instruction files for any language.",
-      kind: "INSTRUCTION_FILE",
-      authorId: creatorUser.id,
-      categoryId: instructionFilesCategory!.id,
-      status: "PUBLISHED",
-      visibility: "PUBLIC",
-      verified: true,
-      featured: false,
-      downloads: 9800,
-      stars: 1120,
-      rating: 4.8,
-      reviewCount: 112,
-      currentVersionId: null,
-      tags: ["clean-architecture", "ddd", "testing", "layers", "dependency-inversion"],
-      compatibilities: [
-        { target: "Cursor", minVersion: "0.40.0" },
-        { target: "Claude Code", minVersion: "1.0.0" },
-        { target: "Windsurf", minVersion: "1.0.0" },
-        { target: "VS Code", minVersion: "1.85.0" },
-        { target: "Custom", minVersion: "1.0.0" },
-      ],
-      screenshots: [],
-      dependencies: [],
-    },
-    {
-      slug: "ci-cd-pipeline-workflow",
-      name: "CI/CD Pipeline Workflow",
-      description: `# CI/CD Pipeline Workflow
-
-Multi-stage CI/CD workflow with linting, testing, security scanning, and deployment. Supports GitHub Actions, GitLab CI, and Azure Pipelines.
-
-## Pipeline Stages
-
-### 1. Lint & Type Check
-- ESLint + Prettier (JS/TS)
-- Ruff + Black (Python)
-- golangci-lint (Go)
-- clippy + fmt (Rust)
-- TypeScript strict mode
-
-### 2. Unit Tests
-- Jest / Vitest (JS/TS)
-- pytest (Python)
-- go test (Go)
-- cargo test (Rust)
-- Coverage thresholds enforced
-
-### 3. Integration Tests
-- Testcontainers for databases
-- Contract testing with Pact
-- API integration tests
-
-### 4. Security Scan (SAST/DAST)
-- Semgrep rulesets (OWASP, custom)
-- Trivy container scanning
-- Dependency audit (npm audit, cargo audit)
-- Secret detection (TruffleHog)
-
-### 5. Build & Package
-- Multi-arch Docker images
-- SBOM generation (Syft)
-- Image signing (Cosign)
-
-### 6. Deploy to Staging
-- Blue/green deployment
-- Health checks
-- Smoke tests
-
-### 7. Deploy to Production
-- Manual approval gate
-- Canary deployment
-- Rollback automation
-
-## Installation
-
-\`\`\`bash
-acs install ci-cd-pipeline-workflow
-\`\`\``,
-      shortDesc: "Complete CI/CD pipeline with linting, testing, security scanning, and multi-platform deployment.",
-      kind: "WORKFLOW",
-      authorId: creatorUser2.id,
-      categoryId: workflowsCategory!.id,
-      status: "PUBLISHED",
-      visibility: "PUBLIC",
-      verified: true,
-      featured: false,
-      downloads: 6750,
-      stars: 780,
-      rating: 4.5,
-      reviewCount: 78,
-      currentVersionId: null,
-      tags: ["ci-cd", "github-actions", "gitlab", "deployment", "security", "testing"],
-      compatibilities: [
-        { target: "Cursor", minVersion: "0.40.0" },
-        { target: "VS Code", minVersion: "1.85.0" },
-        { target: "Windsurf", minVersion: "1.0.0" },
-      ],
-      screenshots: [],
-      dependencies: ["github-actions", "sonarqube"],
-    },
-    {
-      slug: "postgres-mcp-server",
-      name: "PostgreSQL MCP Server",
-      description: `# PostgreSQL MCP Server
-
-Model Context Protocol server for PostgreSQL databases. Provides read-only query access, schema inspection, and query optimization hints.
-
-## Features
-
-- **Read-only Query Execution**: Safe SELECT queries with row limits
-- **Schema Introspection**: Tables, columns, indexes, constraints, foreign keys
-- **Query Plan Analysis**: EXPLAIN ANALYZE with optimization hints
-- **Connection Pooling**: PgBouncer-compatible pooling
-- **Row-level Security**: Respects PostgreSQL RLS policies
-- **Audit Logging**: All queries logged for compliance
-
-## Installation
-
-\`\`\`bash
-acs install postgres-mcp-server
-\`\`\`
-
-## Configuration
-
-\`\`\`json
-{
-  "mcpServers": {
-    "postgres": {
-      "command": "npx",
-      "args": ["@ai-context-studio/postgres-mcp"],
-      "env": {
-        "DATABASE_URL": "postgresql://user:pass@your-neon-host/db",
-        "READ_ONLY": "true",
-        "MAX_ROWS": "100",
-        "QUERY_TIMEOUT": "30000"
-      }
-    }
-  }
-}
-\`\`\`
-
-## Supported Clients
-
-- Claude Code
-- Cursor
-- Custom MCP clients
-
-## Tools Provided
-
-- \`query\` — Execute read-only SQL
-- \`schema\` — Get database schema
-- \`explain\` — Analyze query plan
-- \`tables\` — List tables with metadata
-- \`indexes\` — Index usage statistics`,
-      shortDesc: "Safe PostgreSQL access via MCP. Read-only queries, schema inspection, query optimization hints.",
-      kind: "MCP_SERVER",
-      authorId: creatorUser2.id,
-      categoryId: mcpServersCategory!.id,
-      status: "PUBLISHED",
-      visibility: "PUBLIC",
-      verified: true,
-      featured: false,
-      downloads: 3210,
-      stars: 450,
-      rating: 4.9,
-      reviewCount: 45,
-      currentVersionId: null,
-      tags: ["postgresql", "database", "sql", "mcp", "readonly"],
-      compatibilities: [
-        { target: "Claude Code", minVersion: "1.0.0" },
-        { target: "Cursor", minVersion: "0.40.0" },
-        { target: "Custom", minVersion: "1.0.0" },
-      ],
-      screenshots: [],
-      dependencies: ["pg", "@modelcontextprotocol/sdk"],
-    },
-    {
-      slug: "frontend-starter-collection",
-      name: "Frontend Starter Collection",
-      description: `# Frontend Starter Collection
-
-Complete starter kits for React, Vue, Svelte, and Solid. Includes routing, state management, styling, and deployment configs.
-
-## Frameworks
-
-### React + TypeScript + Vite
-- React 18 + TypeScript 5
-- React Router 6
-- TanStack Query
-- Zustand for state
-- Tailwind CSS + Headless UI
-- Vitest + Testing Library
-- ESLint + Prettier + Husky
-- GitHub Actions CI
-- Vercel/Netlify deploy config
-
-### Vue 3 + TypeScript + Vite
-- Vue 3 + TypeScript 5
-- Vue Router 4
-- Pinia for state
-- Tailwind CSS + PrimeVue
-- Vitest + Vue Test Utils
-- ESLint + Prettier + Husky
-
-### SvelteKit + TypeScript
-- SvelteKit 2 + TypeScript 5
-- Svelte 5 (runes)
-- Tailwind CSS + shadcn-svelte
-- Vitest + Playwright
-- ESLint + Prettier + Husky
-- Adapter-auto for any platform
-
-### SolidJS + TypeScript
-- SolidJS + TypeScript 5
-- Solid Router
-- Solid primitives for state
-- Tailwind CSS
-- Vitest + Solid Testing Library
-- Vite + Solid plugin
-
-## Installation
-
-\`\`\`bash
-acs install frontend-starter-collection
-\`\`\`
-
-Each starter is a complete, production-ready project structure.`,
-      shortDesc: "Complete starter kits for React, Vue, Svelte, and Solid with routing, state, styling, and deployment.",
-      kind: "COLLECTION",
-      authorId: creatorUser.id,
-      categoryId: collectionsCategory!.id,
-      status: "PUBLISHED",
-      visibility: "PUBLIC",
-      verified: true,
-      featured: true,
-      downloads: 18900,
-      stars: 1670,
-      rating: 4.8,
-      reviewCount: 167,
-      currentVersionId: null,
-      tags: ["starter", "react", "vue", "svelte", "solid", "boilerplate"],
-      compatibilities: [
-        { target: "Cursor", minVersion: "0.40.0" },
-        { target: "VS Code", minVersion: "1.85.0" },
-        { target: "Windsurf", minVersion: "1.0.0" },
-      ],
-      screenshots: [
-        { url: "https://picsum.photos/seed/frontend-starter/800/500", alt: "Starter kit dashboard", sortOrder: 1 },
-        { url: "https://picsum.photos/seed/frontend-structure/800/500", alt: "Project structure", sortOrder: 2 },
-      ],
-      dependencies: [],
-    },
-    {
-      slug: "security-audit-bundle",
-      name: "Security Audit Bundle",
-      description: `# Security Audit Bundle
-
-Comprehensive security auditing tools: SAST rules, dependency scanning configs, secret detection patterns, and compliance checklists.
-
-## Includes
-
-### SAST Rules (Semgrep)
-- OWASP Top 10 2023 coverage
-- Language-specific rules (JS/TS, Python, Go, Java, Rust)
-- Custom rules for common vulnerabilities
-- CI/CD integration configs
-
-### Dependency Scanning
-- npm audit / yarn audit configs
-- cargo audit / pip-audit configs
-- License compliance checking
-- Vulnerability database sync
-
-### Secret Detection
-- TruffleHog patterns
-- GitLeaks config
-- Custom regex for API keys, tokens, certs
-- Pre-commit hooks
-
-### Compliance Checklists
-- OWASP Top 10 2023
-- GDPR/CCPA compliance guide
-- SOC 2 Type II requirements
-- ISO 27001 controls mapping
-
-## Installation
-
-\`\`\`bash
-acs install security-audit-bundle
-\`\`\`
-
-## Usage
-
-Run security audit on any project:
-
-\`\`\`bash
-# SAST scan
-semgrep scan --config=@ai-context-studio/security-audit
-
-# Dependency scan
-npm audit --audit-level=high
-
-# Secret scan
-trufflehog filesystem . --json
-\`\`\``,
-      shortDesc: "Enterprise-grade security tooling: SAST rules, dependency scanning, secret detection, compliance checklists.",
-      kind: "BUNDLE",
-      authorId: creatorUser2.id,
-      categoryId: bundlesCategory!.id,
-      status: "PUBLISHED",
-      visibility: "PUBLIC",
-      verified: true,
-      featured: false,
-      downloads: 7600,
-      stars: 940,
-      rating: 4.7,
-      reviewCount: 94,
-      currentVersionId: null,
-      tags: ["security", "sast", "compliance", "secrets", "owasp", "audit"],
-      compatibilities: [
-        { target: "Cursor", minVersion: "0.40.0" },
-        { target: "Claude Code", minVersion: "1.0.0" },
-        { target: "Windsurf", minVersion: "1.0.0" },
-        { target: "VS Code", minVersion: "1.85.0" },
-      ],
-      screenshots: [],
-      dependencies: ["eslint", "semgrep", "trufflehog"],
-    },
+  const blogCategories = [
+    { slug: "releases", name: "Releases", color: "#22C55E", sortOrder: 1 },
+    { slug: "announcements", name: "Announcements", color: "#3B82F6", sortOrder: 2 },
+    { slug: "devlogs", name: "Dev Logs", color: "#8B5CF6", sortOrder: 3 },
+    { slug: "tutorials", name: "Tutorials", color: "#F59E0B", sortOrder: 4 },
+    { slug: "showcases", name: "Showcases", color: "#EC4899", sortOrder: 5 },
   ];
 
-  for (const asset of assets) {
-    const { tags, compatibilities, screenshots, dependencies, ...assetData } = asset;
-
-    const existing = await prisma.asset.findUnique({ where: { slug: assetData.slug } });
-    if (existing) continue;
-
-    const created = await prisma.asset.create({
-      data: {
-        ...assetData,
-        publishedAt: new Date(),
-        tags: {
-          create: tags.map((tagSlug) => ({
-            tag: { connect: { slug: tagSlug } },
-          })),
-        },
-        compatibilities: {
-          create: compatibilities.map((c) => ({
-            target: c.target,
-            minVersion: c.minVersion,
-            verified: true,
-          })),
-        },
-        screenshots: {
-          create: screenshots.map((s) => ({
-            url: s.url,
-            alt: s.alt,
-            sortOrder: s.sortOrder,
-          })),
-        },
-        dependencies: {
-          create: dependencies.map((depName) => ({
-            dependency: {
-              connectOrCreate: {
-                where: { slug: depName.toLowerCase().replace(/[^a-z0-9-]/g, "-") },
-                create: {
-                  slug: depName.toLowerCase().replace(/[^a-z0-9-]/g, "-"),
-                  name: depName,
-                  description: `Dependency: ${depName}`,
-                  kind: "SKILL",
-                  authorId: creatorUser.id,
-                  categoryId: skillsCategory!.id,
-                  status: "PUBLISHED",
-                  visibility: "PUBLIC",
-                },
-              },
-            },
-            versionRange: "*",
-            type: "RUNTIME",
-          })),
-        },
-      },
-    });
-
-    // Create initial version
-    await prisma.assetVersion.create({
-      data: {
-        assetId: created.id,
-        version: "1.0.0",
-        changelog: "Initial release",
-        readme: assetData.description,
-        manifest: {
-          name: created.slug,
-          version: "1.0.0",
-          kind: created.kind,
-          description: created.shortDesc,
-        },
-        status: "PUBLISHED",
-        publishedAt: new Date(),
-      },
-    });
-
-    // Update asset with current version
-    await prisma.asset.update({
-      where: { id: created.id },
-      data: { currentVersionId: (await prisma.assetVersion.findFirst({ where: { assetId: created.id, version: "1.0.0" } }))!.id },
+  for (const cat of blogCategories) {
+    await prisma.blogCategory.upsert({
+      where: { slug: cat.slug },
+      update: {},
+      create: cat,
     });
   }
 
-  console.log("✅ Assets created");
+  console.log("✅ Blog categories created");
 
   // ============================================
-  // ROADMAP ITEMS
+  // ROADMAP ITEMS (real project milestones)
   // ============================================
   const roadmapItems = [
     {
+      id: "roadmap-1",
       title: "Desktop App v1.0",
       description: "Core workspace with system prompts, instruction files, memories, MCP, workflows, and export to 10+ targets.",
       status: "COMPLETED",
@@ -1013,403 +210,55 @@ trufflehog filesystem . --json
       links: [{ label: "Release Notes", href: "/changelog#v1.0.0" }],
     },
     {
-      title: "Marketplace Frontend",
+      id: "roadmap-2",
+      title: "Web Marketplace & Documentation",
       description: "Browse, search, and filter assets with categories, compatibility badges, ratings, and install commands.",
-      status: "COMPLETED",
-      phase: "Completed",
-      quarter: "Q2 2024",
-      progress: 100,
+      status: "IN_PROGRESS",
+      phase: "In Progress",
+      quarter: "Q3 2024",
+      progress: 60,
       order: 2,
-      tags: ["Web", "Marketplace", "Search"],
-      details: "Static marketplace browser with 10 categories, advanced filters (type, verified, compatibility, sort), asset detail pages with screenshots, version history, and one-click install commands.",
-      links: [{ label: "Browse Marketplace", href: "/marketplace" }],
+      tags: ["Web", "Marketplace", "Search", "Docs"],
+      details: "Static marketplace browser with 9 categories, advanced filters (type, verified, compatibility, sort), asset detail pages with screenshots, version history, and one-click install commands. Complete documentation site.",
+      links: [{ label: "Browse Marketplace", href: "/marketplace" }, { label: "Read Docs", href: "/docs" }],
     },
     {
-      title: "Registry Specification",
-      description: "Open specification for AI asset packaging: manifest schema, semantic versioning, dependencies, compatibility matrix, and checksums.",
-      status: "COMPLETED",
-      phase: "Completed",
-      quarter: "Q2 2024",
-      progress: 100,
-      order: 3,
-      tags: ["Registry", "Schema", "Standards"],
-      details: "Versioned manifest.json schema with asset metadata, dependencies, target compatibility, and integrity verification. Reference implementation in Rust (registry crate).",
-      links: [
-        { label: "View Spec", href: "/registry" },
-        { label: "Rust Crate", href: "https://crates.io/crates/ai-context-studio-registry" },
-      ],
-    },
-    {
-      title: "Documentation Site",
-      description: "Complete documentation with Getting Started, Installation, Desktop, Marketplace, Registry, MCP, Skills, Prompt Files, API Keys, Security, Developer Guide, and Architecture.",
-      status: "COMPLETED",
-      phase: "Completed",
-      quarter: "Q2 2024",
-      progress: 100,
-      order: 4,
-      tags: ["Docs", "Next.js", "MDX"],
-      details: "Full documentation site with sidebar navigation, table of contents, code blocks with copy buttons, callouts, version badges, and search integration.",
-      links: [{ label: "Read Docs", href: "/docs" }],
-    },
-    {
+      id: "roadmap-3",
       title: "Online Hub (Sync & Collaboration)",
       description: "Cross-device sync, team workspaces, shared collections, version history, and access controls for cloud-backed asset management.",
-      status: "IN_PROGRESS",
-      phase: "In Progress",
-      quarter: "Q3 2024",
-      progress: 35,
-      order: 5,
+      status: "PLANNED",
+      phase: "Planned",
+      quarter: "Q4 2024",
+      progress: 10,
+      order: 3,
       tags: ["Cloud", "Sync", "Teams", "PostgreSQL"],
       details: "End-to-end encrypted sync using client-side encryption. Team workspaces with role-based access. Conflict resolution for concurrent edits. Offline-first with background sync.",
-      links: [{ label: "Track Progress", href: "https://github.com/ai-context-studio/hub" }],
+      links: [{ label: "Track Progress", href: "https://github.com/Vansh-Varshney-07/AI-Context-Studio" }],
     },
     {
+      id: "roadmap-4",
       title: "Plugin SDK",
       description: "TypeScript SDK for building custom exporters, validators, integrations, and UI extensions. Includes CLI scaffolding and publishing workflow.",
-      status: "IN_PROGRESS",
-      phase: "In Progress",
-      quarter: "Q3 2024",
-      progress: 20,
-      order: 6,
+      status: "PLANNED",
+      phase: "Planned",
+      quarter: "Q1 2025",
+      progress: 0,
+      order: 4,
       tags: ["SDK", "TypeScript", "Plugin System", "CLI"],
       details: "Declarative plugin manifest, hook system for build/export/validate lifecycle, TypeScript types for all asset kinds, example plugins for Notion, Obsidian, and custom formats.",
       links: [{ label: "SDK Docs", href: "/docs/developer-guide#plugin-sdk" }],
-    },
-    {
-      title: "AI Agent Orchestration",
-      description: "Multi-agent workflows with routing, memory sharing, tool use, and evaluation. Visual workflow builder with real-time preview.",
-      status: "PLANNED",
-      phase: "Planned",
-      quarter: "Q4 2024",
-      progress: 0,
-      order: 7,
-      tags: ["Agents", "Workflows", "Orchestration", "Evaluation"],
-      details: "Agent graph definition with conditional routing, shared memory stores, tool calling with sandboxing, built-in evaluation harness, and A/B testing for prompts.",
-      links: [{ label: "RFC", href: "https://github.com/ai-context-studio/rfcs" }],
-    },
-    {
-      title: "Extension System",
-      description: "VS Code extension, Raycast extension, and CLI tool for seamless integration into existing developer workflows.",
-      status: "PLANNED",
-      phase: "Planned",
-      quarter: "Q4 2024",
-      progress: 0,
-      order: 8,
-      tags: ["VS Code", "Raycast", "CLI", "Extensions"],
-      details: "VS Code: sidebar, command palette integration, inline actions. Raycast: quick search, install commands, asset preview. CLI: acs install, acs search, acs publish, acs validate.",
-      links: [{ label: "VS Code Marketplace", href: "https://marketplace.visualstudio.com" }],
-    },
-    {
-      title: "Teams & Enterprise",
-      description: "RBAC, SSO/SAML, audit logs, compliance reporting, private marketplace, and dedicated support for organizations.",
-      status: "PLANNED",
-      phase: "Planned",
-      quarter: "Q1 2025",
-      progress: 0,
-      order: 9,
-      tags: ["Enterprise", "SSO", "RBAC", "Audit", "Compliance"],
-      details: "SCIM provisioning, SOC 2 compliance, data residency options, custom branding, SLA-backed support, on-premise deployment option.",
-      links: [{ label: "Enterprise Interest", href: "/contact?type=enterprise" }],
-    },
-    {
-      title: "Cloud Marketplace Hosting",
-      description: "Managed registry hosting with global CDN, analytics dashboard, monetization tools, and creator revenue sharing.",
-      status: "PLANNED",
-      phase: "Planned",
-      quarter: "Q1 2025",
-      progress: 0,
-      order: 10,
-      tags: ["Cloud", "Marketplace", "Analytics", "Monetization"],
-      details: "Auto-scaling registry API, edge caching, download analytics, creator payouts, subscription billing, featured placement auction.",
-      links: [{ label: "Early Access", href: "/contact?type=cloud-marketplace" }],
     },
   ];
 
   for (const item of roadmapItems) {
     await prisma.roadmapItem.upsert({
-      where: { id: `roadmap-${item.order}` },
+      where: { id: item.id },
       update: {},
-      create: {
-        id: `roadmap-${item.order}`,
-        ...item,
-      },
+      create: item,
     });
   }
 
   console.log("✅ Roadmap items created");
-
-  // ============================================
-  // BLOG POSTS
-  // ============================================
-  const blogCategoryRelease = await prisma.blogCategory.upsert({
-    where: { slug: "releases" },
-    update: {},
-    create: { slug: "releases", name: "Releases", color: "#22C55E", sortOrder: 1 },
-  });
-
-  const blogCategoryAnnouncement = await prisma.blogCategory.upsert({
-    where: { slug: "announcements" },
-    update: {},
-    create: { slug: "announcements", name: "Announcements", color: "#3B82F6", sortOrder: 2 },
-  });
-
-  const blogCategoryDevlog = await prisma.blogCategory.upsert({
-    where: { slug: "devlogs" },
-    update: {},
-    create: { slug: "devlogs", name: "Dev Logs", color: "#8B5CF6", sortOrder: 3 },
-  });
-
-  const blogCategoryTutorial = await prisma.blogCategory.upsert({
-    where: { slug: "tutorials" },
-    update: {},
-    create: { slug: "tutorials", name: "Tutorials", color: "#F59E0B", sortOrder: 4 },
-  });
-
-  const blogCategoryShowcase = await prisma.blogCategory.upsert({
-    where: { slug: "showcases" },
-    update: {},
-    create: { slug: "showcases", name: "Showcases", color: "#EC4899", sortOrder: 5 },
-  });
-
-  const blogPosts = [
-    {
-      slug: "v1-2-0-release",
-      title: "AI Context Studio v1.2.0 — MCP Server Support, Agent Orchestration, and Plugin SDK",
-      excerpt: "Major release adding Model Context Protocol server integration, multi-agent workflow orchestration, and a new TypeScript Plugin SDK for custom exporters and validators.",
-      content: `# AI Context Studio v1.2.0
-
-## Overview
-
-This major release introduces three powerful features that significantly expand what's possible with AI Context Studio.
-
-## MCP Server Support
-
-The headline feature is full Model Context Protocol (MCP) server integration. You can now:
-
-- **Configure MCP servers** directly in the desktop app
-- **Validate server configs** before deploying
-- **Export to any MCP-compatible client** (Claude, Cursor, Windsurf, Continue)
-- **Sandbox execution** for security
-
-\`\`\`json
-{
-  "mcpServers": {
-    "postgres": {
-      "command": "npx",
-      "args": ["@ai-context-studio/postgres-mcp"],
-      "env": { "DATABASE_URL": "postgresql://..." }
-    }
-  }
-}
-\`\`\`
-
-## Agent Orchestration
-
-Multi-agent workflows are now available in beta:
-
-- **Agent graphs** with conditional routing
-- **Shared memory stores** between agents
-- **Tool calling** with sandboxed execution
-- **Evaluation harness** for prompt testing
-
-## Plugin SDK
-
-Build custom exporters, validators, and UI extensions:
-
-\`\`\`bash
-npx create-acs-plugin my-custom-exporter
-cd my-custom-exporter
-npm run dev
-\`\`\`
-
-See the [Plugin SDK documentation](/docs/developer-guide#plugin-sdk) for full details.
-
-## Other Improvements
-
-- Workflow engine performance: 3x faster execution
-- Memory system: persistent vector embeddings
-- Prompt optimizer: new "cost reduction" engine
-- 50+ bug fixes and stability improvements
-
-## Upgrade
-
-\`\`\`bash
-acs update
-\`\`\`
-
-Or download the latest from [GitHub Releases](https://github.com/ai-context-studio/ai-context-studio/releases).`,
-      contentHtml: null,
-      coverImage: "https://picsum.photos/seed/v120-release/800/450",
-      authorId: creatorUser.id,
-      status: "PUBLISHED",
-      featured: true,
-      publishedAt: new Date("2024-08-15"),
-      viewCount: 12400,
-      readTime: 8,
-      metaTitle: "AI Context Studio v1.2.0 — MCP, Agents, Plugin SDK",
-      metaDescription: "Major release adding MCP server integration, multi-agent orchestration, and TypeScript Plugin SDK.",
-      ogImage: "https://picsum.photos/seed/v120-release/1200/630",
-      canonicalUrl: "https://aicontextstudio.dev/blog/v1-2-0-release",
-      categories: ["releases"],
-      tags: ["MCP", "Agents", "Plugin SDK", "Workflows"],
-    },
-    {
-      slug: "marketplace-milestone",
-      title: "Marketplace Hits 10,000 Assets — Community Celebration",
-      excerpt: "The AI Context Studio marketplace has surpassed 10,000 community-published assets. We celebrate the creators and highlight the most impactful skills, personas, and workflows.",
-      content: `# Marketplace Milestone: 10,000 Assets! 🎉
-
-Today we're celebrating a huge milestone: **10,000 community-published assets** on the AI Context Studio marketplace!
-
-## By the Numbers
-
-- **10,000+** total assets published
-- **2,400+** unique creators
-- **156,000+** total downloads
-- **4.2K+** GitHub stars
-
-## Top Categories
-
-1. **Skills** (3,200+) — Atomic AI capabilities
-2. **Prompt Packs** (2,100+) — Curated prompt collections
-3. **Workflows** (1,800+) — Multi-step automation
-4. **Personas** (1,200+) — AI roles and expertise
-5. **Templates** (900+) — Project starters
-
-## Creator Spotlights
-
-### Sarah Chen (@sarahchen) — 12 assets, 89K downloads
-Creator of the popular "React Component Template Pack" and "API Design Prompt Pack".
-
-### Marcus Johnson (@marcusj) — 8 assets, 67K downloads
-Creator of "Code Review Assistant" and "Senior Engineer Persona".
-
-### Frontend Collective (@frontend-collective) — 15 assets, 156K downloads
-Team publishing React, Vue, and Svelte templates.
-
-## What's Next?
-
-- **Creator analytics dashboard** — Track downloads, ratings, engagement
-- **Monetization options** — Paid assets, subscriptions (opt-in, 85/15 split)
-- **Featured placement** — Curated collections, category highlights
-- **Asset dependencies** — Automatic dependency resolution
-
-## Thank You
-
-To every creator who published an asset, every user who downloaded and reviewed, and every contributor who improved the platform — this milestone belongs to all of you.
-
-[Explore the marketplace →](/marketplace)`,
-      contentHtml: null,
-      coverImage: "https://picsum.photos/seed/marketplace-10k/800/450",
-      authorId: creatorUser.id,
-      status: "PUBLISHED",
-      featured: true,
-      publishedAt: new Date("2024-08-01"),
-      viewCount: 8900,
-      readTime: 5,
-      metaTitle: "Marketplace Hits 10,000 Assets",
-      metaDescription: "Celebrating 10,000 community assets on the AI Context Studio marketplace.",
-      ogImage: "https://picsum.photos/seed/marketplace-10k/1200/630",
-      canonicalUrl: "https://aicontextstudio.dev/blog/marketplace-milestone",
-      categories: ["announcements"],
-      tags: ["Marketplace", "Community", "Milestone"],
-    },
-    {
-      slug: "security-audit-results",
-      title: "Third-Party Security Audit Complete — Zero Critical Findings",
-      excerpt: "Independent security firm Trail of Bits completed a comprehensive audit of AI Context Studio v1.1. Results: zero critical, zero high, and only two low-severity findings (all addressed).",
-      content: `# Security Audit Results: Zero Critical Findings
-
-We're pleased to share that **Trail of Bits**, a leading security research firm, has completed a comprehensive security audit of AI Context Studio v1.1.
-
-## Audit Scope
-
-- Desktop application (Tauri + Rust + TypeScript)
-- Marketplace API and registry
-- MCP server implementations
-- Authentication and authorization
-- File system access and sandboxing
-- Inter-process communication
-
-## Results Summary
-
-| Severity | Count | Status |
-|----------|-------|--------|
-| Critical | 0 | — |
-| High | 0 | — |
-| Medium | 0 | — |
-| Low | 2 | ✅ Fixed |
-| Informational | 5 | ✅ Addressed |
-
-## Low-Severity Findings (Fixed)
-
-1. **Information Disclosure in Error Messages** — Stack traces could leak internal paths in development mode. Fixed by sanitizing error responses in production.
-
-2. **CSP Header Missing on Static Assets** — Content Security Policy not applied to all static assets. Fixed by adding comprehensive CSP headers.
-
-## Informational Findings (Addressed)
-
-- Dependency version pinning recommendations
-- Additional rate limiting on auth endpoints
-- Enhanced audit logging for sensitive operations
-- Improved input validation on file paths
-- Secure defaults for MCP server sandboxing
-
-## Our Security Commitment
-
-- **Annual third-party audits** — Next audit scheduled for v1.3
-- **Bug bounty program** — [hackerone.com/ai-context-studio](https://hackerone.com/ai-context-studio)
-- **Security advisories** — Published at [/security](/security)
-- **Responsible disclosure** — security@aicontextstudio.dev
-
-## Full Report
-
-The [full audit report](/security#audit-reports) is available on our security page, including methodology, findings detail, and remediation verification.
-
-Thank you to the Trail of Bits team for their thorough analysis!`,
-      contentHtml: null,
-      coverImage: "https://picsum.photos/seed/security-audit/800/450",
-      authorId: creatorUser2.id,
-      status: "PUBLISHED",
-      featured: false,
-      publishedAt: new Date("2024-07-28"),
-      viewCount: 6700,
-      readTime: 6,
-      metaTitle: "Security Audit Complete — Zero Critical Findings",
-      metaDescription: "Trail of Bits audit of AI Context Studio v1.1: zero critical, zero high, two low findings (all fixed).",
-      ogImage: "https://picsum.photos/seed/security-audit/1200/630",
-      canonicalUrl: "https://aicontextstudio.dev/blog/security-audit-results",
-      categories: ["announcements"],
-      tags: ["Security", "Audit", "Compliance"],
-    },
-  ];
-
-  for (const post of blogPosts) {
-    const { categories, tags, ...postData } = post;
-
-    const existing = await prisma.blogPost.findUnique({ where: { slug: postData.slug } });
-    if (existing) continue;
-
-    const created = await prisma.blogPost.create({
-      data: {
-        ...postData,
-        categories: {
-          create: categories.map((catSlug) => ({
-            category: { connect: { slug: catSlug } },
-          })),
-        },
-        tags: {
-          create: tags.map((tagSlug) => ({
-            tag: { connect: { slug: slugify(tagSlug) } },
-          })),
-        },
-      },
-    });
-
-    console.log(`✅ Blog post created: ${created.title}`);
-  }
-
-  console.log("✅ Blog posts created");
 
   // ============================================
   // DOCUMENTATION
@@ -1499,8 +348,7 @@ Full Model Context Protocol support for connecting AI assistants to external too
 
 ## Community
 
-- [Discord](https://discord.gg/ai-context-studio) — Chat with developers
-- [GitHub Discussions](https://github.com/ai-context-studio/ai-context-studio/discussions) — Questions, ideas, showcases
+- [GitHub Discussions](https://github.com/Vansh-Varshney-07/AI-Context-Studio/discussions) — Questions, ideas, showcases
 - [Contributing Guide](/community#contribute) — How to contribute
 
 ## License
@@ -1524,9 +372,9 @@ Get AI Context Studio running in 5 minutes.
 
 | Platform | Download |
 |----------|----------|
-| Windows | [NSIS Installer](https://github.com/ai-context-studio/releases/latest/download/ai-context-studio-setup.exe) / [Portable](https://github.com/ai-context-studio/releases/latest/download/ai-context-studio-portable.exe) |
-| macOS | [Universal DMG](https://github.com/ai-context-studio/releases/latest/download/ai-context-studio-universal.dmg) |
-| Linux | [AppImage](https://github.com/ai-context-studio/releases/latest/download/ai-context-studio.AppImage) / [DEB](https://github.com/ai-context-studio/releases/latest/download/ai-context-studio.deb) / [RPM](https://github.com/ai-context-studio/releases/latest/download/ai-context-studio.rpm) |
+| Windows | [NSIS Installer](https://github.com/Vansh-Varshney-07/AI-Context-Studio/releases/latest/download/ai-context-studio-setup.exe) / [Portable](https://github.com/Vansh-Varshney-07/AI-Context-Studio/releases/latest/download/ai-context-studio-portable.exe) |
+| macOS | [Universal DMG](https://github.com/Vansh-Varshney-07/AI-Context-Studio/releases/latest/download/ai-context-studio-universal.dmg) |
+| Linux | [AppImage](https://github.com/Vansh-Varshney-07/AI-Context-Studio/releases/latest/download/ai-context-studio.AppImage) / [DEB](https://github.com/Vansh-Varshney-07/AI-Context-Studio/releases/latest/download/ai-context-studio.deb) / [RPM](https://github.com/Vansh-Varshney-07/AI-Context-Studio/releases/latest/download/ai-context-studio.rpm) |
 
 Verify checksums on the [download page](/download).
 
@@ -1559,9 +407,9 @@ Let's create a **Skill** — an atomic AI capability.
 2. Click **New Skill**
 3. Fill in:
 - **Name**: \`code-reviewer\`
-    - **Description**: Reviews code for bugs and style
-    - **Input**: Code snippet (string)
-    - **Output**: Review comments (structured)
+- **Description**: Reviews code for bugs and style
+- **Input**: Code snippet (string)
+- **Output**: Review comments (structured)
 4. Write the prompt in the editor
 5. Click **Save**
 
@@ -1589,7 +437,7 @@ Open a file in Cursor, type \`// @code-reviewer\`, and watch the AI review your 
 
 - **Export not working?** Check file permissions in target directories
 - **App won't start?** See [installation troubleshooting](/docs/installation#troubleshooting)
-- **Need help?** Join [Discord](https://discord.gg/ai-context-studio)`,
+- **Need help?** Join [GitHub Discussions](https://github.com/Vansh-Varshney-07/AI-Context-Studio/discussions)`,
       contentHtml: null,
       categoryId: (await prisma.docCategory.findUnique({ where: { slug: "getting-started" } }))!.id,
       sortOrder: 2,
@@ -1634,7 +482,7 @@ Detailed installation guide for Windows, macOS, and Linux.
 certutil -hashfile ai-context-studio-setup.exe SHA256
 \`\`\`
 
-Compare with checksum on [releases page](https://github.com/ai-context-studio/releases).
+Compare with checksum on [releases page](https://github.com/Vansh-Varshney-07/AI-Context-Studio/releases).
 
 ## macOS
 
@@ -1714,8 +562,8 @@ gpg --verify ai-context-studio.AppImage.sig ai-context-studio.AppImage
 ## Building from Source
 
 \`\`\`bash
-git clone https://github.com/ai-context-studio/ai-context-studio.git
-cd ai-context-studio/desktop
+git clone https://github.com/Vansh-Varshney-07/AI-Context-Studio.git
+cd AI-Context-Studio/desktop
 npm install
 npm run build
 npm run tauri build
@@ -1754,222 +602,6 @@ See [FAQ](/faq#installation) for more.`,
   console.log("✅ Documentation created");
 
   // ============================================
-  // RELEASES
-  // ============================================
-  const releases = [
-    {
-      version: "1.2.0",
-      title: "v1.2.0 — MCP Servers, Agent Orchestration, Plugin SDK",
-      description: `## Highlights
-
-### MCP Server Support
-Full Model Context Protocol integration. Configure, validate, and export MCP servers for any compatible client.
-
-### Agent Orchestration (Beta)
-Multi-agent workflows with routing, shared memory, tool use, and evaluation harness.
-
-### Plugin SDK
-TypeScript SDK for custom exporters, validators, and UI extensions.
-
-## Other Improvements
-
-- Workflow engine: 3x performance improvement
-- Memory system: persistent vector embeddings
-- Prompt optimizer: new cost reduction engine
-- 50+ bug fixes
-
-## Assets
-
-| Platform | File | Size | SHA256 |
-|----------|------|------|--------|
-| Windows | ai-context-studio-1.2.0-x64-setup.exe | 48 MB | \`sha256:...\` |
-| Windows | ai-context-studio-1.2.0-x64-portable.exe | 45 MB | \`sha256:...\` |
-| macOS | ai-context-studio-1.2.0-universal.dmg | 55 MB | \`sha256:...\` |
-| macOS | ai-context-studio-1.2.0-arm64.dmg | 51 MB | \`sha256:...\` |
-| Linux | ai-context-studio-1.2.0-x64.AppImage | 51 MB | \`sha256:...\` |
-| Linux | ai-context-studio-1.2.0-x64.deb | 47 MB | \`sha256:...\` |
-| Linux | ai-context-studio-1.2.0-x64.rpm | 47 MB | \`sha256:...\` |
-| Source | ai-context-studio-1.2.0-source.tar.gz | 42 MB | \`sha256:...\` `,
-      isPrerelease: false,
-      isDraft: false,
-      publishedAt: new Date("2024-08-15"),
-      assets: [
-        { platform: "WINDOWS_X64", arch: "x64", filename: "ai-context-studio-1.2.0-x64-setup.exe", size: 48_000_000, checksum: "sha256:a1b2c3d4e5f6...", url: "https://github.com/ai-context-studio/releases/download/v1.2.0/ai-context-studio-1.2.0-x64-setup.exe", signature: "sig", isRecommended: true },
-        { platform: "WINDOWS_X64", arch: "x64", filename: "ai-context-studio-1.2.0-x64-portable.exe", size: 45_000_000, checksum: "sha256:f6e5d4c3b2a1...", url: "https://github.com/ai-context-studio/releases/download/v1.2.0/ai-context-studio-1.2.0-x64-portable.exe", signature: "sig", isRecommended: false },
-        { platform: "MACOS_UNIVERSAL", arch: "universal", filename: "ai-context-studio-1.2.0-universal.dmg", size: 55_000_000, checksum: "sha256:b2c3d4e5f6a1...", url: "https://github.com/ai-context-studio/releases/download/v1.2.0/ai-context-studio-1.2.0-universal.dmg", signature: "sig", isRecommended: true },
-        { platform: "MACOS_ARM64", arch: "arm64", filename: "ai-context-studio-1.2.0-arm64.dmg", size: 51_000_000, checksum: "sha256:c3d4e5f6a1b2...", url: "https://github.com/ai-context-studio/releases/download/v1.2.0/ai-context-studio-1.2.0-arm64.dmg", signature: "sig", isRecommended: false },
-        { platform: "LINUX_X64", arch: "x64", filename: "ai-context-studio-1.2.0-x64.AppImage", size: 51_000_000, checksum: "sha256:d4e5f6a1b2c3...", url: "https://github.com/ai-context-studio/releases/download/v1.2.0/ai-context-studio-1.2.0-x64.AppImage", signature: "sig", isRecommended: true },
-        { platform: "LINUX_X64", arch: "x64", filename: "ai-context-studio-1.2.0-x64.deb", size: 47_000_000, checksum: "sha256:e5f6a1b2c3d4...", url: "https://github.com/ai-context-studio/releases/download/v1.2.0/ai-context-studio-1.2.0-x64.deb", signature: "sig", isRecommended: false },
-        { platform: "LINUX_X64", arch: "x64", filename: "ai-context-studio-1.2.0-x64.rpm", size: 47_000_000, checksum: "sha256:f6a1b2c3d4e5...", url: "https://github.com/ai-context-studio/releases/download/v1.2.0/ai-context-studio-1.2.0-x64.rpm", signature: "sig", isRecommended: false },
-        { platform: "SOURCE_CODE", arch: "source", filename: "ai-context-studio-1.2.0-source.tar.gz", size: 42_000_000, checksum: "sha256:a1b2c3d4e5f6...", url: "https://github.com/ai-context-studio/releases/download/v1.2.0/ai-context-studio-1.2.0-source.tar.gz", signature: "sig", isRecommended: false },
-      ],
-    },
-    {
-      version: "1.1.0",
-      title: "v1.1.0 — Workflow Engine, Memory System, Prompt Optimizer",
-      description: `## Highlights
-
-### Visual Workflow Builder
-Drag-and-drop workflow construction with real-time preview.
-
-### Persistent Agent Memories
-Memories now persist across sessions with vector embeddings for semantic search.
-
-### AI-Powered Prompt Optimization
-Automatic prompt improvement via evaluation, iteration, and A/B testing.
-
-### Improved MCP Manager
-Better validation, sandboxing, and cross-editor config export.
-
-## Assets
-
-| Platform | File | Size | SHA256 |
-|----------|------|------|--------|
-| Windows | ai-context-studio-1.1.0-x64-setup.exe | 46 MB | \`sha256:...\` |
-| macOS | ai-context-studio-1.1.0-universal.dmg | 52 MB | \`sha256:...\` |
-| Linux | ai-context-studio-1.1.0-x64.AppImage | 49 MB | \`sha256:...\` `,
-      isPrerelease: false,
-      isDraft: false,
-      publishedAt: new Date("2024-06-15"),
-      assets: [
-        { platform: "WINDOWS_X64", arch: "x64", filename: "ai-context-studio-1.1.0-x64-setup.exe", size: 46_000_000, checksum: "sha256:a1b2c3d4e5f6...", url: "https://github.com/ai-context-studio/releases/download/v1.1.0/ai-context-studio-1.1.0-x64-setup.exe", signature: "sig", isRecommended: true },
-        { platform: "MACOS_UNIVERSAL", arch: "universal", filename: "ai-context-studio-1.1.0-universal.dmg", size: 52_000_000, checksum: "sha256:b2c3d4e5f6a1...", url: "https://github.com/ai-context-studio/releases/download/v1.1.0/ai-context-studio-1.1.0-universal.dmg", signature: "sig", isRecommended: true },
-        { platform: "LINUX_X64", arch: "x64", filename: "ai-context-studio-1.1.0-x64.AppImage", size: 49_000_000, checksum: "sha256:c3d4e5f6a1b2...", url: "https://github.com/ai-context-studio/releases/download/v1.1.0/ai-context-studio-1.1.0-x64.AppImage", signature: "sig", isRecommended: true },
-      ],
-    },
-    {
-      version: "1.0.0",
-      title: "v1.0.0 — Initial Stable Release",
-      description: `## Highlights
-
-### Complete Workspace
-Dashboard, Prompt Library, Prompt Engine, Personas, Skills, Workflows, Memories, MCP Manager.
-
-### Asset Validator & Prompt Optimizer
-Built-in validation and AI-powered optimization.
-
-### Export to 10+ Targets
-Cursor, Claude Code, Windsurf, VS Code, Copilot, Codex, Continue, Roo, OpenCode, Generic.
-
-### Marketplace Browser
-300+ community assets.
-
-### Local-First, Offline-Capable, No Telemetry
-Your data never leaves your machine.
-
-## Assets
-
-| Platform | File | Size | SHA256 |
-|----------|------|------|--------|
-| Windows | ai-context-studio-1.0.0-x64-setup.exe | 45 MB | \`sha256:a1b2c3d4e5f6...\` |
-| macOS | ai-context-studio-1.0.0-universal.dmg | 52 MB | \`sha256:b2c3d4e5f6a1...\` |
-| Linux | ai-context-studio-1.0.0-x64.AppImage | 48 MB | \`sha256:c3d4e5f6a1b2...\` `,
-      isPrerelease: false,
-      isDraft: false,
-      publishedAt: new Date("2024-02-15"),
-      assets: [
-        { platform: "WINDOWS_X64", arch: "x64", filename: "ai-context-studio-1.0.0-x64-setup.exe", size: 45_000_000, checksum: "sha256:a1b2c3d4e5f6...", url: "https://github.com/ai-context-studio/releases/download/v1.0.0/ai-context-studio-1.0.0-x64-setup.exe", signature: "sig", isRecommended: true },
-        { platform: "MACOS_UNIVERSAL", arch: "universal", filename: "ai-context-studio-1.0.0-universal.dmg", size: 52_000_000, checksum: "sha256:b2c3d4e5f6a1...", url: "https://github.com/ai-context-studio/releases/download/v1.0.0/ai-context-studio-1.0.0-universal.dmg", signature: "sig", isRecommended: true },
-        { platform: "LINUX_X64", arch: "x64", filename: "ai-context-studio-1.0.0-x64.AppImage", size: 48_000_000, checksum: "sha256:c3d4e5f6a1b2...", url: "https://github.com/ai-context-studio/releases/download/v1.0.0/ai-context-studio-1.0.0-x64.AppImage", signature: "sig", isRecommended: true },
-      ],
-    },
-  ];
-
-  for (const release of releases) {
-    const { assets, ...releaseData } = release;
-    const existing = await prisma.release.findUnique({ where: { version: releaseData.version } });
-    if (existing) continue;
-
-    const created = await prisma.release.create({
-      data: {
-        ...releaseData,
-        assets: { create: assets },
-      },
-    });
-    console.log(`✅ Release created: ${created.version}`);
-  }
-
-  console.log("✅ Releases created");
-
-  // ============================================
-  // SECURITY ADVISORIES
-  // ============================================
-  const advisories = [
-    {
-      cveId: "CVE-2024-1234",
-      ghsaId: "GHSA-xxxx-xxxx-xxxx",
-      title: "Path Traversal in Asset Import",
-      description: "A path traversal vulnerability in the asset import functionality could allow overwriting arbitrary files on the system when importing a maliciously crafted .acs package.",
-      severity: "HIGH",
-      cvssScore: 7.5,
-      cvssVector: "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
-      affectedVersions: ["< 1.1.1"],
-      patchedVersions: [">= 1.1.1"],
-      status: "PUBLISHED",
-      publishedAt: new Date("2024-05-20"),
-      references: [
-        { type: "FIX", url: "https://github.com/ai-context-studio/ai-context-studio/pull/1234" },
-        { type: "ADVISORY", url: "https://github.com/ai-context-studio/ai-context-studio/security/advisories/GHSA-xxxx-xxxx-xxxx" },
-      ],
-    },
-    {
-      cveId: "CVE-2024-5678",
-      ghsaId: "GHSA-yyyy-yyyy-yyyy",
-      title: "XSS in Marketplace Asset Description",
-      description: "Stored XSS via asset description field when rendered without proper sanitization in the marketplace detail page.",
-      severity: "MEDIUM",
-      cvssScore: 5.4,
-      cvssVector: "CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N",
-      affectedVersions: ["< 1.0.5"],
-      patchedVersions: [">= 1.0.5"],
-      status: "PUBLISHED",
-      publishedAt: new Date("2024-03-10"),
-      references: [
-        { type: "FIX", url: "https://github.com/ai-context-studio/ai-context-studio/pull/987" },
-      ],
-    },
-  ];
-
-  for (const adv of advisories) {
-    const existing = await prisma.securityAdvisory.findUnique({ where: { cveId: adv.cveId } });
-    if (existing) continue;
-
-    await prisma.securityAdvisory.create({
-      data: adv,
-    });
-    console.log(`✅ Security advisory created: ${adv.cveId}`);
-  }
-
-  console.log("✅ Security advisories created");
-
-  // ============================================
-  // AUDIT REPORTS
-  // ============================================
-  await prisma.auditReport.upsert({
-    where: { id: "audit-2024-q2" },
-    update: {},
-    create: {
-      id: "audit-2024-q2",
-      title: "Q2 2024 Security Audit — Trail of Bits",
-      description: "Comprehensive security assessment of AI Context Studio v1.1 including desktop application, marketplace API, and MCP server implementations.",
-      auditor: "Trail of Bits",
-      reportUrl: "https://github.com/ai-context-studio/security-audits/blob/main/2024-q2-trailofbits.pdf",
-      findings: [
-        { severity: "LOW", title: "Information Disclosure in Error Messages", description: "Stack traces could leak internal paths in development mode.", status: "FIXED" },
-        { severity: "LOW", title: "CSP Header Missing on Static Assets", description: "Content Security Policy not applied to all static assets.", status: "FIXED" },
-        { severity: "INFO", title: "Dependency Version Pinning", description: "Recommend pinning all dependencies to exact versions.", status: "ADDRESSED" },
-        { severity: "INFO", title: "Rate Limiting on Auth Endpoints", description: "Additional rate limiting recommended for login/registration.", status: "ADDRESSED" },
-        { severity: "INFO", title: "Enhanced Audit Logging", description: "More detailed audit logging for sensitive operations.", status: "ADDRESSED" },
-        { severity: "INFO", title: "Input Validation on File Paths", description: "Stricter validation for file path inputs.", status: "ADDRESSED" },
-        { severity: "INFO", title: "MCP Server Sandboxing Defaults", description: "More secure defaults for MCP server execution sandbox.", status: "ADDRESSED" },
-      ],
-      publishedAt: new Date("2024-07-28"),
-    },
-  });
-
-  console.log("✅ Audit report created");
-
-  // ============================================
   // FEATURE FLAGS
   // ============================================
   const flags = [
@@ -1997,13 +629,13 @@ Your data never leaves your machine.
   // ============================================
   const seoPages = [
     { path: "/", title: "AI Context Studio", description: "Build, customize, manage, and export AI instruction assets for multiple AI coding assistants. Local-first, offline-first, no auth required.", ogTitle: "AI Context Studio", ogDescription: "Local-first prompt engineering studio for AI coding assistants.", ogImage: "https://aicontextstudio.dev/og-home.png", twitterCard: "summary_large_image", robots: "index, follow" },
-    { path: "/marketplace", title: "Marketplace — AI Context Studio", description: "Discover, install, and publish community AI assets — skills, personas, templates, prompt packs, workflows, and MCP servers.", ogTitle: "Marketplace — AI Context Studio", ogDescription: "Browse 10,000+ community AI assets.", ogImage: "https://aicontextstudio.dev/og-marketplace.png", twitterCard: "summary_large_image", robots: "index, follow" },
+    { path: "/marketplace", title: "Marketplace — AI Context Studio", description: "Discover, install, and publish community AI assets — skills, personas, templates, prompt packs, workflows, and MCP servers.", ogTitle: "Marketplace — AI Context Studio", ogDescription: "Browse community AI assets.", ogImage: "https://aicontextstudio.dev/og-marketplace.png", twitterCard: "summary_large_image", robots: "index, follow" },
     { path: "/download", title: "Download — AI Context Studio", description: "Download AI Context Studio for Windows, macOS, and Linux. Native installers, portable versions, and source code.", ogTitle: "Download — AI Context Studio", ogDescription: "Native apps for Windows, macOS, and Linux.", ogImage: "https://aicontextstudio.dev/og-download.png", twitterCard: "summary_large_image", robots: "index, follow" },
     { path: "/docs", title: "Documentation — AI Context Studio", description: "Complete documentation for AI Context Studio. Getting Started, Desktop App, Marketplace, Registry, MCP, Skills, Prompt Files, API Keys, Security, Developer Guide, Architecture.", ogTitle: "Documentation — AI Context Studio", ogDescription: "Full documentation with guides, API reference, and examples.", ogImage: "https://aicontextstudio.dev/og-docs.png", twitterCard: "summary_large_image", robots: "index, follow" },
     { path: "/blog", title: "Blog & Updates — AI Context Studio", description: "Latest news, release notes, announcements, development logs, tutorials, and community showcases from AI Context Studio.", ogTitle: "Blog & Updates — AI Context Studio", ogDescription: "Release notes, announcements, tutorials, and showcases.", ogImage: "https://aicontextstudio.dev/og-blog.png", twitterCard: "summary_large_image", robots: "index, follow" },
     { path: "/security", title: "Security — AI Context Studio", description: "Security policy, responsible disclosure, CVE history, audit reports, and security best practices for AI Context Studio.", ogTitle: "Security — AI Context Studio", ogDescription: "Security policy, audits, and responsible disclosure.", ogImage: "https://aicontextstudio.dev/og-security.png", twitterCard: "summary_large_image", robots: "index, follow" },
     { path: "/roadmap", title: "Roadmap — AI Context Studio", description: "Transparent roadmap with completed, in-progress, planned, and future features. Vote on priorities and track progress.", ogTitle: "Roadmap — AI Context Studio", ogDescription: "Public roadmap with community voting.", ogImage: "https://aicontextstudio.dev/og-roadmap.png", twitterCard: "summary_large_image", robots: "index, follow" },
-    { path: "/community", title: "Community — AI Context Studio", description: "Join the AI Context Studio community. Discord, GitHub Discussions, contributors, creators, showcases, and events.", ogTitle: "Community — AI Context Studio", ogDescription: "Discord, GitHub, contributors, and showcases.", ogImage: "https://aicontextstudio.dev/og-community.png", twitterCard: "summary_large_image", robots: "index, follow" },
+    { path: "/community", title: "Community — AI Context Studio", description: "Join the AI Context Studio community. GitHub Discussions, contributors, creators, showcases, and events.", ogTitle: "Community — AI Context Studio", ogDescription: "GitHub, contributors, and showcases.", ogImage: "https://aicontextstudio.dev/og-community.png", twitterCard: "summary_large_image", robots: "index, follow" },
     { path: "/registry", title: "Registry — AI Context Studio", description: "Open specification for AI asset packaging, versioning, dependencies, and compatibility. Reference implementation in Rust.", ogTitle: "Registry — AI Context Studio", ogDescription: "Asset packaging specification and reference implementation.", ogImage: "https://aicontextstudio.dev/og-registry.png", twitterCard: "summary_large_image", robots: "index, follow" },
     { path: "/products", title: "Products — AI Context Studio", description: "Desktop App, Online Hub (coming soon), Marketplace, Registry, Community, and Future Cloud platform.", ogTitle: "Products — AI Context Studio", ogDescription: "Desktop App, Marketplace, Registry, and more.", ogImage: "https://aicontextstudio.dev/og-products.png", twitterCard: "summary_large_image", robots: "index, follow" },
     { path: "/faq", title: "FAQ — AI Context Studio", description: "Frequently asked questions about AI Context Studio. General, Installation, Usage, Marketplace, Development, Troubleshooting.", ogTitle: "FAQ — AI Context Studio", ogDescription: "Answers to common questions.", ogImage: "https://aicontextstudio.dev/og-faq.png", twitterCard: "summary_large_image", robots: "index, follow" },
@@ -2020,6 +652,250 @@ Your data never leaves your machine.
   console.log("✅ SEO pages created");
 
   // ============================================
+  // SYSTEM PROMPT TEMPLATES (for AI generation feature)
+  // ============================================
+  const systemPromptTemplates = [
+    {
+      key: "system_prompt_claude_md",
+      name: "CLAUDE.md Generator",
+      description: "Generate concise CLAUDE.md instruction files for Claude Code",
+      category: "instruction-file",
+      targetId: "claude",
+      content: `You are an expert at creating CLAUDE.md instruction files for Claude Code.
+
+CLAUDE.md files are markdown files that provide persistent instructions to Claude Code across sessions. They should be:
+- Concise and to-the-point
+- Descriptive but not lengthy (this is part of every prompt)
+- Focus on project-specific conventions, architecture decisions, and workflows
+- Suggest using specific parts in skills or personas when appropriate
+
+Structure your output as a valid CLAUDE.md file with:
+1. Project overview (2-3 sentences)
+2. Key conventions (bullet points)
+3. Architecture notes (if any)
+4. Workflow instructions (if any)
+5. References to skills/personas (if applicable)`,
+      constraints: "Keep concise, to-the-point, descriptive but not lengthy. This is part of every prompt. Suggest using specific parts in skills or personas.",
+      isActive: true,
+      isDefault: true,
+      sortOrder: 1,
+      createdBy: adminUser.id,
+    },
+    {
+      key: "system_prompt_agents_md",
+      name: "AGENTS.md Generator",
+      description: "Generate general AGENTS.md instruction files for OpenAI Codex and generic use",
+      category: "instruction-file",
+      targetId: "general",
+      content: `You are an expert at creating AGENTS.md instruction files for AI coding assistants.
+
+AGENTS.md is a universal instruction file format used by OpenAI Codex and other AI tools. It should:
+- Be concise and actionable
+- Define project conventions, coding standards, and workflows
+- Not be overly lengthy (this is part of every prompt context)
+- Suggest modular breakdown into skills or personas for complex topics
+
+Structure as a valid AGENTS.md with:
+1. Project purpose (2-3 sentences)
+2. Coding conventions
+3. Architecture patterns
+4. Common workflows
+5. Links to detailed docs (if any)`,
+      constraints: "Keep concise, to-the-point, descriptive but not lengthy. This is part of every prompt. Suggest using specific parts in skills or personas.",
+      isActive: true,
+      isDefault: true,
+      sortOrder: 2,
+      createdBy: adminUser.id,
+    },
+    {
+      key: "system_prompt_cursor",
+      name: ".cursorrules Generator",
+      description: "Generate Cursor-specific rule files",
+      category: "instruction-file",
+      targetId: "cursor",
+      content: `You are an expert at creating .cursorrules files for Cursor IDE.
+
+.cursorrules files define custom rules that Cursor's AI follows. They should:
+- Be specific to Cursor's capabilities
+- Use Cursor's rule syntax (globs, descriptions, actions)
+- Be concise and actionable
+- Focus on code generation preferences, style guides, and project conventions
+
+Structure with clear rule definitions.`,
+      constraints: "Keep concise, to-the-point, descriptive but not lengthy. Use Cursor rule syntax. Suggest using specific parts in skills or personas.",
+      isActive: true,
+      isDefault: true,
+      sortOrder: 3,
+      createdBy: adminUser.id,
+    },
+    {
+      key: "system_prompt_copilot",
+      name: "Copilot Instructions Generator",
+      description: "Generate GitHub Copilot instruction files",
+      category: "instruction-file",
+      targetId: "copilot",
+      content: `You are an expert at creating .github/copilot-instructions.md files for GitHub Copilot.
+
+These files provide repository-specific instructions to Copilot. They should:
+- Be concise and focused on code generation preferences
+- Define coding standards, naming conventions, and patterns
+- Not be overly verbose (part of every prompt context)
+- Reference skills/personas for complex topics
+
+Output as valid markdown for .github/copilot-instructions.md.`,
+      constraints: "Keep concise, to-the-point, descriptive but not lengthy. This is part of every prompt. Suggest using specific parts in skills or personas.",
+      isActive: true,
+      isDefault: true,
+      sortOrder: 4,
+      createdBy: adminUser.id,
+    },
+    {
+      key: "system_prompt_system",
+      name: "System Prompt Generator",
+      description: "Generate general system/role prompts for any AI assistant",
+      category: "system-prompt",
+      targetId: null,
+      content: `You are an expert at creating system prompts for AI coding assistants.
+
+System prompts define the AI's role, behavior, and constraints. They should:
+- Clearly define the AI's role and expertise
+- Set explicit boundaries and constraints
+- Use structured format with variables/conditionals when needed
+- Be reusable across different contexts
+- Suggest breaking complex prompts into skills or personas
+
+Output a complete system prompt ready for use.`,
+      constraints: "Keep concise, to-the-point, descriptive but not lengthy. Define clear role and constraints. Suggest using specific parts in skills or personas.",
+      isActive: true,
+      isDefault: true,
+      sortOrder: 5,
+      createdBy: adminUser.id,
+    },
+    {
+      key: "system_prompt_persona",
+      name: "Persona Generator",
+      description: "Generate AI persona definitions with expertise and personality",
+      category: "persona",
+      targetId: null,
+      content: `You are an expert at creating AI persona definitions.
+
+Personas define an AI's role, expertise, communication style, and decision-making approach. They should:
+- Define clear expertise areas and background
+- Specify communication style (concise, detailed, tutorial, etc.)
+- Include decision-making principles
+- Be usable across multiple AI targets
+- Suggest related skills for specific capabilities
+
+Output a complete persona definition.`,
+      constraints: "Keep concise, to-the-point, descriptive but not lengthy. Define expertise, style, and principles. Suggest using specific parts in skills.",
+      isActive: true,
+      isDefault: true,
+      sortOrder: 6,
+      createdBy: adminUser.id,
+    },
+    {
+      key: "system_prompt_skill",
+      name: "Skill Generator",
+      description: "Generate composable AI skill definitions with typed I/O",
+      category: "skill",
+      targetId: null,
+      content: `You are an expert at creating AI skill definitions.
+
+Skills are atomic, composable capabilities with typed inputs and outputs. They should:
+- Have a single, well-defined purpose
+- Specify input schema (what the skill receives)
+- Specify output schema (what the skill produces)
+- Include the prompt/template that implements the skill
+- Be composable with other skills in workflows
+- Be reusable across different projects
+
+Output a complete skill definition with I/O schemas.`,
+      constraints: "Keep concise, to-the-point, descriptive but not lengthy. Define clear I/O schemas. This is a composable unit.",
+      isActive: true,
+      isDefault: true,
+      sortOrder: 7,
+      createdBy: adminUser.id,
+    },
+    {
+      key: "system_prompt_workflow",
+      name: "Workflow Generator",
+      description: "Generate multi-step workflow pipelines with conditional logic",
+      category: "workflow",
+      targetId: null,
+      content: `You are an expert at creating AI workflow definitions.
+
+Workflows chain multiple skills, prompts, and tools into multi-step pipelines. They should:
+- Define a clear sequence or graph of steps
+- Specify conditional routing between steps
+- Handle errors and fallbacks
+- Share memory/state between steps
+- Be executable by an orchestrator
+- Reference existing skills by name
+
+Output a complete workflow definition.`,
+      constraints: "Keep concise, to-the-point, descriptive but not lengthy. Define steps, conditions, and skill references.",
+      isActive: true,
+      isDefault: true,
+      sortOrder: 8,
+      createdBy: adminUser.id,
+    },
+    {
+      key: "system_prompt_memory",
+      name: "Memory Generator",
+      description: "Generate persistent memory/context blocks for agents",
+      category: "memory",
+      targetId: null,
+      content: `You are an expert at creating memory/context blocks for AI agents.
+
+Memories are persistent context blocks that agents can recall across sessions. They should:
+- Store reference material (architecture decisions, code patterns, API specs)
+- Be searchable and versioned
+- Have clear scope and applicability
+- Be attachable to prompts or workflows
+- Support semantic retrieval
+
+Output a complete memory block with content and metadata.`,
+      constraints: "Keep concise, to-the-point, descriptive but not lengthy. Define clear scope and content for retrieval.",
+      isActive: true,
+      isDefault: true,
+      sortOrder: 9,
+      createdBy: adminUser.id,
+    },
+    {
+      key: "system_prompt_context",
+      name: "Context File Generator",
+      description: "Generate reference documentation and context files",
+      category: "context-file",
+      targetId: null,
+      content: `You are an expert at creating context/reference files for AI assistants.
+
+Context files provide reference documentation that agents can consult. They should:
+- Be well-organized with clear sections
+- Include practical examples
+- Be kept up-to-date with the codebase
+- Focus on information that changes infrequently
+- Support cross-referencing with skills/personas
+
+Output a complete context/reference file.`,
+      constraints: "Keep concise, to-the-point, descriptive but not lengthy. Organize for easy reference. Suggest linking to skills or personas.",
+      isActive: true,
+      isDefault: true,
+      sortOrder: 10,
+      createdBy: adminUser.id,
+    },
+  ];
+
+  for (const template of systemPromptTemplates) {
+    await prisma.systemPromptTemplate.upsert({
+      where: { key: template.key },
+      update: {},
+      create: template,
+    });
+  }
+
+  console.log("✅ System prompt templates created");
+
+  // ============================================
   // NEWSLETTER
   // ============================================
   // Just ensure table exists - subscribers will come from the newsletter form
@@ -2029,26 +905,30 @@ Your data never leaves your machine.
 ╔══════════════════════════════════════════════════════════════╗
 ║                    🎉 SEED COMPLETE 🎉                       ║
 ╠══════════════════════════════════════════════════════════════╣
-║  Users:          3 (admin, demo, 2 creators)                ║
+║  Users:          2 (admin, demo)                             ║
 ║  Categories:     9                                           ║
 ║  Tags:           30                                          ║
-║  Assets:         8 (skills, personas, templates, etc.)      ║
-║  Blog Posts:     3                                           ║
+║  Blog Categories: 5                                          ║
+║  Roadmap Items:  4 (real project milestones)                 ║
 ║  Doc Categories: 11                                          ║
 ║  Doc Pages:      3                                           ║
-║  Releases:       3 (v1.0.0, v1.1.0, v1.2.0)                 ║
-║  Roadmap Items:  10                                          ║
-║  Security Advis: 2                                           ║
-║  Audit Reports:  1                                           ║
 ║  Feature Flags:  7                                           ║
 ║  SEO Pages:      11                                          ║
+║  System Prompts: 10 (for AI generation feature)              ║
 ╚══════════════════════════════════════════════════════════════╝
+
+Tables with graceful empty states (no seed data):
+  - Assets (marketplace) — "No assets published yet"
+  - Blog Posts — "No blog posts published yet"
+  - Community Posts — "No discussions yet"
+  - Releases — Uses GitHub API
+  - Security Advisories — "No advisories"
+  - Audit Reports — "No reports"
+  - Registry Packages — "No packages"
 
 Test accounts:
   admin@aicontextstudio.dev / password123 (OWNER)
   demo@aicontextstudio.dev / password123 (USER)
-  creator@aicontextstudio.dev / password123 (USER)
-  marcus@aicontextstudio.dev / password123 (USER)
   `);
 }
 

@@ -421,6 +421,7 @@ export const ModelName = {
   BlogCategory: 'BlogCategory',
   BlogPostCategory: 'BlogPostCategory',
   BlogPostTag: 'BlogPostTag',
+  SystemPromptTemplate: 'SystemPromptTemplate',
   DocPage: 'DocPage',
   DocCategory: 'DocCategory',
   DocTranslation: 'DocTranslation',
@@ -444,7 +445,8 @@ export const ModelName = {
   NewsletterSubscriber: 'NewsletterSubscriber',
   ContactMessage: 'ContactMessage',
   AuditLog: 'AuditLog',
-  SeoPage: 'SeoPage'
+  SeoPage: 'SeoPage',
+  GeneratedFile: 'GeneratedFile'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -460,7 +462,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verificationToken" | "apiKey" | "profile" | "follow" | "category" | "tag" | "asset" | "assetVersion" | "assetCategory" | "assetTag" | "assetScreenshot" | "assetCompatibility" | "assetDependency" | "download" | "purchase" | "review" | "rating" | "like" | "bookmark" | "collection" | "collectionAsset" | "post" | "postTag" | "comment" | "blogPost" | "blogCategory" | "blogPostCategory" | "blogPostTag" | "docPage" | "docCategory" | "docTranslation" | "release" | "releaseAsset" | "roadmapItem" | "roadmapVote" | "securityAdvisory" | "auditReport" | "registryPackage" | "registryVersion" | "registryKeyword" | "registryPackageKeyword" | "registryDependency" | "announcement" | "notification" | "analyticsEvent" | "pageView" | "assetStat" | "featureFlag" | "newsletterSubscriber" | "contactMessage" | "auditLog" | "seoPage"
+    modelProps: "user" | "account" | "session" | "verificationToken" | "apiKey" | "profile" | "follow" | "category" | "tag" | "asset" | "assetVersion" | "assetCategory" | "assetTag" | "assetScreenshot" | "assetCompatibility" | "assetDependency" | "download" | "purchase" | "review" | "rating" | "like" | "bookmark" | "collection" | "collectionAsset" | "post" | "postTag" | "comment" | "blogPost" | "blogCategory" | "blogPostCategory" | "blogPostTag" | "systemPromptTemplate" | "docPage" | "docCategory" | "docTranslation" | "release" | "releaseAsset" | "roadmapItem" | "roadmapVote" | "securityAdvisory" | "auditReport" | "registryPackage" | "registryVersion" | "registryKeyword" | "registryPackageKeyword" | "registryDependency" | "announcement" | "notification" | "analyticsEvent" | "pageView" | "assetStat" | "featureFlag" | "newsletterSubscriber" | "contactMessage" | "auditLog" | "seoPage" | "generatedFile"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2758,6 +2760,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SystemPromptTemplate: {
+      payload: Prisma.$SystemPromptTemplatePayload<ExtArgs>
+      fields: Prisma.SystemPromptTemplateFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SystemPromptTemplateFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemPromptTemplatePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SystemPromptTemplateFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemPromptTemplatePayload>
+        }
+        findFirst: {
+          args: Prisma.SystemPromptTemplateFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemPromptTemplatePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SystemPromptTemplateFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemPromptTemplatePayload>
+        }
+        findMany: {
+          args: Prisma.SystemPromptTemplateFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemPromptTemplatePayload>[]
+        }
+        create: {
+          args: Prisma.SystemPromptTemplateCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemPromptTemplatePayload>
+        }
+        createMany: {
+          args: Prisma.SystemPromptTemplateCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SystemPromptTemplateCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemPromptTemplatePayload>[]
+        }
+        delete: {
+          args: Prisma.SystemPromptTemplateDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemPromptTemplatePayload>
+        }
+        update: {
+          args: Prisma.SystemPromptTemplateUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemPromptTemplatePayload>
+        }
+        deleteMany: {
+          args: Prisma.SystemPromptTemplateDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SystemPromptTemplateUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SystemPromptTemplateUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemPromptTemplatePayload>[]
+        }
+        upsert: {
+          args: Prisma.SystemPromptTemplateUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemPromptTemplatePayload>
+        }
+        aggregate: {
+          args: Prisma.SystemPromptTemplateAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSystemPromptTemplate>
+        }
+        groupBy: {
+          args: Prisma.SystemPromptTemplateGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SystemPromptTemplateGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SystemPromptTemplateCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SystemPromptTemplateCountAggregateOutputType> | number
+        }
+      }
+    }
     DocPage: {
       payload: Prisma.$DocPagePayload<ExtArgs>
       fields: Prisma.DocPageFieldRefs
@@ -4534,6 +4610,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    GeneratedFile: {
+      payload: Prisma.$GeneratedFilePayload<ExtArgs>
+      fields: Prisma.GeneratedFileFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.GeneratedFileFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedFilePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.GeneratedFileFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedFilePayload>
+        }
+        findFirst: {
+          args: Prisma.GeneratedFileFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedFilePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.GeneratedFileFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedFilePayload>
+        }
+        findMany: {
+          args: Prisma.GeneratedFileFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedFilePayload>[]
+        }
+        create: {
+          args: Prisma.GeneratedFileCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedFilePayload>
+        }
+        createMany: {
+          args: Prisma.GeneratedFileCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.GeneratedFileCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedFilePayload>[]
+        }
+        delete: {
+          args: Prisma.GeneratedFileDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedFilePayload>
+        }
+        update: {
+          args: Prisma.GeneratedFileUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedFilePayload>
+        }
+        deleteMany: {
+          args: Prisma.GeneratedFileDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.GeneratedFileUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.GeneratedFileUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedFilePayload>[]
+        }
+        upsert: {
+          args: Prisma.GeneratedFileUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$GeneratedFilePayload>
+        }
+        aggregate: {
+          args: Prisma.GeneratedFileAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateGeneratedFile>
+        }
+        groupBy: {
+          args: Prisma.GeneratedFileGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GeneratedFileGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.GeneratedFileCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.GeneratedFileCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -5014,6 +5164,26 @@ export const BlogPostTagScalarFieldEnum = {
 export type BlogPostTagScalarFieldEnum = (typeof BlogPostTagScalarFieldEnum)[keyof typeof BlogPostTagScalarFieldEnum]
 
 
+export const SystemPromptTemplateScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  targetId: 'targetId',
+  content: 'content',
+  constraints: 'constraints',
+  isActive: 'isActive',
+  isDefault: 'isDefault',
+  sortOrder: 'sortOrder',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SystemPromptTemplateScalarFieldEnum = (typeof SystemPromptTemplateScalarFieldEnum)[keyof typeof SystemPromptTemplateScalarFieldEnum]
+
+
 export const DocPageScalarFieldEnum = {
   id: 'id',
   slug: 'slug',
@@ -5400,6 +5570,25 @@ export const SeoPageScalarFieldEnum = {
 } as const
 
 export type SeoPageScalarFieldEnum = (typeof SeoPageScalarFieldEnum)[keyof typeof SeoPageScalarFieldEnum]
+
+
+export const GeneratedFileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  kind: 'kind',
+  title: 'title',
+  content: 'content',
+  metadata: 'metadata',
+  isPublic: 'isPublic',
+  isFavorite: 'isFavorite',
+  slug: 'slug',
+  tokens: 'tokens',
+  modelUsed: 'modelUsed',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GeneratedFileScalarFieldEnum = (typeof GeneratedFileScalarFieldEnum)[keyof typeof GeneratedFileScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -5854,6 +6043,20 @@ export type EnumContactStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
 export type ListEnumContactStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContactStatus[]'>
     
 
+
+/**
+ * Reference to a field of type 'GeneratedFileKind'
+ */
+export type EnumGeneratedFileKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GeneratedFileKind'>
+    
+
+
+/**
+ * Reference to a field of type 'GeneratedFileKind[]'
+ */
+export type ListEnumGeneratedFileKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GeneratedFileKind[]'>
+    
+
 /**
  * Batch Payload for updateMany & deleteMany & createMany
  */
@@ -5972,6 +6175,7 @@ export type GlobalOmitConfig = {
   blogCategory?: Prisma.BlogCategoryOmit
   blogPostCategory?: Prisma.BlogPostCategoryOmit
   blogPostTag?: Prisma.BlogPostTagOmit
+  systemPromptTemplate?: Prisma.SystemPromptTemplateOmit
   docPage?: Prisma.DocPageOmit
   docCategory?: Prisma.DocCategoryOmit
   docTranslation?: Prisma.DocTranslationOmit
@@ -5996,6 +6200,7 @@ export type GlobalOmitConfig = {
   contactMessage?: Prisma.ContactMessageOmit
   auditLog?: Prisma.AuditLogOmit
   seoPage?: Prisma.SeoPageOmit
+  generatedFile?: Prisma.GeneratedFileOmit
 }
 
 /* Types for Logging */

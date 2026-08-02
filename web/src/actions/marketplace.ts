@@ -9,6 +9,7 @@ export interface MarketplaceFilters {
   verifiedOnly?: boolean;
   compatibility?: string[];
   search?: string;
+  featured?: boolean;
   sortBy?: "trending" | "recent" | "rating" | "downloads" | "alphabetical";
   page?: number;
   limit?: number;
@@ -75,6 +76,7 @@ export async function getMarketplaceAssets(filters: MarketplaceFilters = {}): Pr
     verifiedOnly,
     compatibility,
     search,
+    featured,
     sortBy = "trending",
     page = 1,
     limit = 20,
@@ -95,6 +97,10 @@ export async function getMarketplaceAssets(filters: MarketplaceFilters = {}): Pr
 
   if (verifiedOnly) {
     where.verified = true;
+  }
+
+  if (featured) {
+    where.featured = true;
   }
 
   if (compatibility && compatibility.length > 0) {

@@ -2,12 +2,10 @@ export const siteConfig = {
   name: 'AI Context Studio',
   tagline: 'Local-First AI Prompt Engineering Studio',
   description:
-    'Build, customize, manage, and export AI instruction assets for multiple AI coding assistants. Local-first, offline-first, no auth required.',
+    'Build, customize, manage, and export AI instruction assets for multiple AI coding assistants. Generate system prompts, instruction files, personas, workflows, MCP configs and more.',
   url: 'https://ai-context-studio.vercel.app',
   ogImage: '/og-image.png',
-  github: 'https://github.com/ai-context-studio',
-  twitter: 'https://twitter.com/aicontextstudio',
-  discord: 'https://discord.gg/ai-context-studio',
+  github: 'https://github.com/Vansh-Varshney-07/AI-Context-Studio',
   creator: '@aicontextstudio',
 };
 
@@ -59,9 +57,7 @@ export const navigation = {
       { href: '/license', label: 'License (MIT)' },
     ],
     social: [
-      { href: 'https://github.com/ai-context-studio', label: 'GitHub' },
-      { href: 'https://twitter.com/aicontextstudio', label: 'Twitter' },
-      { href: 'https://discord.gg/ai-context-studio', label: 'Discord' },
+      { href: 'https://github.com/Vansh-Varshney-07/AI-Context-Studio', label: 'GitHub' },
     ],
   },
 };
@@ -350,7 +346,5 @@ export const roadmapPhases = [
 ];
 
 export const socialLinks = [
-  { name: 'GitHub', href: 'https://github.com/ai-context-studio', icon: 'Github' },
-  { name: 'Twitter', href: 'https://twitter.com/aicontextstudio', icon: 'Twitter' },
-  { name: 'Discord', href: 'https://discord.gg/ai-context-studio', icon: 'MessageSquare' },
+  { name: 'GitHub', href: 'https://github.com/Vansh-Varshney-07/AI-Context-Studio', icon: 'Github' },
 ];

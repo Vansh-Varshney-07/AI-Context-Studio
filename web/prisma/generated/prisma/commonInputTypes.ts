@@ -749,6 +749,23 @@ export type EnumContactStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumContactStatusFilter<$PrismaModel>
 }
 
+export type EnumGeneratedFileKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.GeneratedFileKind | Prisma.EnumGeneratedFileKindFieldRefInput<$PrismaModel>
+  in?: $Enums.GeneratedFileKind[] | Prisma.ListEnumGeneratedFileKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GeneratedFileKind[] | Prisma.ListEnumGeneratedFileKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGeneratedFileKindFilter<$PrismaModel> | $Enums.GeneratedFileKind
+}
+
+export type EnumGeneratedFileKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.GeneratedFileKind | Prisma.EnumGeneratedFileKindFieldRefInput<$PrismaModel>
+  in?: $Enums.GeneratedFileKind[] | Prisma.ListEnumGeneratedFileKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GeneratedFileKind[] | Prisma.ListEnumGeneratedFileKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGeneratedFileKindWithAggregatesFilter<$PrismaModel> | $Enums.GeneratedFileKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumGeneratedFileKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumGeneratedFileKindFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -1419,6 +1436,23 @@ export type NestedEnumContactStatusWithAggregatesFilter<$PrismaModel = never> = 
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumContactStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumContactStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumGeneratedFileKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.GeneratedFileKind | Prisma.EnumGeneratedFileKindFieldRefInput<$PrismaModel>
+  in?: $Enums.GeneratedFileKind[] | Prisma.ListEnumGeneratedFileKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GeneratedFileKind[] | Prisma.ListEnumGeneratedFileKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGeneratedFileKindFilter<$PrismaModel> | $Enums.GeneratedFileKind
+}
+
+export type NestedEnumGeneratedFileKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.GeneratedFileKind | Prisma.EnumGeneratedFileKindFieldRefInput<$PrismaModel>
+  in?: $Enums.GeneratedFileKind[] | Prisma.ListEnumGeneratedFileKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.GeneratedFileKind[] | Prisma.ListEnumGeneratedFileKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumGeneratedFileKindWithAggregatesFilter<$PrismaModel> | $Enums.GeneratedFileKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumGeneratedFileKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumGeneratedFileKindFilter<$PrismaModel>
 }
 
 

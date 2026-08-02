@@ -260,6 +260,7 @@ export type UserWhereInput = {
   auditLogs?: Prisma.AuditLogListRelationFilter
   downloads?: Prisma.DownloadListRelationFilter
   contactMessages?: Prisma.ContactMessageListRelationFilter
+  generatedFiles?: Prisma.GeneratedFileListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -297,6 +298,7 @@ export type UserOrderByWithRelationInput = {
   auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
   downloads?: Prisma.DownloadOrderByRelationAggregateInput
   contactMessages?: Prisma.ContactMessageOrderByRelationAggregateInput
+  generatedFiles?: Prisma.GeneratedFileOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -337,6 +339,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   auditLogs?: Prisma.AuditLogListRelationFilter
   downloads?: Prisma.DownloadListRelationFilter
   contactMessages?: Prisma.ContactMessageListRelationFilter
+  generatedFiles?: Prisma.GeneratedFileListRelationFilter
 }, "id" | "email" | "username">
 
 export type UserOrderByWithAggregationInput = {
@@ -410,6 +413,7 @@ export type UserCreateInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -447,6 +451,7 @@ export type UserUncheckedCreateInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -484,6 +489,7 @@ export type UserUpdateInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -521,6 +527,7 @@ export type UserUncheckedUpdateInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -961,6 +968,20 @@ export type UserUpdateOneWithoutAuditLogsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAuditLogsInput, Prisma.UserUpdateWithoutAuditLogsInput>, Prisma.UserUncheckedUpdateWithoutAuditLogsInput>
 }
 
+export type UserCreateNestedOneWithoutGeneratedFilesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutGeneratedFilesInput, Prisma.UserUncheckedCreateWithoutGeneratedFilesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGeneratedFilesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutGeneratedFilesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutGeneratedFilesInput, Prisma.UserUncheckedCreateWithoutGeneratedFilesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGeneratedFilesInput
+  upsert?: Prisma.UserUpsertWithoutGeneratedFilesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutGeneratedFilesInput, Prisma.UserUpdateWithoutGeneratedFilesInput>, Prisma.UserUncheckedUpdateWithoutGeneratedFilesInput>
+}
+
 export type UserCreateWithoutAccountsInput = {
   id?: string
   email: string
@@ -995,6 +1016,7 @@ export type UserCreateWithoutAccountsInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -1031,6 +1053,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -1083,6 +1106,7 @@ export type UserUpdateWithoutAccountsInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -1119,6 +1143,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -1155,6 +1180,7 @@ export type UserCreateWithoutSessionsInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -1191,6 +1217,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -1243,6 +1270,7 @@ export type UserUpdateWithoutSessionsInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -1279,6 +1307,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutApiKeysInput = {
@@ -1315,6 +1344,7 @@ export type UserCreateWithoutApiKeysInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutApiKeysInput = {
@@ -1351,6 +1381,7 @@ export type UserUncheckedCreateWithoutApiKeysInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutApiKeysInput = {
@@ -1403,6 +1434,7 @@ export type UserUpdateWithoutApiKeysInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApiKeysInput = {
@@ -1439,6 +1471,7 @@ export type UserUncheckedUpdateWithoutApiKeysInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutProfileInput = {
@@ -1475,6 +1508,7 @@ export type UserCreateWithoutProfileInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProfileInput = {
@@ -1511,6 +1545,7 @@ export type UserUncheckedCreateWithoutProfileInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProfileInput = {
@@ -1563,6 +1598,7 @@ export type UserUpdateWithoutProfileInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProfileInput = {
@@ -1599,6 +1635,7 @@ export type UserUncheckedUpdateWithoutProfileInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutFollowingInput = {
@@ -1635,6 +1672,7 @@ export type UserCreateWithoutFollowingInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFollowingInput = {
@@ -1671,6 +1709,7 @@ export type UserUncheckedCreateWithoutFollowingInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFollowingInput = {
@@ -1712,6 +1751,7 @@ export type UserCreateWithoutFollowersInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFollowersInput = {
@@ -1748,6 +1788,7 @@ export type UserUncheckedCreateWithoutFollowersInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFollowersInput = {
@@ -1800,6 +1841,7 @@ export type UserUpdateWithoutFollowingInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFollowingInput = {
@@ -1836,6 +1878,7 @@ export type UserUncheckedUpdateWithoutFollowingInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutFollowersInput = {
@@ -1883,6 +1926,7 @@ export type UserUpdateWithoutFollowersInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFollowersInput = {
@@ -1919,6 +1963,7 @@ export type UserUncheckedUpdateWithoutFollowersInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAssetsInput = {
@@ -1955,6 +2000,7 @@ export type UserCreateWithoutAssetsInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAssetsInput = {
@@ -1991,6 +2037,7 @@ export type UserUncheckedCreateWithoutAssetsInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAssetsInput = {
@@ -2043,6 +2090,7 @@ export type UserUpdateWithoutAssetsInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAssetsInput = {
@@ -2079,6 +2127,7 @@ export type UserUncheckedUpdateWithoutAssetsInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDownloadsInput = {
@@ -2115,6 +2164,7 @@ export type UserCreateWithoutDownloadsInput = {
   registryPackages?: Prisma.RegistryPackageCreateNestedManyWithoutAuthorInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDownloadsInput = {
@@ -2151,6 +2201,7 @@ export type UserUncheckedCreateWithoutDownloadsInput = {
   registryPackages?: Prisma.RegistryPackageUncheckedCreateNestedManyWithoutAuthorInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDownloadsInput = {
@@ -2203,6 +2254,7 @@ export type UserUpdateWithoutDownloadsInput = {
   registryPackages?: Prisma.RegistryPackageUpdateManyWithoutAuthorNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDownloadsInput = {
@@ -2239,6 +2291,7 @@ export type UserUncheckedUpdateWithoutDownloadsInput = {
   registryPackages?: Prisma.RegistryPackageUncheckedUpdateManyWithoutAuthorNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPurchasesInput = {
@@ -2275,6 +2328,7 @@ export type UserCreateWithoutPurchasesInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPurchasesInput = {
@@ -2311,6 +2365,7 @@ export type UserUncheckedCreateWithoutPurchasesInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPurchasesInput = {
@@ -2363,6 +2418,7 @@ export type UserUpdateWithoutPurchasesInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPurchasesInput = {
@@ -2399,6 +2455,7 @@ export type UserUncheckedUpdateWithoutPurchasesInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReviewsInput = {
@@ -2435,6 +2492,7 @@ export type UserCreateWithoutReviewsInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReviewsInput = {
@@ -2471,6 +2529,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReviewsInput = {
@@ -2523,6 +2582,7 @@ export type UserUpdateWithoutReviewsInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -2559,6 +2619,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRatingsInput = {
@@ -2595,6 +2656,7 @@ export type UserCreateWithoutRatingsInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRatingsInput = {
@@ -2631,6 +2693,7 @@ export type UserUncheckedCreateWithoutRatingsInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRatingsInput = {
@@ -2683,6 +2746,7 @@ export type UserUpdateWithoutRatingsInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRatingsInput = {
@@ -2719,6 +2783,7 @@ export type UserUncheckedUpdateWithoutRatingsInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutLikesInput = {
@@ -2755,6 +2820,7 @@ export type UserCreateWithoutLikesInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutLikesInput = {
@@ -2791,6 +2857,7 @@ export type UserUncheckedCreateWithoutLikesInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutLikesInput = {
@@ -2843,6 +2910,7 @@ export type UserUpdateWithoutLikesInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLikesInput = {
@@ -2879,6 +2947,7 @@ export type UserUncheckedUpdateWithoutLikesInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutBookmarksInput = {
@@ -2915,6 +2984,7 @@ export type UserCreateWithoutBookmarksInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBookmarksInput = {
@@ -2951,6 +3021,7 @@ export type UserUncheckedCreateWithoutBookmarksInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBookmarksInput = {
@@ -3003,6 +3074,7 @@ export type UserUpdateWithoutBookmarksInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBookmarksInput = {
@@ -3039,6 +3111,7 @@ export type UserUncheckedUpdateWithoutBookmarksInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCollectionsInput = {
@@ -3075,6 +3148,7 @@ export type UserCreateWithoutCollectionsInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCollectionsInput = {
@@ -3111,6 +3185,7 @@ export type UserUncheckedCreateWithoutCollectionsInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCollectionsInput = {
@@ -3163,6 +3238,7 @@ export type UserUpdateWithoutCollectionsInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCollectionsInput = {
@@ -3199,6 +3275,7 @@ export type UserUncheckedUpdateWithoutCollectionsInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPostsInput = {
@@ -3235,6 +3312,7 @@ export type UserCreateWithoutPostsInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPostsInput = {
@@ -3271,6 +3349,7 @@ export type UserUncheckedCreateWithoutPostsInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPostsInput = {
@@ -3323,6 +3402,7 @@ export type UserUpdateWithoutPostsInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPostsInput = {
@@ -3359,6 +3439,7 @@ export type UserUncheckedUpdateWithoutPostsInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCommentsInput = {
@@ -3395,6 +3476,7 @@ export type UserCreateWithoutCommentsInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCommentsInput = {
@@ -3431,6 +3513,7 @@ export type UserUncheckedCreateWithoutCommentsInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCommentsInput = {
@@ -3483,6 +3566,7 @@ export type UserUpdateWithoutCommentsInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -3519,6 +3603,7 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutBlogPostsInput = {
@@ -3555,6 +3640,7 @@ export type UserCreateWithoutBlogPostsInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBlogPostsInput = {
@@ -3591,6 +3677,7 @@ export type UserUncheckedCreateWithoutBlogPostsInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBlogPostsInput = {
@@ -3643,6 +3730,7 @@ export type UserUpdateWithoutBlogPostsInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBlogPostsInput = {
@@ -3679,6 +3767,7 @@ export type UserUncheckedUpdateWithoutBlogPostsInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRoadmapVotesInput = {
@@ -3715,6 +3804,7 @@ export type UserCreateWithoutRoadmapVotesInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRoadmapVotesInput = {
@@ -3751,6 +3841,7 @@ export type UserUncheckedCreateWithoutRoadmapVotesInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRoadmapVotesInput = {
@@ -3803,6 +3894,7 @@ export type UserUpdateWithoutRoadmapVotesInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRoadmapVotesInput = {
@@ -3839,6 +3931,7 @@ export type UserUncheckedUpdateWithoutRoadmapVotesInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRegistryPackagesInput = {
@@ -3875,6 +3968,7 @@ export type UserCreateWithoutRegistryPackagesInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRegistryPackagesInput = {
@@ -3911,6 +4005,7 @@ export type UserUncheckedCreateWithoutRegistryPackagesInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRegistryPackagesInput = {
@@ -3963,6 +4058,7 @@ export type UserUpdateWithoutRegistryPackagesInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRegistryPackagesInput = {
@@ -3999,6 +4095,7 @@ export type UserUncheckedUpdateWithoutRegistryPackagesInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -4035,6 +4132,7 @@ export type UserCreateWithoutNotificationsInput = {
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -4071,6 +4169,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -4123,6 +4222,7 @@ export type UserUpdateWithoutNotificationsInput = {
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -4159,6 +4259,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutContactMessagesInput = {
@@ -4195,6 +4296,7 @@ export type UserCreateWithoutContactMessagesInput = {
   registryPackages?: Prisma.RegistryPackageCreateNestedManyWithoutAuthorInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutContactMessagesInput = {
@@ -4231,6 +4333,7 @@ export type UserUncheckedCreateWithoutContactMessagesInput = {
   registryPackages?: Prisma.RegistryPackageUncheckedCreateNestedManyWithoutAuthorInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutContactMessagesInput = {
@@ -4283,6 +4386,7 @@ export type UserUpdateWithoutContactMessagesInput = {
   registryPackages?: Prisma.RegistryPackageUpdateManyWithoutAuthorNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutContactMessagesInput = {
@@ -4319,6 +4423,7 @@ export type UserUncheckedUpdateWithoutContactMessagesInput = {
   registryPackages?: Prisma.RegistryPackageUncheckedUpdateManyWithoutAuthorNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAuditLogsInput = {
@@ -4355,6 +4460,7 @@ export type UserCreateWithoutAuditLogsInput = {
   registryPackages?: Prisma.RegistryPackageCreateNestedManyWithoutAuthorInput
   downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -4391,6 +4497,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   registryPackages?: Prisma.RegistryPackageUncheckedCreateNestedManyWithoutAuthorInput
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
   contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -4443,6 +4550,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   registryPackages?: Prisma.RegistryPackageUpdateManyWithoutAuthorNestedInput
   downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -4479,6 +4587,171 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   registryPackages?: Prisma.RegistryPackageUncheckedUpdateManyWithoutAuthorNestedInput
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
   contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  generatedFiles?: Prisma.GeneratedFileUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutGeneratedFilesInput = {
+  id?: string
+  email: string
+  emailVerified?: boolean
+  name?: string | null
+  username?: string | null
+  avatar?: string | null
+  bio?: string | null
+  role?: $Enums.Role
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastLoginAt?: Date | string | null
+  passwordHash?: string | null
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  apiKeys?: Prisma.ApiKeyCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
+  followers?: Prisma.FollowCreateNestedManyWithoutFollowingInput
+  following?: Prisma.FollowCreateNestedManyWithoutFollowerInput
+  bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput
+  likes?: Prisma.LikeCreateNestedManyWithoutUserInput
+  assets?: Prisma.AssetCreateNestedManyWithoutAuthorInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  ratings?: Prisma.RatingCreateNestedManyWithoutUserInput
+  collections?: Prisma.CollectionCreateNestedManyWithoutUserInput
+  purchases?: Prisma.PurchaseCreateNestedManyWithoutUserInput
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput
+  comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  blogPosts?: Prisma.BlogPostCreateNestedManyWithoutAuthorInput
+  roadmapVotes?: Prisma.RoadmapVoteCreateNestedManyWithoutUserInput
+  registryPackages?: Prisma.RegistryPackageCreateNestedManyWithoutAuthorInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUserInput
+  contactMessages?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutGeneratedFilesInput = {
+  id?: string
+  email: string
+  emailVerified?: boolean
+  name?: string | null
+  username?: string | null
+  avatar?: string | null
+  bio?: string | null
+  role?: $Enums.Role
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastLoginAt?: Date | string | null
+  passwordHash?: string | null
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  apiKeys?: Prisma.ApiKeyUncheckedCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
+  followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowingInput
+  following?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowerInput
+  bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput
+  likes?: Prisma.LikeUncheckedCreateNestedManyWithoutUserInput
+  assets?: Prisma.AssetUncheckedCreateNestedManyWithoutAuthorInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  ratings?: Prisma.RatingUncheckedCreateNestedManyWithoutUserInput
+  collections?: Prisma.CollectionUncheckedCreateNestedManyWithoutUserInput
+  purchases?: Prisma.PurchaseUncheckedCreateNestedManyWithoutUserInput
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  blogPosts?: Prisma.BlogPostUncheckedCreateNestedManyWithoutAuthorInput
+  roadmapVotes?: Prisma.RoadmapVoteUncheckedCreateNestedManyWithoutUserInput
+  registryPackages?: Prisma.RegistryPackageUncheckedCreateNestedManyWithoutAuthorInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUserInput
+  contactMessages?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutGeneratedFilesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutGeneratedFilesInput, Prisma.UserUncheckedCreateWithoutGeneratedFilesInput>
+}
+
+export type UserUpsertWithoutGeneratedFilesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutGeneratedFilesInput, Prisma.UserUncheckedUpdateWithoutGeneratedFilesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutGeneratedFilesInput, Prisma.UserUncheckedCreateWithoutGeneratedFilesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutGeneratedFilesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutGeneratedFilesInput, Prisma.UserUncheckedUpdateWithoutGeneratedFilesInput>
+}
+
+export type UserUpdateWithoutGeneratedFilesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  apiKeys?: Prisma.ApiKeyUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
+  followers?: Prisma.FollowUpdateManyWithoutFollowingNestedInput
+  following?: Prisma.FollowUpdateManyWithoutFollowerNestedInput
+  bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput
+  likes?: Prisma.LikeUpdateManyWithoutUserNestedInput
+  assets?: Prisma.AssetUpdateManyWithoutAuthorNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  ratings?: Prisma.RatingUpdateManyWithoutUserNestedInput
+  collections?: Prisma.CollectionUpdateManyWithoutUserNestedInput
+  purchases?: Prisma.PurchaseUpdateManyWithoutUserNestedInput
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput
+  comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  blogPosts?: Prisma.BlogPostUpdateManyWithoutAuthorNestedInput
+  roadmapVotes?: Prisma.RoadmapVoteUpdateManyWithoutUserNestedInput
+  registryPackages?: Prisma.RegistryPackageUpdateManyWithoutAuthorNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  downloads?: Prisma.DownloadUpdateManyWithoutUserNestedInput
+  contactMessages?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutGeneratedFilesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  apiKeys?: Prisma.ApiKeyUncheckedUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
+  followers?: Prisma.FollowUncheckedUpdateManyWithoutFollowingNestedInput
+  following?: Prisma.FollowUncheckedUpdateManyWithoutFollowerNestedInput
+  bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput
+  likes?: Prisma.LikeUncheckedUpdateManyWithoutUserNestedInput
+  assets?: Prisma.AssetUncheckedUpdateManyWithoutAuthorNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  ratings?: Prisma.RatingUncheckedUpdateManyWithoutUserNestedInput
+  collections?: Prisma.CollectionUncheckedUpdateManyWithoutUserNestedInput
+  purchases?: Prisma.PurchaseUncheckedUpdateManyWithoutUserNestedInput
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  blogPosts?: Prisma.BlogPostUncheckedUpdateManyWithoutAuthorNestedInput
+  roadmapVotes?: Prisma.RoadmapVoteUncheckedUpdateManyWithoutUserNestedInput
+  registryPackages?: Prisma.RegistryPackageUncheckedUpdateManyWithoutAuthorNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUserNestedInput
+  contactMessages?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -4508,6 +4781,7 @@ export type UserCountOutputType = {
   auditLogs: number
   downloads: number
   contactMessages: number
+  generatedFiles: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4532,6 +4806,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
   downloads?: boolean | UserCountOutputTypeCountDownloadsArgs
   contactMessages?: boolean | UserCountOutputTypeCountContactMessagesArgs
+  generatedFiles?: boolean | UserCountOutputTypeCountGeneratedFilesArgs
 }
 
 /**
@@ -4691,6 +4966,13 @@ export type UserCountOutputTypeCountContactMessagesArgs<ExtArgs extends runtime.
   where?: Prisma.ContactMessageWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountGeneratedFilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.GeneratedFileWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -4727,6 +5009,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
   downloads?: boolean | Prisma.User$downloadsArgs<ExtArgs>
   contactMessages?: boolean | Prisma.User$contactMessagesArgs<ExtArgs>
+  generatedFiles?: boolean | Prisma.User$generatedFilesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -4799,6 +5082,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
   downloads?: boolean | Prisma.User$downloadsArgs<ExtArgs>
   contactMessages?: boolean | Prisma.User$contactMessagesArgs<ExtArgs>
+  generatedFiles?: boolean | Prisma.User$generatedFilesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -4829,6 +5113,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
     downloads: Prisma.$DownloadPayload<ExtArgs>[]
     contactMessages: Prisma.$ContactMessagePayload<ExtArgs>[]
+    generatedFiles: Prisma.$GeneratedFilePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -5259,6 +5544,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   auditLogs<T extends Prisma.User$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   downloads<T extends Prisma.User$downloadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$downloadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DownloadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   contactMessages<T extends Prisma.User$contactMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$contactMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContactMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  generatedFiles<T extends Prisma.User$generatedFilesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$generatedFilesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GeneratedFilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6208,6 +6494,30 @@ export type User$contactMessagesArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.ContactMessageScalarFieldEnum | Prisma.ContactMessageScalarFieldEnum[]
+}
+
+/**
+ * User.generatedFiles
+ */
+export type User$generatedFilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the GeneratedFile
+   */
+  select?: Prisma.GeneratedFileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the GeneratedFile
+   */
+  omit?: Prisma.GeneratedFileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GeneratedFileInclude<ExtArgs> | null
+  where?: Prisma.GeneratedFileWhereInput
+  orderBy?: Prisma.GeneratedFileOrderByWithRelationInput | Prisma.GeneratedFileOrderByWithRelationInput[]
+  cursor?: Prisma.GeneratedFileWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.GeneratedFileScalarFieldEnum | Prisma.GeneratedFileScalarFieldEnum[]
 }
 
 /**

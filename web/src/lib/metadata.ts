@@ -3,12 +3,10 @@ import type { Metadata, Viewport } from 'next';
 export const siteConfig = {
   name: 'AI Context Studio',
   description:
-    'Build, customize, manage, and export AI instruction assets for multiple AI coding assistants. Local-first, offline-first, no auth required.',
+    'Build, customize, manage, and export AI instruction assets for multiple AI coding assistants. Generate system prompts, instruction files, personas, workflows, MCP configs and more.',
   url: 'https://ai-context-studio.vercel.app',
   ogImage: '/og-image.svg',
-  github: 'https://github.com/ai-context-studio',
-  discord: 'https://discord.gg/ai-context-studio',
-  twitter: 'https://twitter.com/aicontextstudio',
+  github: 'https://github.com/Vansh-Varshney-07/AI-Context-Studio',
   creator: '@aicontextstudio',
 };
 
@@ -117,7 +115,7 @@ export const organizationSchema = generateStructuredData({
   name: siteConfig.name,
   url: siteConfig.url,
   logo: `${siteConfig.url}/icons/icon-512x512.png`,
-  sameAs: [siteConfig.github, siteConfig.twitter, siteConfig.discord],
+  sameAs: [siteConfig.github],
   description: siteConfig.description,
 });
 
