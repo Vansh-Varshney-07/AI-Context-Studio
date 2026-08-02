@@ -14,7 +14,7 @@ import { AdminLayoutShell as AdminLayout } from "../layout";
 const ROLES = ["USER", "MODERATOR", "ADMIN", "OWNER"] as const;
 type Role = typeof ROLES[number];
 
-interface User {
+interface AdminUser {
   id: string;
   name: string | null;
   email: string;
@@ -33,14 +33,14 @@ interface User {
 }
 
 interface UsersResponse {
-  users: User[];
+  users: AdminUser[];
   totalCount: number;
   totalPages: number;
   currentPage: number;
 }
 
 export default function AdminUsersPage() {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<Role | "all">("all");

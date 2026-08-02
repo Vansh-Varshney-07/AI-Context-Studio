@@ -1,4 +1,5 @@
 import { type Metadata } from 'next';
+import Link from 'next/link';
 import { Header, Footer } from '@/components/layout';
 import { generateMetadata } from '@/lib/metadata';
 import { Card } from '@/components/ui/card';
@@ -325,13 +326,13 @@ export default function FAQPage() {
                   Search the full documentation, browse GitHub Discussions, or open an issue.
                 </p>
                 <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-                  <a
+                  <Link
                     href="/docs/search"
                     className="inline-flex items-center gap-2"
                   >
                     <Button size="lg">Search Documentation</Button>
                     <ChevronRight className="h-5 w-5" />
-                  </a>
+                  </Link>
                   <a
                     href="https://github.com/Vansh-Varshney-07/AI-Context-Studio/discussions"
                     target="_blank"

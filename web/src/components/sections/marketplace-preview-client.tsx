@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { MotionDiv } from "@/components/ui/motion";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -177,12 +178,12 @@ export function MarketplacePreviewClient({ initialAssets, initialCategories }: M
         )}
 
         <div className="mt-12 text-center">
-          <a href="/marketplace" className="inline-flex items-center gap-2">
+          <Link href="/marketplace" className="inline-flex items-center gap-2">
             <Button size="lg">Explore Marketplace</Button>
             <span className="text-sm text-[var(--color-text-muted)]">
               {categories.reduce((sum, cat) => sum + (cat._count?.assets || 0), 0)} assets
             </span>
-          </a>
+          </Link>
         </div>
       </div>
     </section>

@@ -119,10 +119,6 @@ function groupAssetsByPlatform(release: GitHubRelease): PlatformEntry[] {
   return order.map((os) => platforms[os]).filter((p): p is PlatformEntry => p !== undefined);
 }
 
-interface DownloadCTAClientProps {
-  initialReleases: GitHubRelease[];
-}
-
 export function DownloadCTAClient({ initialReleases }: DownloadCTAClientProps) {
   const latestRelease = initialReleases[0];
   const platforms = latestRelease ? groupAssetsByPlatform(latestRelease) : [];

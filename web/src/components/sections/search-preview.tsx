@@ -1,5 +1,6 @@
 'use client';
 
+import Link from "next/link";
 import { useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { useState } from 'react';
 import {
@@ -205,9 +206,9 @@ export function SearchPreview() {
                 </p>
                 <p className="mt-1 text-center text-sm text-[var(--color-text-muted)]">
                   Try a different keyword or{' '}
-                  <a href="/marketplace" className="text-[var(--color-accent)] hover:underline">
+                  <Link href="/marketplace" className="text-[var(--color-accent)] hover:underline">
                     browse all assets
-                  </a>
+                  </Link>
                 </p>
               </MotionDiv>
             )}
